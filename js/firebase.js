@@ -10,12 +10,12 @@ import { getAuth }        from "https://www.gstatic.com/firebasejs/10.12.2/fireb
 import { getFirestore }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCIY6AiBsGrq7wM0BBYGW2lM_0FLWjnH0k",
-  authDomain: "cybermonitor-1ab3c.firebaseapp.com",
-  projectId: "cybermonitor-1ab3c",
-  storageBucket: "cybermonitor-1ab3c.firebasestorage.app",
-  messagingSenderId: "569408987884",
-  appId: "1:569408987884:web:0839eb7932c206fc157bc9"
+  apiKey:            "AIzaSyCLPNGY6w2otiBUGfbjnOM86DYfvh-zt4U",
+  authDomain:        "cyber-buddy-academy.firebaseapp.com",
+  projectId:         "cyber-buddy-academy",
+  storageBucket:     "cyber-buddy-academy.appspot.com",
+  messagingSenderId: "378058712667",
+  appId:             "1:378058712667:web:88b72bcde024c217dac17e"
 };
 
 const app = initializeApp(firebaseConfig);

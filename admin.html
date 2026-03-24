@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Console — CTF Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+<style>
+:root{
+  --bg:#060810;--bg2:#0b0e1a;--bg3:#0f1320;--bg4:#141828;
+  --border:rgba(255,255,255,.06);--border2:rgba(232,67,147,.2);
+  --accent:#e84393;--accent2:#9f7aea;
+  --green:#68d391;--red:#fc8181;--amber:#f6ad55;--cyan:#76e4f7;
+  --tx:#e2e8f0;--dim:#4a5568;--dim2:#718096;
+  --sidebar:260px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(232,67,147,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(232,67,147,.02) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:none;z-index:50;transition:transform .3s;}
+.sidebar::-webkit-scrollbar{display:none;}
+.sb-logo{padding:20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.logo-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;box-shadow:0 4px 12px rgba(232,67,147,.3);flex-shrink:0;}
+.sb-logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;}
+.admin-badge{font-size:.58rem;font-weight:700;background:rgba(232,67,147,.15);color:var(--accent);border:1px solid rgba(232,67,147,.25);padding:2px 6px;border-radius:4px;margin-left:auto;font-family:'JetBrains Mono',monospace;}
+.sb-nav{flex:1;padding:10px 10px;}
+.sec-label{font-size:.6rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim);padding:12px 8px 5px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.sb-nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:.83rem;color:var(--dim2);cursor:pointer;transition:all .15s;margin-bottom:2px;border:1px solid transparent;font-weight:500;}
+.sb-nav a:hover{color:var(--tx);background:rgba(255,255,255,.04);}
+.sb-nav a.active{color:var(--accent);background:rgba(232,67,147,.08);border-color:rgba(232,67,147,.15);}
+.sb-nav a i{width:16px;text-align:center;font-size:.8rem;flex-shrink:0;}
+.notif-badge{margin-left:auto;min-width:18px;height:18px;padding:0 5px;background:var(--red);color:#fff;border-radius:9px;font-size:.58rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.sb-bottom{padding:10px 8px;border-top:1px solid var(--border);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:1;}
+.topbar{height:58px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;position:sticky;top:0;background:rgba(6,8,16,.92);z-index:40;backdrop-filter:blur(16px);}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;}
+.admin-info{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.admin-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:#fff;}
+.ham-btn{display:none;background:none;border:none;color:var(--tx);font-size:1.1rem;cursor:pointer;padding:4px;margin-right:4px;}
+
+.content{flex:1;padding:24px;overflow-y:auto;}
+.view{display:none;}.view.active{display:block;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .2s;}
+.stat-card:hover{border-color:rgba(232,67,147,.2);transform:translateY(-2px);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.stat-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.88rem;margin-bottom:8px;}
+.stat-label{font-size:.7rem;color:var(--dim2);font-weight:500;text-transform:uppercase;letter-spacing:.5px;}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;line-height:1;color:var(--accent);}
+
+/* SEC HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-hd h2{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;}
+
+/* TABLE */
+.data-table{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.dt-row{display:grid;align-items:center;padding:13px 18px;border-bottom:1px solid var(--border);transition:background .12s;}
+.dt-row:last-child{border-bottom:none;}
+.dt-row:not(.dt-head):hover{background:var(--bg3);}
+.dt-head{background:var(--bg3);font-size:.62rem;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+/* FORM */
+.form-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:16px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:.66rem;color:var(--dim2);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.7px;font-family:'JetBrains Mono',monospace;}
+.inp{width:100%;padding:10px 13px;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;color:var(--tx);font-family:'Space Grotesk',sans-serif;font-size:.88rem;outline:none;transition:all .2s;}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,67,147,.08);}
+.inp::placeholder{color:var(--dim);}
+select.inp option{background:var(--bg3);}
+textarea.inp{resize:vertical;min-height:80px;}
+.mono.inp{font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* BUTTONS */
+.btn{padding:9px 16px;border-radius:10px;border:none;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.btn-accent:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(232,67,147,.3);}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border);color:var(--dim2);}
+.btn-ghost:hover{color:var(--tx);border-color:rgba(255,255,255,.15);}
+.btn-danger{background:rgba(252,129,129,.08);border:1px solid rgba(252,129,129,.2);color:var(--red);}
+.btn-danger:hover{background:rgba(252,129,129,.15);}
+.btn-green{background:rgba(104,211,145,.08);border:1px solid rgba(104,211,145,.2);color:var(--green);}
+.btn-green:hover{background:rgba(104,211,145,.15);}
+.btn-amber{background:rgba(246,173,85,.08);border:1px solid rgba(246,173,85,.2);color:var(--amber);}
+.btn-amber:hover{background:rgba(246,173,85,.15);}
+.btn-sm{padding:6px 12px;font-size:.74rem;}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;}
+.pill-approved{background:rgba(104,211,145,.1);color:var(--green);border:1px solid rgba(104,211,145,.2);}
+.pill-pending{background:rgba(246,173,85,.1);color:var(--amber);border:1px solid rgba(246,173,85,.2);}
+.pill-rejected{background:rgba(252,129,129,.1);color:var(--red);border:1px solid rgba(252,129,129,.2);}
+.pill-admin{background:rgba(232,67,147,.1);color:var(--accent);border:1px solid rgba(232,67,147,.2);}
+.pill-on{background:rgba(104,211,145,.1);color:var(--green);border:1px solid rgba(104,211,145,.2);}
+.pill-off{background:rgba(90,95,122,.12);color:var(--dim2);border:1px solid var(--border);}
+.diff-Easy{background:rgba(104,211,145,.1);color:var(--green);border:1px solid rgba(104,211,145,.2);}
+.diff-Intermediate{background:rgba(246,173,85,.1);color:var(--amber);border:1px solid rgba(246,173,85,.2);}
+.diff-Hard{background:rgba(252,129,129,.1);color:var(--red);border:1px solid rgba(252,129,129,.2);}
+.cat-badge{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:4px;}
+
+/* ACCESS REQUEST CARD */
+.req-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:all .2s;}
+.req-card:hover{border-color:rgba(246,173,85,.2);}
+.req-card.new{border-left:3px solid var(--amber);}
+.req-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#fff;flex-shrink:0;}
+.req-info{flex:1;min-width:0;}
+.req-name{font-size:.88rem;font-weight:700;}
+.req-email{font-size:.74rem;color:var(--dim2);font-family:'JetBrains Mono',monospace;}
+.req-meta{font-size:.68rem;color:var(--dim);margin-top:2px;}
+.req-actions{display:flex;gap:7px;flex-shrink:0;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px);}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid rgba(232,67,147,.2);border-radius:18px;width:min(620px,95vw);max-height:90vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(16px) scale(.97);transition:transform .25s;box-shadow:0 32px 80px rgba(0,0,0,.8);}
+.modal-bg.open .modal{transform:translateY(0) scale(1);}
+.modal-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;}
+.modal-close{width:28px;height:28px;border-radius:8px;background:var(--bg3);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--dim2);font-size:.75rem;transition:color .15s;}
+.modal-close:hover{color:var(--tx);}
+.modal-body{padding:20px 22px 24px;overflow-y:auto;}
+
+/* TOAST */
+#toast-cont{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+@keyframes toastIn{from{transform:translateX(60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast{padding:10px 16px;border-radius:10px;font-size:.8rem;font-weight:600;color:#fff;animation:toastIn .25s ease;display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.toast.ok{background:rgba(104,211,145,.9);border:1px solid rgba(104,211,145,.3);}
+.toast.err{background:rgba(252,129,129,.9);border:1px solid rgba(252,129,129,.3);}
+.toast.info{background:rgba(232,67,147,.9);border:1px solid rgba(232,67,147,.3);}
+
+/* EMPTY / SPINNER */
+.empty{text-align:center;padding:40px;color:var(--dim2);}
+.empty i{font-size:1.8rem;margin-bottom:10px;display:block;color:var(--dim);}
+@keyframes spin{to{transform:rotate(360deg);}}.spin{animation:spin .7s linear infinite;}
+
+/* LIVE DOT */
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;animation:livePulse 2s ease-in-out infinite;}
+@keyframes livePulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* MOB */
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:45;}
+.mob-overlay.show{display:block;}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}.form-row{grid-template-columns:1fr;}.form-row3{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){.sidebar{position:fixed;left:-100%;z-index:50;transition:left .28s;}.sidebar.open{left:0;}.mob-overlay.show{display:block;}.ham-btn{display:flex;}.content{padding:16px;}}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;}.form-row3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div id="mob-overlay" class="mob-overlay" onclick="closeSb()"></div>
+<div id="toast-cont"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="logo-mark"><i class="fas fa-shield-alt"></i></div>
+    <div class="sb-logo-text">CTF Admin</div>
+    <span class="admin-badge">ROOT</span>
+  </div>
+  <nav class="sb-nav">
+    <p class="sec-label">// Overview</p>
+    <a class="active" id="nav-overview" onclick="go('overview')"><i class="fas fa-th-large"></i> Overview</a>
+    <a id="nav-requests" onclick="go('requests')"><i class="fas fa-user-clock"></i> Access Requests <span class="notif-badge" id="req-badge">0</span></a>
+    <p class="sec-label">// Manage</p>
+    <a id="nav-challenges" onclick="go('challenges')"><i class="fas fa-layer-group"></i> Challenges</a>
+    <a id="nav-users" onclick="go('users')"><i class="fas fa-users"></i> Users</a>
+    <a id="nav-solves" onclick="go('solves')"><i class="fas fa-flag"></i> All Solves</a>
+  </nav>
+  <div class="sb-bottom">
+    <a href="dashboard.html" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:.82rem;color:var(--dim2);text-decoration:none;transition:color .15s;" onmouseover="this.style.color='var(--tx)'" onmouseout="this.style.color='var(--dim2)'">
+      <i class="fas fa-arrow-left" style="width:16px;text-align:center;font-size:.78rem;"></i> Back to Dashboard
+    </a>
+    <a onclick="doLogout()" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:.82rem;color:var(--dim2);cursor:pointer;transition:color .15s;margin-top:2px;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--dim2)'">
+      <i class="fas fa-sign-out-alt" style="width:16px;text-align:center;font-size:.78rem;"></i> Sign Out
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <button class="ham-btn" onclick="openSb()"><i class="fas fa-bars"></i></button>
+    <div class="topbar-title" id="page-title">Overview</div>
+    <div class="admin-info">
+      <span class="live-dot"></span>
+      <span style="font-size:.74rem;color:var(--dim2);font-family:'JetBrains Mono',monospace;" id="admin-name">—</span>
+      <div class="admin-av" id="admin-av">A</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ════ OVERVIEW ════ -->
+    <div id="view-overview" class="view active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(232,67,147,.1);color:var(--accent);"><i class="fas fa-layer-group"></i></div>
+          <div class="stat-label">Challenges</div>
+          <div class="stat-value" id="ov-chals">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(104,211,145,.1);color:var(--green);"><i class="fas fa-users"></i></div>
+          <div class="stat-label">Total Players</div>
+          <div class="stat-value" id="ov-players">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(159,122,234,.1);color:var(--accent2);"><i class="fas fa-flag"></i></div>
+          <div class="stat-label">Total Solves</div>
+          <div class="stat-value" id="ov-solves">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(246,173,85,.1);color:var(--amber);"><i class="fas fa-user-clock"></i></div>
+          <div class="stat-label">Pending Approvals</div>
+          <div class="stat-value" id="ov-pending" style="color:var(--amber);">—</div>
+        </div>
+      </div>
+      <div class="sec-hd"><h2>Recent Activity</h2></div>
+      <div class="data-table" id="ov-activity"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+    </div>
+
+    <!-- ════ ACCESS REQUESTS ════ -->
+    <div id="view-requests" class="view">
+      <div class="sec-hd">
+        <h2>Access Requests</h2>
+        <span style="font-size:.74rem;color:var(--dim2);font-family:'JetBrains Mono',monospace;">Approve or reject new user registrations</span>
+      </div>
+      <div id="pending-requests-list"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+      <div class="sec-hd" style="margin-top:20px;"><h2>Approved Users</h2></div>
+      <div id="approved-requests-list"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+    </div>
+
+    <!-- ════ CHALLENGES ════ -->
+    <div id="view-challenges" class="view">
+      <div class="sec-hd">
+        <h2>Challenges</h2>
+        <button class="btn btn-accent btn-sm" onclick="openAddChal()"><i class="fas fa-plus"></i> Add Challenge</button>
+      </div>
+      <div class="data-table" id="chal-table"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+    </div>
+
+    <!-- ════ USERS ════ -->
+    <div id="view-users" class="view">
+      <div class="sec-hd"><h2>Users</h2></div>
+      <div class="data-table" id="users-table"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+    </div>
+
+    <!-- ════ ALL SOLVES ════ -->
+    <div id="view-solves" class="view">
+      <div class="sec-hd"><h2>All Solves</h2></div>
+      <div class="data-table" id="solves-table"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD / EDIT CHALLENGE MODAL -->
+<div class="modal-bg" id="chal-modal" onclick="if(event.target===this)closeChalModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="chal-modal-title">Add Challenge</div>
+      <button class="modal-close" onclick="closeChalModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <div class="form-row">
+        <div class="field"><label>Challenge Title *</label><input class="inp" id="cf-title" placeholder="SQL Injection 101"></div>
+        <div class="field"><label>Points *</label><input class="inp" type="number" id="cf-pts" placeholder="100" min="10" step="10"></div>
+      </div>
+      <div class="form-row3">
+        <div class="field">
+          <label>Category *</label>
+          <select class="inp" id="cf-cat">
+            <option>Web</option><option>Crypto</option><option>Pwn</option>
+            <option>Forensics</option><option>Rev</option><option>Misc</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Difficulty Level *</label>
+          <select class="inp" id="cf-diff">
+            <option value="Easy">Easy</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Visible to Players</label>
+          <select class="inp" id="cf-visible">
+            <option value="true">Yes — Published</option>
+            <option value="false">No — Hidden</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Description *</label><textarea class="inp" id="cf-desc" placeholder="What does the player need to do?" style="min-height:90px;"></textarea></div>
+      <div class="field"><label>Vulnerability Knowledge</label><textarea class="inp" id="cf-vuln" placeholder="Explain the underlying vulnerability (shown to players as learning material)" style="min-height:70px;"></textarea></div>
+      <div class="field"><label>Hint 1</label><input class="inp" id="cf-hint1" placeholder="First gentle nudge…"></div>
+      <div class="field"><label>Hint 2</label><input class="inp" id="cf-hint2" placeholder="Second hint…"></div>
+      <div class="field"><label>Hint 3</label><input class="inp" id="cf-hint3" placeholder="Third (strongest) hint…"></div>
+      <div class="field"><label>Challenge URL (hosted environment)</label><input class="inp" id="cf-url" placeholder="https://challenge.example.com/ch01"></div>
+      <div class="field"><label>Flag (exact string) *</label><input class="inp mono" id="cf-flag" placeholder="CTF{your_flag_here}"></div>
+      <div class="field"><label>Tags (comma-separated)</label><input class="inp" id="cf-tags" placeholder="sql, injection, auth"></div>
+      <div style="display:flex;gap:9px;margin-top:4px;flex-wrap:wrap;">
+        <button class="btn btn-accent" onclick="saveChal()"><i class="fas fa-check"></i> Save Challenge</button>
+        <button class="btn btn-ghost" onclick="closeChalModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROLE MODAL -->
+<div class="modal-bg" id="role-modal" onclick="if(event.target===this)closeRoleModal()">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-hd">
+      <div class="modal-title">Change User Role</div>
+      <button class="modal-close" onclick="closeRoleModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.82rem;color:var(--dim2);margin-bottom:14px;">Set role for <strong id="role-uname">—</strong></p>
+      <input type="hidden" id="role-uid">
+      <div class="field">
+        <label>Role</label>
+        <select class="inp" id="role-select">
+          <option value="player">Player</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:9px;">
+        <button class="btn btn-accent btn-sm" onclick="saveRole()"><i class="fas fa-check"></i> Save</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeRoleModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { auth, db } from "./js/firebase.js";
+import {
+  onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc,
+  onSnapshot, query, orderBy, limit, serverTimestamp, where, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+
+function toast(msg, type = "info") {
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.innerHTML = `<i class="fas ${type==="ok"?"fa-check-circle":type==="err"?"fa-times-circle":"fa-info-circle"}"></i>${msg}`;
+  $("toast-cont").appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+const av = s => (s||"A")[0].toUpperCase();
+let me = null, myData = null, allChals = [], allUsers = [];
+
+// ── AUTH GUARD ────────────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = "login.html"; return; }
+  me = user;
+  const snap = await getDoc(doc(db,"users",user.uid));
+  myData = snap.data() || {};
+  if (myData.role !== "admin") {
+    alert("Access denied. Admins only.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+  $("admin-av").textContent   = av(myData.name||user.email);
+  $("admin-name").textContent = myData.name||user.email;
+  loadAll();
+});
+
+function loadAll() {
+  loadOverview();
+  loadChals();
+  loadUsers();
+  loadSolves();
+  listenRequests();
+}
+
+// ── NAV ───────────────────────────────────────────────────────
+const VIEWS = ["overview","requests","challenges","users","solves"];
+window.go = function(v) {
+  VIEWS.forEach(x => {
+    $("view-"+x).classList.toggle("active", x===v);
+    $("nav-"+x)?.classList.toggle("active", x===v);
+  });
+  $("page-title").textContent = v[0].toUpperCase()+v.slice(1);
+  closeSb();
+};
+window.openSb  = () => { $("sidebar").classList.add("open"); $("mob-overlay").classList.add("show"); };
+window.closeSb = () => { $("sidebar").classList.remove("open"); $("mob-overlay").classList.remove("show"); };
+
+// ── OVERVIEW ─────────────────────────────────────────────────
+async function loadOverview() {
+  const [chalSnap, userSnap, solveSnap, pendingSnap] = await Promise.all([
+    getDocs(collection(db,"challenges")),
+    getDocs(query(collection(db,"users"), where("role","==","player"))),
+    getDocs(collection(db,"solves")),
+    getDocs(query(collection(db,"users"), where("status","==","pending")))
+  ]);
+  $("ov-chals").textContent   = chalSnap.size;
+  $("ov-players").textContent = userSnap.size;
+  $("ov-solves").textContent  = solveSnap.size;
+  $("ov-pending").textContent = pendingSnap.size;
+  $("req-badge").textContent  = pendingSnap.size;
+
+  const q = query(collection(db,"solves"), orderBy("ts","desc"), limit(20));
+  onSnapshot(q, snap => {
+    const rows = []; snap.forEach(d => rows.push(d.data()));
+    const tbl = $("ov-activity");
+    if (!rows.length) { tbl.innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><p>No activity yet.</p></div>`; return; }
+    tbl.innerHTML = `
+      <div class="dt-row dt-head" style="grid-template-columns:1fr 130px 80px 110px;">
+        <span>Player</span><span>Challenge</span><span>Points</span><span>Time</span>
+      </div>` +
+      rows.map(r=>`
+      <div class="dt-row" style="grid-template-columns:1fr 130px 80px 110px;">
+        <span style="font-size:.84rem;font-weight:600;">${r.name||"?"}</span>
+        <span style="font-size:.78rem;color:var(--dim2);">${r.title||"?"}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);">+${r.pts}</span>
+        <span style="font-size:.7rem;color:var(--dim);">${r.ts?.toDate?r.ts.toDate().toLocaleString("en-IN",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}):"—"}</span>
+      </div>`).join("");
+  });
+}
+
+// ── ACCESS REQUESTS ──────────────────────────────────────────
+function listenRequests() {
+  // Listen for pending
+  onSnapshot(query(collection(db,"users"), where("status","==","pending"), orderBy("joinedAt","desc")), snap => {
+    const pending = []; snap.forEach(d => pending.push({id:d.id,...d.data()}));
+    $("req-badge").textContent = pending.length;
+    $("ov-pending").textContent = pending.length;
+    renderRequestList("pending-requests-list", pending, true);
+  });
+  // Approved
+  onSnapshot(query(collection(db,"users"), where("status","==","approved"), orderBy("joinedAt","desc"), limit(30)), snap => {
+    const approved = []; snap.forEach(d => approved.push({id:d.id,...d.data()}));
+    renderRequestList("approved-requests-list", approved, false);
+  });
+}
+
+function renderRequestList(targetId, users, isPending) {
+  const container = $(targetId);
+  if (!users.length) {
+    container.innerHTML = `<div style="padding:24px;text-align:center;color:var(--dim2);font-size:.82rem;">${isPending?"No pending requests ✓":"No approved users yet."}</div>`;
+    return;
+  }
+  container.innerHTML = users.map(u => `
+    <div class="req-card ${isPending?"new":""}">
+      <div class="req-av">${av(u.name||u.email)}</div>
+      <div class="req-info">
+        <div class="req-name">${u.name||"—"}</div>
+        <div class="req-email">${u.email||"—"}</div>
+        <div class="req-meta">
+          Mobile: ${u.mobile||"—"} &nbsp;·&nbsp;
+          Joined: ${u.joinedAt?.toDate?u.joinedAt.toDate().toLocaleDateString():"—"}
+          ${!isPending?` &nbsp;·&nbsp; Score: ${(u.score||0).toLocaleString()} pts`:""}
+        </div>
+      </div>
+      <div class="req-actions">
+        ${isPending
+          ? `<button class="btn btn-green btn-sm" onclick="approveUser('${u.id}','${u.name||""}')"><i class="fas fa-check"></i> Approve</button>
+             <button class="btn btn-danger btn-sm" onclick="rejectUser('${u.id}')"><i class="fas fa-times"></i> Reject</button>`
+          : `<button class="btn btn-ghost btn-sm" onclick="openRoleModal('${u.id}','${u.name||""}','${u.role||"player"}')" title="Change role"><i class="fas fa-user-shield"></i></button>
+             <button class="btn btn-danger btn-sm" onclick="revokeUser('${u.id}')" title="Revoke access"><i class="fas fa-ban"></i></button>`
+        }
+      </div>
+    </div>`).join("");
+}
+
+window.approveUser = async function(uid, name) {
+  await updateDoc(doc(db,"users",uid), { status:"approved" });
+  toast(`${name||uid} approved ✓`, "ok");
+};
+window.rejectUser = async function(uid) {
+  if (!confirm("Reject this user? They will not be able to access the platform.")) return;
+  await updateDoc(doc(db,"users",uid), { status:"rejected" });
+  toast("User rejected.", "info");
+};
+window.revokeUser = async function(uid) {
+  if (!confirm("Revoke this user's access? They will be set to pending.")) return;
+  await updateDoc(doc(db,"users",uid), { status:"pending" });
+  toast("Access revoked — user set to pending.", "info");
+};
+
+// ── CHALLENGES ───────────────────────────────────────────────
+async function loadChals() {
+  const snap = await getDocs(collection(db,"challenges"));
+  allChals = []; snap.forEach(d => allChals.push({id:d.id,...d.data()}));
+  renderChalTable();
+}
+
+function renderChalTable() {
+  const tbl = $("chal-table");
+  if (!allChals.length) { tbl.innerHTML=`<div class="empty"><i class="fas fa-layer-group"></i><p>No challenges yet. Add one!</p></div>`; return; }
+  tbl.innerHTML = `
+    <div class="dt-row dt-head" style="grid-template-columns:1fr 80px 90px 55px 60px 65px 100px;">
+      <span>Title</span><span>Category</span><span>Difficulty</span><span>Pts</span><span>Solves</span><span>Visible</span><span>Actions</span>
+    </div>` +
+    allChals.map(c=>`
+    <div class="dt-row" style="grid-template-columns:1fr 80px 90px 55px 60px 65px 100px;">
+      <span style="font-size:.84rem;font-weight:600;">${c.title}</span>
+      <span class="cat-badge" style="font-size:.58rem;background:rgba(99,179,237,.08);color:var(--cyan);border:1px solid rgba(99,179,237,.15);">${c.category}</span>
+      <span class="diff-${c.difficulty}" style="font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:4px;">${c.difficulty}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);">${c.points}</span>
+      <span style="font-size:.8rem;color:var(--dim2);">${c.solves||0}</span>
+      <span class="pill ${c.visible!==false?"pill-on":"pill-off"}">${c.visible!==false?"On":"Off"}</span>
+      <div style="display:flex;gap:5px;">
+        <button class="btn btn-ghost btn-sm" onclick="editChal('${c.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="delChal('${c.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`).join("");
+}
+
+window.openAddChal = function() {
+  $("edit-id").value="";
+  $("chal-modal-title").textContent="Add Challenge";
+  ["cf-title","cf-pts","cf-desc","cf-vuln","cf-hint1","cf-hint2","cf-hint3","cf-url","cf-flag","cf-tags"].forEach(id=>$(id).value="");
+  $("cf-cat").value="Web";$("cf-diff").value="Easy";$("cf-visible").value="true";
+  $("chal-modal").classList.add("open");
+};
+window.editChal = function(id) {
+  const c = allChals.find(x=>x.id===id); if(!c) return;
+  $("edit-id").value=id;
+  $("chal-modal-title").textContent="Edit Challenge";
+  $("cf-title").value=c.title||"";$("cf-pts").value=c.points||100;
+  $("cf-cat").value=c.category||"Web";$("cf-diff").value=c.difficulty||"Easy";
+  $("cf-desc").value=c.description||"";$("cf-vuln").value=c.vulnerability||"";
+  $("cf-hint1").value=c.hint1||c.hint||"";$("cf-hint2").value=c.hint2||"";$("cf-hint3").value=c.hint3||"";
+  $("cf-url").value=c.challengeUrl||"";
+  $("cf-flag").value=c.flag||"";
+  $("cf-tags").value=(c.tags||[]).join(", ");
+  $("cf-visible").value=c.visible!==false?"true":"false";
+  $("chal-modal").classList.add("open");
+};
+window.closeChalModal = () => $("chal-modal").classList.remove("open");
+
+window.saveChal = async function() {
+  const editId = $("edit-id").value;
+  const data = {
+    title:         $("cf-title").value.trim(),
+    points:        parseInt($("cf-pts").value)||100,
+    category:      $("cf-cat").value,
+    difficulty:    $("cf-diff").value,
+    description:   $("cf-desc").value.trim(),
+    vulnerability: $("cf-vuln").value.trim(),
+    hint1:         $("cf-hint1").value.trim(),
+    hint2:         $("cf-hint2").value.trim(),
+    hint3:         $("cf-hint3").value.trim(),
+    challengeUrl:  $("cf-url").value.trim(),
+    flag:          $("cf-flag").value.trim(),
+    tags:          $("cf-tags").value.split(",").map(t=>t.trim()).filter(Boolean),
+    visible:       $("cf-visible").value==="true",
+    updatedAt:     serverTimestamp()
+  };
+  if (!data.title||!data.flag) { toast("Title and flag are required.", "err"); return; }
+  try {
+    if (editId) {
+      await updateDoc(doc(db,"challenges",editId), data);
+      toast("Challenge updated ✓", "ok");
+    } else {
+      data.createdAt=serverTimestamp();data.solves=0;
+      await addDoc(collection(db,"challenges"), data);
+      toast("Challenge created ✓", "ok");
+    }
+    closeChalModal();
+    loadChals();
+  } catch(e) { toast("Error: "+e.message,"err"); }
+};
+
+window.delChal = async function(id) {
+  if (!confirm("Delete this challenge permanently?")) return;
+  await deleteDoc(doc(db,"challenges",id));
+  toast("Challenge deleted.", "info");
+  loadChals();
+};
+
+// ── USERS ─────────────────────────────────────────────────────
+async function loadUsers() {
+  const snap = await getDocs(collection(db,"users"));
+  allUsers = []; snap.forEach(d => allUsers.push({id:d.id,...d.data()}));
+  allUsers.sort((a,b)=>(b.score||0)-(a.score||0));
+  renderUserTable();
+}
+
+function renderUserTable() {
+  const tbl = $("users-table");
+  if (!allUsers.length) { tbl.innerHTML=`<div class="empty"><i class="fas fa-users"></i><p>No users.</p></div>`; return; }
+  tbl.innerHTML = `
+    <div class="dt-row dt-head" style="grid-template-columns:1fr 150px 55px 60px 70px 80px 110px;">
+      <span>Name / Email</span><span>Mobile</span><span>Solves</span><span>Score</span><span>Role</span><span>Status</span><span>Actions</span>
+    </div>` +
+    allUsers.map(u=>`
+    <div class="dt-row" style="grid-template-columns:1fr 150px 55px 60px 70px 80px 110px;">
+      <div>
+        <div style="font-size:.84rem;font-weight:600;">${u.name||"?"}</div>
+        <div style="font-size:.68rem;color:var(--dim2);font-family:'JetBrains Mono',monospace;">${u.email||""}</div>
+      </div>
+      <span style="font-size:.72rem;color:var(--dim2);">${u.mobile||"—"}</span>
+      <span style="font-size:.82rem;">${u.solves||0}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);">${(u.score||0).toLocaleString()}</span>
+      <span class="pill ${u.role==="admin"?"pill-admin":"pill-off"}">${u.role||"player"}</span>
+      <span class="pill pill-${u.status||"pending"}">${u.status||"pending"}</span>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" onclick="openRoleModal('${u.id||u.uid}','${u.name||""}','${u.role||"player"}')" title="Change role"><i class="fas fa-user-shield"></i></button>
+        <button class="btn btn-amber btn-sm" onclick="resetScore('${u.id||u.uid}')" title="Reset score"><i class="fas fa-undo"></i></button>
+      </div>
+    </div>`).join("");
+}
+
+window.resetScore = async function(uid) {
+  if (!confirm("Reset this player's score to 0?")) return;
+  await updateDoc(doc(db,"users",uid), {score:0,solves:0,solvedIds:[]});
+  await updateDoc(doc(db,"leaderboard",uid), {score:0,solves:0}).catch(()=>{});
+  toast("Score reset.", "info");
+  loadUsers();
+};
+
+window.openRoleModal = function(uid, name, role) {
+  $("role-uid").value=uid;
+  $("role-uname").textContent=name||uid;
+  $("role-select").value=role;
+  $("role-modal").classList.add("open");
+};
+window.closeRoleModal = () => $("role-modal").classList.remove("open");
+window.saveRole = async function() {
+  const uid=$("role-uid").value, role=$("role-select").value;
+  await updateDoc(doc(db,"users",uid),{role});
+  toast("Role updated to "+role+" ✓","ok");
+  closeRoleModal(); loadUsers();
+};
+
+// ── SOLVES ────────────────────────────────────────────────────
+async function loadSolves() {
+  const q = query(collection(db,"solves"), orderBy("ts","desc"), limit(100));
+  onSnapshot(q, snap => {
+    const rows = []; snap.forEach(d => rows.push(d.data()));
+    const tbl = $("solves-table");
+    if (!rows.length) { tbl.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet.</p></div>`; return; }
+    tbl.innerHTML = `
+      <div class="dt-row dt-head" style="grid-template-columns:1fr 1fr 70px 110px;">
+        <span>Player</span><span>Challenge</span><span>Points</span><span>Time</span>
+      </div>` +
+      rows.map(r=>`
+      <div class="dt-row" style="grid-template-columns:1fr 1fr 70px 110px;">
+        <span style="font-size:.84rem;font-weight:600;">${r.name||"?"}</span>
+        <span style="font-size:.8rem;color:var(--dim2);">${r.title||r.challengeId||"?"}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);">+${r.pts}</span>
+        <span style="font-size:.7rem;color:var(--dim);">${r.ts?.toDate?r.ts.toDate().toLocaleString("en-IN",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}):"—"}</span>
+      </div>`).join("");
+  });
+}
+
+window.doLogout = async function() {
+  await signOut(auth);
+  window.location.href = "login.html";
+};
+
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeChalModal();closeRoleModal();}});
+</script>
+</body>
+</html>

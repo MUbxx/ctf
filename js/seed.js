@@ -3,7 +3,7 @@
 // Open browser console on any page that imports firebase.js,
 // then paste and call: seed()
 
-import { db } from "./firebase.js";
+import { db } from "firebase.js";
 import {
   collection, doc, setDoc, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";

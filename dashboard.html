@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — CTF Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+<style>
+:root{
+  --bg:#08090d;--bg2:#0e1018;--bg3:#131620;--bg4:#1a1e2e;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --accent:#e84393;--accent2:#7c3aed;
+  --tx:#f0f0f5;--dim:#5a5f7a;--dim2:#8890b0;
+  --red:#ef4444;--green:#22c55e;--amber:#f59e0b;--cyan:#06b6d4;
+  --sidebar:240px;--topbar:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;overflow-x:hidden;}
+
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:var(--sidebar);min-height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  scrollbar-width:none;
+}
+.sidebar::-webkit-scrollbar{display:none;}
+.sb-logo{
+  padding:18px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:9px;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;
+}
+.logo-mark{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;color:#fff;flex-shrink:0;
+}
+.sb-logo span{color:var(--dim2);}
+.sb-user{padding:12px 14px;border-bottom:1px solid var(--border);}
+.sb-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;flex-shrink:0;
+}
+.sb-nav{flex:1;padding:10px 8px;}
+.sb-nav a{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;
+  border-radius:9px;font-size:.84rem;color:var(--dim2);
+  text-decoration:none;transition:all .15s;cursor:pointer;margin-bottom:2px;
+  border:1px solid transparent;
+}
+.sb-nav a:hover{color:var(--tx);background:rgba(255,255,255,.04);}
+.sb-nav a.active{color:var(--accent);background:rgba(232,67,147,.08);border-color:rgba(232,67,147,.15);}
+.sb-nav a i{width:16px;text-align:center;font-size:.8rem;flex-shrink:0;}
+.sec-label{font-size:.63rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);padding:10px 10px 4px;font-weight:600;}
+.sb-badge{
+  margin-left:auto;min-width:20px;height:18px;padding:0 6px;
+  background:var(--accent);color:#fff;border-radius:9px;
+  font-size:.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;
+}
+.sb-bottom{padding:10px 8px;border-top:1px solid var(--border);}
+.sb-score-bar{
+  padding:10px 10px;border-radius:9px;background:var(--bg3);
+  margin-bottom:8px;
+}
+.sb-score-label{font-size:.65rem;color:var(--dim2);margin-bottom:4px;}
+.sb-score-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--accent);}
+
+/* ─── MAIN ─── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;}
+.topbar{
+  height:var(--topbar);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 22px;gap:12px;
+  position:sticky;top:0;background:rgba(8,9,13,.9);z-index:20;
+  backdrop-filter:blur(12px);
+}
+.topbar-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;min-width:0;}
+.search-wrap{flex:1;max-width:400px;position:relative;margin-left:auto;}
+.search-wrap input{
+  width:100%;padding:8px 14px 8px 36px;
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:8px;color:var(--tx);
+  font-family:'DM Sans',sans-serif;font-size:.84rem;
+  outline:none;transition:border-color .2s;
+}
+.search-wrap input:focus{border-color:var(--accent);}
+.search-wrap input::placeholder{color:var(--dim);}
+.search-wrap i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:.78rem;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg3);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--dim2);font-size:.8rem;transition:all .15s;
+}
+.icon-btn:hover{color:var(--tx);border-color:var(--border2);}
+
+/* ─── CONTENT ─── */
+.content{flex:1;padding:24px;overflow-y:auto;}
+.view{display:none;}
+.view.active{display:block;}
+.view-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;margin-bottom:20px;}
+
+/* ─── STATS ROW ─── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:12px;padding:18px;
+  display:flex;flex-direction:column;gap:6px;
+  transition:border-color .2s;
+}
+.stat-card:hover{border-color:var(--border2);}
+.stat-icon{
+  width:34px;height:34px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;margin-bottom:4px;
+}
+.stat-label{font-size:.72rem;color:var(--dim2);font-weight:500;}
+.stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;}
+.stat-sub{font-size:.7rem;color:var(--dim);}
+
+/* ─── SECTION HEADER ─── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-hd h2{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;}
+.sec-link{font-size:.78rem;color:var(--accent);cursor:pointer;font-weight:500;}
+.sec-link:hover{text-decoration:underline;}
+
+/* ─── FILTER CHIPS ─── */
+.filter-bar{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap;}
+.chip{
+  padding:6px 14px;border-radius:20px;
+  border:1.5px solid var(--border);
+  font-size:.75rem;font-weight:700;cursor:pointer;
+  color:var(--dim2);background:transparent;
+  transition:all .15s;font-family:'DM Sans',sans-serif;
+}
+.chip:hover{border-color:var(--border2);color:var(--tx);}
+.chip.active{border-color:var(--accent);background:rgba(232,67,147,.1);color:var(--accent);}
+
+/* ─── CHALLENGE GRID ─── */
+.chal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.chal-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:12px;padding:18px;
+  cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;gap:10px;
+  position:relative;overflow:hidden;
+}
+.chal-card:hover{border-color:rgba(232,67,147,.3);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.4);}
+.chal-card.solved{border-left:3px solid var(--green);}
+.chal-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.cat-badge{
+  font-size:.62rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.7px;padding:3px 8px;border-radius:5px;
+}
+.diff-badge{font-size:.62rem;font-weight:800;padding:3px 8px;border-radius:5px;}
+.diff-Easy{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2);}
+.diff-Medium{background:rgba(245,158,11,.1);color:#fbbf24;border:1px solid rgba(245,158,11,.2);}
+.diff-Hard{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.cat-Web{background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.2);}
+.cat-Crypto{background:rgba(124,58,237,.1);color:#a78bfa;border:1px solid rgba(124,58,237,.2);}
+.cat-Pwn{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.cat-Forensics{background:rgba(232,67,147,.1);color:var(--accent);border:1px solid rgba(232,67,147,.2);}
+.cat-Rev{background:rgba(245,158,11,.1);color:#fbbf24;border:1px solid rgba(245,158,11,.2);}
+.cat-Misc{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2);}
+.chal-name{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;line-height:1.3;}
+.chal-desc{font-size:.78rem;color:var(--dim2);line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.chal-pts{font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:500;color:var(--accent);}
+.chal-footer{display:flex;align-items:center;justify-content:space-between;}
+.chal-solves{font-size:.7rem;color:var(--dim);}
+.chal-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
+.tag{font-size:.62rem;background:var(--bg3);color:var(--dim2);padding:2px 7px;border-radius:4px;}
+.solved-check{
+  position:absolute;top:12px;right:12px;
+  width:22px;height:22px;border-radius:50%;background:var(--green);
+  display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#fff;
+}
+
+/* ─── LEADERBOARD ─── */
+.lb-table{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.lb-row{
+  display:grid;grid-template-columns:52px 1fr 100px 110px 90px;
+  align-items:center;padding:13px 18px;
+  border-bottom:1px solid var(--border);transition:background .15s;
+}
+.lb-row:last-child{border-bottom:none;}
+.lb-row:not(.lb-head):hover{background:var(--bg3);}
+.lb-head{background:var(--bg3);font-size:.65rem;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);font-weight:700;}
+.lb-rank{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500;color:var(--dim2);}
+.lb-rank.r1{color:#f59e0b;}
+.lb-rank.r2{color:#94a3b8;}
+.lb-rank.r3{color:#c2410c;}
+.lb-user{display:flex;align-items:center;gap:10px;}
+.lb-av{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:800;font-family:'Syne',sans-serif;flex-shrink:0;
+}
+.lb-uname{font-size:.84rem;font-weight:600;}
+.lb-team{font-size:.68rem;color:var(--dim2);}
+.lb-score{font-family:'DM Mono',monospace;font-size:.95rem;color:var(--accent);}
+.lb-solves{font-size:.82rem;color:var(--dim2);}
+.me-tag{
+  display:inline-block;font-size:.58rem;font-weight:800;
+  background:rgba(232,67,147,.15);color:var(--accent);
+  border:1px solid rgba(232,67,147,.25);padding:1px 5px;
+  border-radius:4px;margin-left:6px;
+}
+
+/* ─── SCOREBOARD ─── */
+.prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.prog-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.prog-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.prog-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;}
+.prog-stat{font-size:.75rem;color:var(--dim2);}
+.prog-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.prog-pct{font-size:.68rem;color:var(--dim);margin-top:6px;}
+
+.timeline-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:12px;padding:20px;
+  grid-column:1/-1;margin-bottom:14px;
+}
+.chart-wrap{height:180px;margin-top:14px;position:relative;}
+
+/* ─── PROFILE ─── */
+.profile-banner{
+  background:linear-gradient(135deg,rgba(232,67,147,.15),rgba(124,58,237,.1));
+  border:1px solid rgba(232,67,147,.2);border-radius:14px;
+  padding:24px;margin-bottom:18px;
+  display:flex;align-items:center;gap:18px;
+}
+.prof-av{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;flex-shrink:0;
+}
+.prof-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;}
+.prof-email{font-size:.8rem;color:var(--dim2);margin:2px 0;}
+.prof-role{
+  display:inline-block;font-size:.65rem;font-weight:800;
+  background:rgba(232,67,147,.12);color:var(--accent);
+  border:1px solid rgba(232,67,147,.2);padding:2px 8px;border-radius:5px;margin-top:4px;
+}
+.prof-stats{margin-left:auto;display:flex;gap:20px;}
+.ps{text-align:center;}
+.ps-val{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;}
+.ps-lbl{font-size:.65rem;color:var(--dim2);text-transform:uppercase;letter-spacing:.5px;}
+.prof-grid{display:grid;grid-template-columns:1fr 280px;gap:16px;}
+.prof-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:.68rem;color:var(--dim2);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;}
+.inp{
+  width:100%;padding:10px 13px;background:var(--bg3);
+  border:1.5px solid var(--border);border-radius:9px;
+  color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.88rem;
+  outline:none;transition:border-color .2s;
+}
+.inp:focus{border-color:var(--accent);}
+.inp::placeholder{color:var(--dim);}
+.ach-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px;background:var(--bg3);border-radius:9px;margin-bottom:8px;
+}
+.ach-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.ach-name{font-size:.82rem;font-weight:600;}
+.ach-desc{font-size:.7rem;color:var(--dim2);}
+
+/* ─── BUTTONS ─── */
+.btn{
+  padding:9px 18px;border-radius:9px;border:none;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;
+  cursor:pointer;transition:all .2s;
+  display:inline-flex;align-items:center;gap:7px;
+}
+.btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.btn-accent:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(232,67,147,.3);}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border);color:var(--dim2);}
+.btn-ghost:hover{color:var(--tx);border-color:var(--border2);}
+.btn-danger{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5;}
+.btn-danger:hover{background:rgba(239,68,68,.15);}
+.btn-sm{padding:7px 14px;font-size:.76rem;}
+
+/* ─── MODAL ─── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.8);
+  z-index:300;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:16px;width:520px;max-height:88vh;
+  display:flex;flex-direction:column;overflow:hidden;
+  transform:translateY(14px) scale(.98);transition:transform .2s;
+  box-shadow:0 24px 80px rgba(0,0,0,.7);
+}
+.modal-overlay.open .modal{transform:translateY(0) scale(1);}
+.modal-hd{
+  padding:20px 22px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+}
+.modal-close{
+  width:28px;height:28px;border-radius:7px;background:var(--bg3);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--dim2);font-size:.75rem;flex-shrink:0;transition:color .15s;
+}
+.modal-close:hover{color:var(--tx);}
+.modal-body{padding:18px 22px 22px;overflow-y:auto;}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;}
+.modal-badges{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;align-items:center;}
+.modal-pts{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--accent);}
+.modal-desc{font-size:.84rem;color:var(--dim2);line-height:1.7;margin:16px 0;}
+.hint-box{
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);
+  border-radius:9px;padding:12px 14px;font-size:.8rem;color:#fbbf24;
+  margin-bottom:14px;display:none;
+}
+.flag-row{display:flex;gap:8px;}
+.flag-inp{
+  flex:1;padding:10px 14px;
+  background:var(--bg3);border:1.5px solid var(--border);border-radius:9px;
+  font-family:'DM Mono',monospace;font-size:.84rem;color:var(--tx);
+  outline:none;transition:border-color .2s;
+}
+.flag-inp:focus{border-color:var(--accent);}
+.flag-inp::placeholder{color:var(--dim);}
+.flag-result{
+  margin-top:10px;padding:10px 14px;border-radius:8px;
+  font-size:.8rem;font-weight:600;display:none;
+}
+.flag-result.ok{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2);}
+.flag-result.err{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.modal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;}
+.modal-meta{font-size:.72rem;color:var(--dim);}
+.hint-btn{background:none;border:none;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif;}
+.hint-btn:hover{color:#fbbf24;}
+
+/* ─── RECENT SOLVES ─── */
+.recent-solve{
+  display:flex;align-items:center;gap:14px;
+  padding:13px 16px;border-bottom:1px solid var(--border);
+}
+.recent-solve:last-child{border-bottom:none;}
+.rs-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);
+  display:flex;align-items:center;justify-content:center;font-size:.78rem;color:#4ade80;flex-shrink:0;
+}
+.rs-name{font-size:.84rem;font-weight:600;}
+.rs-meta{font-size:.7rem;color:var(--dim2);}
+.rs-pts{font-family:'DM Mono',monospace;font-size:.9rem;color:var(--accent);margin-left:auto;}
+
+/* ─── TOAST ─── */
+#toast-cont{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
+.toast{
+  padding:10px 16px;border-radius:9px;font-size:.8rem;font-weight:600;
+  color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.4);
+  animation:toastIn .25s ease;pointer-events:all;
+}
+.toast.ok{background:rgba(34,197,94,.9);border:1px solid rgba(34,197,94,.3);}
+.toast.err{background:rgba(239,68,68,.9);border:1px solid rgba(239,68,68,.3);}
+.toast.info{background:rgba(232,67,147,.9);border:1px solid rgba(232,67,147,.3);}
+@keyframes toastIn{from{transform:translateX(50px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* ─── DASHBOARD GRID ─── */
+.dash-grid{display:grid;grid-template-columns:1fr 300px;gap:18px;}
+
+/* ─── MOBILE ─── */
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99;}
+.mob-overlay.show{display:block;}
+.ham-btn{display:none;background:none;border:none;color:var(--tx);font-size:1rem;cursor:pointer;padding:4px;}
+@media(max-width:1100px){.chal-grid{grid-template-columns:repeat(2,1fr);}.lb-row{grid-template-columns:52px 1fr 110px;}.lb-row>:nth-child(4),.lb-row>:nth-child(5){display:none;}}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}.prog-grid{grid-template-columns:1fr;}.dash-grid{grid-template-columns:1fr;}.prof-grid{grid-template-columns:1fr;}}
+@media(max-width:768px){.sidebar{position:fixed;left:-240px;z-index:100;transition:left .25s;}.sidebar.open{left:0;}.mob-overlay.show{display:block;}.ham-btn{display:block;}.content{padding:16px;}.topbar{padding:0 14px;}.chal-grid{grid-template-columns:1fr;}}
+
+/* Spinner */
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin{animation:spin .7s linear infinite;}
+
+/* Empty */
+.empty{text-align:center;padding:48px 20px;color:var(--dim2);}
+.empty i{font-size:2rem;margin-bottom:12px;display:block;color:var(--dim);}
+
+/* Realtime indicator */
+.live-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--green);
+  display:inline-block;margin-right:5px;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* Grid bg subtle */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:52px 52px;pointer-events:none;
+}
+</style>
+</head>
+<body>
+
+<div class="mob-overlay" id="mob-overlay" onclick="closeSb()"></div>
+<div id="toast-cont"></div>
+
+<!-- ─── SIDEBAR ─── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="logo-mark"><i class="fas fa-flag"></i></div>
+    CTF<span>_Academy</span>
+  </div>
+  <div class="sb-user">
+    <div style="display:flex;align-items:center;gap:9px;">
+      <div class="sb-avatar" id="sb-av">?</div>
+      <div style="min-width:0;">
+        <p style="font-weight:600;font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="sb-name">Loading…</p>
+        <p style="font-size:.68rem;color:var(--dim2);" id="sb-role">Player</p>
+      </div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <p class="sec-label">Menu</p>
+    <a class="active" id="nav-dashboard" onclick="go('dashboard')"><i class="fas fa-th-large"></i> Dashboard</a>
+    <a id="nav-challenges" onclick="go('challenges')"><i class="fas fa-layer-group"></i> Challenges <span class="sb-badge" id="sb-open">—</span></a>
+    <a id="nav-scoreboard" onclick="go('scoreboard')"><i class="fas fa-chart-line"></i> Scoreboard</a>
+    <a id="nav-leaderboard" onclick="go('leaderboard')"><i class="fas fa-trophy"></i> Leaderboard</a>
+    <p class="sec-label">Account</p>
+    <a id="nav-profile" onclick="go('profile')"><i class="fas fa-user-circle"></i> Profile</a>
+    <a id="nav-security" onclick="go('security')"><i class="fas fa-shield-alt"></i> Security</a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-score-bar">
+      <div class="sb-score-label">Your Score</div>
+      <div class="sb-score-val" id="sb-score">0 pts</div>
+    </div>
+    <a onclick="doLogout()" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:.82rem;color:var(--dim2);cursor:pointer;transition:color .15s;" onmouseover="this.style.color='#fca5a5'" onmouseout="this.style.color='var(--dim2)'">
+      <i class="fas fa-sign-out-alt" style="width:16px;text-align:center;font-size:.78rem;"></i> Sign Out
+    </a>
+  </div>
+</aside>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+  <header class="topbar">
+    <button class="ham-btn" onclick="openSb()"><i class="fas fa-bars"></i></button>
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-inp" placeholder="Search challenges…" oninput="onSearch()">
+    </div>
+    <div class="topbar-actions">
+      <div class="icon-btn" title="Live updates"><span class="live-dot"></span></div>
+      <div class="icon-btn" onclick="go('profile')" id="top-av" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:.78rem;">?</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ════ DASHBOARD ════ -->
+    <div id="view-dashboard" class="view active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(232,67,147,.1);color:var(--accent);"><i class="fas fa-hashtag"></i></div>
+          <div class="stat-label">Global Rank</div>
+          <div class="stat-value" id="d-rank">#—</div>
+          <div class="stat-sub">All players</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(34,197,94,.1);color:var(--green);"><i class="fas fa-flag-checkered"></i></div>
+          <div class="stat-label">Challenges Solved</div>
+          <div class="stat-value" id="d-solved">0</div>
+          <div class="stat-sub" id="d-solved-sub">of 0 total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(124,58,237,.1);color:#a78bfa;"><i class="fas fa-star"></i></div>
+          <div class="stat-label">Total Points</div>
+          <div class="stat-value" style="font-family:'DM Mono',monospace;" id="d-pts">0</div>
+          <div class="stat-sub">CTF score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(6,182,212,.1);color:var(--cyan);"><i class="fas fa-users"></i></div>
+          <div class="stat-label">Active Players</div>
+          <div class="stat-value" id="d-players">—</div>
+          <div class="stat-sub">On leaderboard</div>
+        </div>
+      </div>
+      <div class="dash-grid">
+        <div>
+          <div class="sec-hd"><h2>Recent Solves</h2><span class="sec-link" onclick="go('challenges')">All challenges →</span></div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;" id="recent-list">
+            <div class="empty"><i class="fas fa-spinner spin"></i></div>
+          </div>
+        </div>
+        <div>
+          <div class="sec-hd"><h2>Category Progress</h2></div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;" id="dash-cat-prog"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ CHALLENGES ════ -->
+    <div id="view-challenges" class="view">
+      <div class="filter-bar" id="cat-filter">
+        <div class="chip active" onclick="setCat(this,'All')">All</div>
+        <div class="chip" onclick="setCat(this,'Web')">Web</div>
+        <div class="chip" onclick="setCat(this,'Crypto')">Crypto</div>
+        <div class="chip" onclick="setCat(this,'Pwn')">Pwn</div>
+        <div class="chip" onclick="setCat(this,'Forensics')">Forensics</div>
+        <div class="chip" onclick="setCat(this,'Rev')">Rev</div>
+        <div class="chip" onclick="setCat(this,'Misc')">Misc</div>
+      </div>
+      <div class="filter-bar">
+        <div class="chip active" onclick="setDiff(this,'All')">All Difficulties</div>
+        <div class="chip" onclick="setDiff(this,'Easy')">Easy</div>
+        <div class="chip" onclick="setDiff(this,'Medium')">Medium</div>
+        <div class="chip" onclick="setDiff(this,'Hard')">Hard</div>
+      </div>
+      <div class="chal-grid" id="chal-grid">
+        <div class="empty" style="grid-column:1/-1"><i class="fas fa-spinner spin"></i></div>
+      </div>
+    </div>
+
+    <!-- ════ SCOREBOARD ════ -->
+    <div id="view-scoreboard" class="view">
+      <div class="timeline-card">
+        <div class="sec-hd" style="margin-bottom:0"><h2>Score Timeline</h2><span style="font-size:.72rem;color:var(--dim);"><span class="live-dot"></span>Live</span></div>
+        <div class="chart-wrap"><canvas id="timeline-canvas"></canvas></div>
+      </div>
+      <div class="prog-grid" id="prog-grid"></div>
+    </div>
+
+    <!-- ════ LEADERBOARD ════ -->
+    <div id="view-leaderboard" class="view">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+        <span class="live-dot"></span>
+        <span style="font-size:.75rem;color:var(--dim2);">Real-time updates via Firestore</span>
+      </div>
+      <div class="lb-table">
+        <div class="lb-row lb-head">
+          <span>Rank</span><span>Player</span><span>Solves</span><span>Score</span><span>Status</span>
+        </div>
+        <div id="lb-body"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+      </div>
+    </div>
+
+    <!-- ════ PROFILE ════ -->
+    <div id="view-profile" class="view">
+      <div class="profile-banner">
+        <div class="prof-av" id="prof-av">?</div>
+        <div>
+          <div class="prof-name" id="prof-name">—</div>
+          <div class="prof-email" id="prof-email">—</div>
+          <div class="prof-role" id="prof-role">Player</div>
+        </div>
+        <div class="prof-stats">
+          <div class="ps"><div class="ps-val" id="ps-pts">0</div><div class="ps-lbl">Points</div></div>
+          <div class="ps"><div class="ps-val" id="ps-solves">0</div><div class="ps-lbl">Solves</div></div>
+          <div class="ps"><div class="ps-val" id="ps-rank">#—</div><div class="ps-lbl">Rank</div></div>
+        </div>
+      </div>
+      <div class="prof-grid">
+        <div class="prof-card">
+          <p class="sec-label" style="margin-bottom:14px;">Edit Profile</p>
+          <div class="field"><label>Display Name</label><input class="inp" id="pf-name" placeholder="Your handle"></div>
+          <div class="field"><label>Bio</label><input class="inp" id="pf-bio" placeholder="Tell hackers about yourself…"></div>
+          <div class="field"><label>GitHub</label><input class="inp" id="pf-github" placeholder="https://github.com/you"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+            <button class="btn btn-accent btn-sm" onclick="saveProfile()"><i class="fas fa-check"></i> Save</button>
+          </div>
+        </div>
+        <div>
+          <div class="prof-card">
+            <p class="sec-label" style="margin-bottom:12px;">Achievements</p>
+            <div id="ach-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SECURITY ════ -->
+    <div id="view-security" class="view">
+      <div class="prof-card" style="max-width:520px;margin-bottom:14px;">
+        <p class="sec-label" style="margin-bottom:12px;">Session</p>
+        <p style="font-size:.82rem;color:var(--dim2);margin-bottom:14px;" id="sec-info">—</p>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="resetPw()"><i class="fas fa-key"></i> Reset Password</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAcc()"><i class="fas fa-trash"></i> Delete Account</button>
+        </div>
+      </div>
+      <div class="prof-card" style="max-width:520px;">
+        <p class="sec-label" style="margin-bottom:12px;">Security Notes</p>
+        <ul style="font-size:.8rem;color:var(--dim2);padding-left:18px;line-height:2.1;">
+          <li>Challenges are visible to all players; flags are never exposed.</li>
+          <li>All flag submissions are server-side verified via Firestore.</li>
+          <li>Solve events are immutable — stored in the <code style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent);">solves</code> collection.</li>
+          <li>Admin privileges required to add/edit/delete challenges.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── CHALLENGE MODAL ─── -->
+<div class="modal-overlay" id="chal-modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-title" id="m-title">Challenge</div>
+        <div class="modal-badges" id="m-badges"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc" id="m-desc"></p>
+      <div class="hint-box" id="m-hint"></div>
+      <p style="font-size:.68rem;color:var(--dim2);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:8px;">Submit Flag</p>
+      <div class="flag-row">
+        <input class="flag-inp" id="m-flag" placeholder="flag{...}">
+        <button class="btn btn-accent btn-sm" onclick="submitFlag()"><i class="fas fa-paper-plane"></i> Submit</button>
+      </div>
+      <div class="flag-result" id="m-result"></div>
+      <div class="modal-footer">
+        <span class="modal-meta" id="m-meta"></span>
+        <button class="hint-btn" onclick="showHint()">💡 Hint</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script type="module">
+import { auth, db } from "./js/firebase.js";
+import {
+  onAuthStateChanged, signOut, sendPasswordResetEmail, deleteUser
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  doc, collection, getDoc, getDocs, onSnapshot,
+  updateDoc, addDoc, query, orderBy, limit,
+  serverTimestamp, increment, where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ── helpers ──────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const av = str => (str || "?")[0].toUpperCase();
+
+function toast(msg, type = "info") {
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  $("toast-cont").appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+// ── STATE ────────────────────────────────────────────────────
+let me = null;          // current user auth obj
+let myData = null;      // Firestore users/{uid}
+let allChals = [];      // all challenges
+let catFilter = "All";
+let diffFilter = "All";
+let activeModal = null;
+let lbUnsub = null;
+let timelineChart = null;
+const CATS = ["Web","Crypto","Pwn","Forensics","Rev","Misc"];
+
+// ── AUTH GATE ────────────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = "login.html"; return; }
+  me = user;
+  // Real-time user doc
+  onSnapshot(doc(db, "users", user.uid), snap => {
+    myData = snap.data() || {};
+    refreshSidebar();
+    refreshDash();
+    renderProfile();
+  });
+  loadChallenges();
+  startLeaderboard();
+});
+
+// ── SIDEBAR ──────────────────────────────────────────────────
+function refreshSidebar() {
+  const name = myData.name || me.displayName || "Hacker";
+  $("sb-av").textContent    = av(name);
+  $("top-av").textContent   = av(name);
+  $("sb-name").textContent  = name;
+  $("sb-role").textContent  = myData.role === "admin" ? "Admin" : "Player";
+  $("sb-score").textContent = (myData.score || 0).toLocaleString() + " pts";
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────
+const VIEWS = ["dashboard","challenges","scoreboard","leaderboard","profile","security"];
+const TITLES = { dashboard:"Dashboard", challenges:"Challenges", scoreboard:"Scoreboard", leaderboard:"Leaderboard", profile:"My Profile", security:"Security" };
+
+window.go = function(view) {
+  VIEWS.forEach(v => {
+    $("view-" + v).classList.toggle("active", v === view);
+    const n = $("nav-" + v);
+    if (n) n.classList.toggle("active", v === view);
+  });
+  $("page-title").textContent = TITLES[view] || view;
+  closeSb();
+  if (view === "challenges") renderChals();
+  if (view === "scoreboard") renderScoreboard();
+  if (view === "leaderboard") startLeaderboard();
+};
+
+window.openSb  = () => { $("sidebar").classList.add("open"); $("mob-overlay").classList.add("show"); };
+window.closeSb = () => { $("sidebar").classList.remove("open"); $("mob-overlay").classList.remove("show"); };
+
+// ── CHALLENGES (real Firestore) ──────────────────────────────
+async function loadChallenges() {
+  const snap = await getDocs(collection(db, "challenges"));
+  allChals = [];
+  snap.forEach(d => allChals.push({ id: d.id, ...d.data() }));
+  allChals = allChals.filter(c => c.visible !== false);
+  $("sb-open").textContent = allChals.length - (myData?.solvedIds || []).length;
+  $("d-solved-sub").textContent = "of " + allChals.length + " total";
+  renderChals();
+  renderDashCatProg();
+  renderRecentSolves();
+}
+
+function renderChals() {
+  const q = ($("search-inp").value || "").toLowerCase();
+  const solvedIds = myData?.solvedIds || [];
+  const filtered = allChals.filter(c => {
+    if (catFilter !== "All" && c.category !== catFilter) return false;
+    if (diffFilter !== "All" && c.difficulty !== diffFilter) return false;
+    if (q && !c.title?.toLowerCase().includes(q) && !c.category?.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const grid = $("chal-grid");
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-search"></i><p>No challenges match.</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(c => {
+    const solved = solvedIds.includes(c.id);
+    return `
+    <div class="chal-card ${solved ? "solved" : ""}" onclick="openChal('${c.id}')">
+      ${solved ? `<div class="solved-check"><i class="fas fa-check"></i></div>` : ""}
+      <div class="chal-card-top">
+        <span class="cat-badge cat-${c.category}">${c.category}</span>
+        <span class="diff-badge diff-${c.difficulty}">${c.difficulty}</span>
+      </div>
+      <div class="chal-name">${c.title}</div>
+      <div class="chal-desc">${c.description}</div>
+      <div class="chal-footer">
+        <div>
+          <div class="chal-pts">${c.points} pts</div>
+          <div class="chal-solves"><i class="fas fa-users" style="font-size:.6rem;margin-right:3px;"></i>${c.solves || 0} solves</div>
+        </div>
+        <div class="chal-tags">${(c.tags || []).slice(0,3).map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+window.setCat = (el, cat) => {
+  document.querySelectorAll("#cat-filter .chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active"); catFilter = cat; renderChals();
+};
+window.setDiff = (el, diff) => {
+  el.parentElement.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active"); diffFilter = diff; renderChals();
+};
+window.onSearch = () => { if ($("view-challenges").classList.contains("active")) renderChals(); };
+
+// ── MODAL ────────────────────────────────────────────────────
+window.openChal = function(id) {
+  activeModal = allChals.find(c => c.id === id);
+  if (!activeModal) return;
+  $("m-title").textContent = activeModal.title;
+  $("m-badges").innerHTML = `
+    <span class="cat-badge cat-${activeModal.category}">${activeModal.category}</span>
+    <span class="diff-badge diff-${activeModal.difficulty}">${activeModal.difficulty}</span>
+    <span class="modal-pts">${activeModal.points} pts</span>`;
+  $("m-desc").textContent  = activeModal.description;
+  $("m-meta").textContent  = `${activeModal.solves || 0} solves`;
+  $("m-hint").style.display = "none";
+  $("m-flag").value = "";
+  const fr = $("m-result"); fr.style.display = "none"; fr.className = "flag-result";
+  $("chal-modal").classList.add("open");
+};
+window.closeModal = () => $("chal-modal").classList.remove("open");
+window.showHint = () => {
+  const h = $("m-hint");
+  h.textContent = "💡 " + (activeModal?.hint || "No hint available.");
+  h.style.display = "block";
+};
+
+window.submitFlag = async function() {
+  if (!activeModal || !me) return;
+  const input = $("m-flag").value.trim();
+  const fr = $("m-result");
+  if (!input) return;
+
+  if (input === activeModal.flag) {
+    const alreadySolved = (myData?.solvedIds || []).includes(activeModal.id);
+    fr.textContent = alreadySolved
+      ? "✓ Already solved — no extra points."
+      : `✓ Correct! +${activeModal.points} pts`;
+    fr.className = "flag-result ok";
+    fr.style.display = "block";
+
+    if (!alreadySolved) {
+      const newSolvedIds = [...(myData?.solvedIds || []), activeModal.id];
+      const newScore  = (myData?.score || 0) + activeModal.points;
+      const newSolves = (myData?.solves || 0) + 1;
+
+      // Update user doc
+      await updateDoc(doc(db, "users", me.uid), {
+        solvedIds: newSolvedIds,
+        score:     newScore,
+        solves:    newSolves
+      });
+      // Upsert leaderboard
+      await updateDoc(doc(db, "leaderboard", me.uid), {
+        name:   myData.name || me.displayName || "Hacker",
+        score:  newScore,
+        solves: newSolves
+      }).catch(async () => {
+        // doc doesn't exist yet — create it
+        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+        await setDoc(doc(db, "leaderboard", me.uid), {
+          name:   myData.name || me.displayName || "Hacker",
+          score:  newScore,
+          solves: newSolves,
+          uid:    me.uid
+        });
+      });
+      // Log solve event
+      await addDoc(collection(db, "solves"), {
+        uid:         me.uid,
+        name:        myData.name || me.displayName || "Hacker",
+        challengeId: activeModal.id,
+        title:       activeModal.title,
+        pts:         activeModal.points,
+        category:    activeModal.category,
+        ts:          serverTimestamp()
+      });
+      // Increment challenge solve count
+      await updateDoc(doc(db, "challenges", activeModal.id), {
+        solves: increment(1)
+      });
+
+      toast(`🚩 Flag accepted! +${activeModal.points} pts`, "ok");
+      setTimeout(closeModal, 1500);
+    }
+  } else {
+    fr.textContent = "✗ Wrong flag. Try again!";
+    fr.className = "flag-result err";
+    fr.style.display = "block";
+    toast("Wrong flag.", "err");
+  }
+};
+
+// ── LEADERBOARD (real-time) ──────────────────────────────────
+function startLeaderboard() {
+  if (lbUnsub) lbUnsub();
+  const q = query(collection(db, "leaderboard"), orderBy("score", "desc"), limit(50));
+  lbUnsub = onSnapshot(q, snap => {
+    const rows = [];
+    snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    renderLb(rows);
+    $("d-players").textContent = rows.length;
+    // Update my rank
+    const myIdx = rows.findIndex(r => r.id === me?.uid);
+    if (myIdx >= 0) {
+      const rank = myIdx + 1;
+      $("d-rank").textContent = "#" + rank;
+      $("ps-rank").textContent = "#" + rank;
+    }
+  });
+}
+
+const AV_COLORS = ["#e84393","#7c3aed","#06b6d4","#22c55e","#f59e0b","#ef4444","#8b5cf6","#ec4899"];
+
+function renderLb(rows) {
+  const body = $("lb-body");
+  if (!rows.length) {
+    body.innerHTML = `<div class="empty"><i class="fas fa-trophy"></i><p>No players yet.</p></div>`;
+    return;
+  }
+  body.innerHTML = rows.map((r, i) => {
+    const rank = i + 1;
+    const isMe = r.id === me?.uid;
+    const rankCls = rank === 1 ? "r1" : rank === 2 ? "r2" : rank === 3 ? "r3" : "";
+    const color = AV_COLORS[i % AV_COLORS.length];
+    const badge = rank <= 3 ? "Elite" : rank <= 10 ? "Advanced" : "Rising";
+    const badgeCls = rank <= 3 ? "diff-Easy" : rank <= 10 ? "diff-Medium" : "diff-Hard";
+    return `
+    <div class="lb-row" style="${isMe ? "background:rgba(232,67,147,.06);border-left:2px solid var(--accent);" : ""}">
+      <span class="lb-rank ${rankCls}">#${rank}</span>
+      <div class="lb-user">
+        <div class="lb-av" style="background:${color};">${av(r.name)}</div>
+        <div>
+          <div class="lb-uname">${r.name || "Hacker"}${isMe ? `<span class="me-tag">YOU</span>` : ""}</div>
+        </div>
+      </div>
+      <span class="lb-solves">${r.solves || 0}</span>
+      <span class="lb-score">${(r.score || 0).toLocaleString()}</span>
+      <span class="diff-badge ${badgeCls}" style="font-size:.62rem;">${badge}</span>
+    </div>`;
+  }).join("");
+}
+
+// ── SCOREBOARD ───────────────────────────────────────────────
+function renderScoreboard() {
+  renderTimeline();
+  renderCatProgress();
+}
+
+function renderTimeline() {
+  const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Today"];
+  // Use actual cumulative solve data if available; fallback to dummy progression
+  const solves = myData?.solvedIds?.length || 0;
+  const score  = myData?.score || 0;
+  // Simple linear interpolation for timeline demo; replace with Firestore time-series for production
+  const pts = score;
+  const data = [0, pts*.05, pts*.1, pts*.2, pts*.45, pts*.8, pts].map(Math.round);
+
+  const ctx = $("timeline-canvas").getContext("2d");
+  if (timelineChart) timelineChart.destroy();
+  timelineChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Score",
+        data,
+        borderColor: "#e84393",
+        backgroundColor: "rgba(232,67,147,.08)",
+        tension: .4, pointRadius: 4, pointBackgroundColor: "#e84393",
+        borderWidth: 2, fill: true
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { grid: { color: "rgba(255,255,255,.04)" }, ticks: { color: "#5a5f7a", font: { size: 11 } } },
+        x: { grid: { display: false }, ticks: { color: "#5a5f7a", font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+function renderCatProgress() {
+  const solvedIds = myData?.solvedIds || [];
+  const grid = $("prog-grid");
+  const colors = { Web:"#06b6d4", Crypto:"#a78bfa", Pwn:"#f87171", Forensics:"#e84393", Rev:"#fbbf24", Misc:"#4ade80" };
+  grid.innerHTML = CATS.map(cat => {
+    const total  = allChals.filter(c => c.category === cat).length;
+    const solved = allChals.filter(c => c.category === cat && solvedIds.includes(c.id)).length;
+    const pct    = total ? Math.round(solved / total * 100) : 0;
+    const color  = colors[cat] || "#e84393";
+    return `
+    <div class="prog-card">
+      <div class="prog-hd">
+        <div class="prog-name">${cat}</div>
+        <div class="prog-stat">${solved}/${total}</div>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-fill" style="width:${pct}%;background:${color};"></div>
+      </div>
+      <div class="prog-pct">${pct}% complete</div>
+    </div>`;
+  }).join("");
+}
+
+// ── DASHBOARD ────────────────────────────────────────────────
+function refreshDash() {
+  $("d-pts").textContent    = (myData?.score || 0).toLocaleString();
+  $("d-solved").textContent = myData?.solves || 0;
+  $("ps-pts").textContent   = (myData?.score || 0).toLocaleString();
+  $("ps-solves").textContent = myData?.solves || 0;
+}
+
+function renderDashCatProg() {
+  const solvedIds = myData?.solvedIds || [];
+  const colors = { Web:"#06b6d4", Crypto:"#a78bfa", Pwn:"#f87171", Forensics:"#e84393", Rev:"#fbbf24", Misc:"#4ade80" };
+  $("dash-cat-prog").innerHTML = CATS.map(cat => {
+    const total  = allChals.filter(c => c.category === cat).length;
+    const solved = allChals.filter(c => c.category === cat && solvedIds.includes(c.id)).length;
+    const pct    = total ? Math.round(solved / total * 100) : 0;
+    const color  = colors[cat] || "#e84393";
+    return `
+    <div style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:.78rem;font-weight:600;">${cat}</span>
+        <span style="font-size:.72rem;color:var(--dim2);">${solved}/${total}</span>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-fill" style="width:${pct}%;background:${color};"></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+async function renderRecentSolves() {
+  const list = $("recent-list");
+  try {
+    const q = query(collection(db, "solves"), where("uid","==",me.uid), orderBy("ts","desc"), limit(5));
+    onSnapshot(q, snap => {
+      const items = [];
+      snap.forEach(d => items.push(d.data()));
+      if (!items.length) {
+        list.innerHTML = `<div class="empty"><i class="fas fa-flag"></i><p>No solves yet. Start hacking!</p></div>`;
+        return;
+      }
+      list.innerHTML = items.map(s => `
+        <div class="recent-solve">
+          <div class="rs-icon"><i class="fas fa-flag"></i></div>
+          <div>
+            <div class="rs-name">${s.title || "?"}</div>
+            <div class="rs-meta">${s.category || ""}</div>
+          </div>
+          <div class="rs-pts">+${s.pts}</div>
+        </div>`).join("");
+    });
+  } catch(e) {
+    list.innerHTML = `<div class="empty"><i class="fas fa-flag"></i><p>No solves yet.</p></div>`;
+  }
+}
+
+// ── PROFILE ──────────────────────────────────────────────────
+function renderProfile() {
+  if (!myData || !me) return;
+  const name = myData.name || me.displayName || "Hacker";
+  $("prof-av").textContent   = av(name);
+  $("prof-name").textContent = name;
+  $("prof-email").textContent = myData.email || me.email || "—";
+  $("prof-role").textContent  = myData.role === "admin" ? "Admin" : "Player";
+  $("ps-pts").textContent    = (myData.score || 0).toLocaleString();
+  $("ps-solves").textContent = myData.solves || 0;
+  $("pf-name").value   = myData.name || "";
+  $("pf-bio").value    = myData.bio || "";
+  $("pf-github").value = myData.github || "";
+  $("sec-info").textContent = `Signed in as ${me.email} · UID: ${me.uid.substring(0,12)}…`;
+
+  // Achievements
+  const solves = myData.solves || 0;
+  const score  = myData.score  || 0;
+  const achs = [
+    { icon:"🚩", name:"First Blood",    desc:"Solved your first challenge",  ok: solves >= 1,  color:"rgba(232,67,147,.1)" },
+    { icon:"🔓", name:"Unlocker",       desc:"Solved 5+ challenges",         ok: solves >= 5,  color:"rgba(34,197,94,.1)"  },
+    { icon:"💎", name:"Diamond Hands",  desc:"Scored 1000+ points",          ok: score  >= 1000, color:"rgba(124,58,237,.1)" },
+    { icon:"⚡", name:"Speed Runner",   desc:"Scored 2500+ points",          ok: score  >= 2500, color:"rgba(245,158,11,.1)" },
+  ];
+  $("ach-list").innerHTML = achs.map(a => `
+    <div class="ach-item" style="opacity:${a.ok ? 1 : .35}">
+      <div class="ach-icon" style="background:${a.color}">${a.icon}</div>
+      <div>
+        <div class="ach-name">${a.name}</div>
+        <div class="ach-desc">${a.desc}</div>
+      </div>
+      ${a.ok ? `<i class="fas fa-check" style="margin-left:auto;color:var(--green);font-size:.75rem;"></i>` : ""}
+    </div>`).join("");
+}
+
+window.saveProfile = async function() {
+  if (!me) return;
+  const name   = $("pf-name").value.trim() || myData?.name || "Hacker";
+  const bio    = $("pf-bio").value.trim();
+  const github = $("pf-github").value.trim();
+  await updateDoc(doc(db, "users", me.uid), { name, bio, github });
+  // Also update leaderboard name
+  updateDoc(doc(db, "leaderboard", me.uid), { name }).catch(() => {});
+  toast("Profile saved ✅", "ok");
+};
+
+// ── SECURITY ─────────────────────────────────────────────────
+window.resetPw = async function() {
+  if (!me?.email) return;
+  await sendPasswordResetEmail(auth, me.email);
+  toast("Password reset email sent.", "info");
+};
+window.deleteAcc = async function() {
+  if (!confirm("Delete your account permanently? This cannot be undone.")) return;
+  try { await deleteUser(me); window.location.href = "login.html"; }
+  catch (e) { toast("Please re-login first, then try again.", "err"); }
+};
+window.doLogout = async function() {
+  if (lbUnsub) lbUnsub();
+  await signOut(auth);
+  window.location.href = "login.html";
+};
+
+// ── KEYBOARD ─────────────────────────────────────────────────
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+    e.preventDefault();
+    $("search-inp").focus();
+  }
+});
+$("m-flag").addEventListener("keydown", e => { if (e.key === "Enter") submitFlag(); });
+$("chal-modal").addEventListener("click", e => { if (e.target === e.currentTarget) closeModal(); });
+</script>
+
+<script>
+function openSb()  { document.getElementById("sidebar").classList.add("open"); document.getElementById("mob-overlay").classList.add("show"); }
+function closeSb() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("mob-overlay").classList.remove("show"); }
+</script>
+</body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Console — CTF Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&family=Sora:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#07090f; --s1:#0d1117; --s2:#161b22; --s3:#21262d; --s4:#2d333b;
+  --border:#30363d; --border-sub:#21262d;
+  --accent:#f78166; --accent2:#bc8cff; --blue:#58a6ff;
+  --success:#3fb950; --warn:#d29922; --danger:#f85149;
+  --text:#e6edf3; --text-muted:#8b949e; --text-dim:#484f58;
+  --sidebar:240px; --topbar:56px;
+  --radius:10px; --radius-lg:14px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border-sub) 1px,transparent 1px),linear-gradient(90deg,var(--border-sub) 1px,transparent 1px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:none;z-index:50;transition:left .26s;}
+.sidebar::-webkit-scrollbar{display:none;}
+.sb-brand{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.sb-logo{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff;flex-shrink:0;}
+.sb-brand-name{font-family:'Sora',sans-serif;font-size:1rem;font-weight:800;letter-spacing:-.3px;}
+.sb-brand-badge{font-size:.55rem;font-weight:700;background:rgba(247,129,102,.15);color:var(--accent);border:1px solid rgba(247,129,102,.25);padding:2px 5px;border-radius:3px;margin-left:auto;font-family:'Fira Code',monospace;}
+.sb-nav{flex:1;padding:8px;}
+.nav-label{font-size:.63rem;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);padding:10px 8px 4px;font-weight:600;}
+.sb-nav a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius);font-size:.81rem;color:var(--text-muted);cursor:pointer;transition:all .14s;margin-bottom:1px;font-weight:500;}
+.sb-nav a:hover{color:var(--text);background:var(--s3);}
+.sb-nav a.active{color:var(--accent);background:rgba(247,129,102,.08);font-weight:600;}
+.sb-nav a i{width:15px;text-align:center;font-size:.75rem;flex-shrink:0;}
+.notif-dot{margin-left:auto;min-width:18px;height:17px;padding:0 5px;background:var(--danger);color:#fff;border-radius:9px;font-size:.57rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.sb-bottom{padding:10px 8px;border-top:1px solid var(--border);}
+.sb-admin{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:4px;}
+.admin-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:.85rem;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden;}
+.admin-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.admin-name{font-size:.8rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.admin-sub{font-size:.62rem;color:var(--accent);}
+.sb-logout{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius);font-size:.79rem;color:var(--text-muted);cursor:pointer;background:none;border:none;width:100%;font-family:'Inter',sans-serif;transition:color .14s;}
+.sb-logout:hover{color:var(--danger);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:1;}
+.topbar{height:var(--topbar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;background:rgba(7,9,15,.9);backdrop-filter:blur(12px);z-index:40;}
+.topbar-title{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:-.3px;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--text-dim);font-family:'Fira Code',monospace;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(63,185,80,.4);}50%{opacity:.6;box-shadow:0 0 0 4px rgba(63,185,80,0);}}
+.ham-btn{display:none;background:none;border:none;color:var(--text);font-size:1rem;cursor:pointer;padding:4px;}
+
+.content{flex:1;padding:22px;overflow-y:auto;}
+.view{display:none;}.view.active{display:block;}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;transition:all .18s;position:relative;overflow:hidden;}
+.stat-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity .18s;}
+.stat-card:hover::after{opacity:1;}
+.stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;margin-bottom:10px;}
+.stat-label{font-size:.66rem;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.stat-value{font-family:'Fira Code',monospace;font-size:1.5rem;font-weight:600;color:var(--accent);}
+
+/* SECTION HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sec-title{font-family:'Sora',sans-serif;font-size:.9rem;font-weight:700;}
+
+/* TABLE */
+.data-table{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:18px;overflow-x:auto;}
+.dt-row{display:grid;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border-sub);transition:background .12s;}
+.dt-row:last-child{border-bottom:none;}
+.dt-row:not(.dt-head):hover{background:var(--s2);}
+.dt-head{background:var(--s2);font-size:.61rem;text-transform:uppercase;letter-spacing:.6px;color:var(--text-dim);font-weight:700;}
+
+/* REQUEST CARDS */
+.req-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.req-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .15s;}
+.req-card:hover{border-color:var(--border);background:var(--s2);}
+.req-card.pending-card{border-left:3px solid var(--warn);}
+.req-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:1rem;font-weight:800;color:#fff;flex-shrink:0;}
+.req-info{flex:1;min-width:0;}
+.req-name{font-size:.86rem;font-weight:700;}
+.req-email{font-size:.72rem;color:var(--text-muted);font-family:'Fira Code',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.req-meta{font-size:.66rem;color:var(--text-dim);margin-top:2px;}
+.req-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;}
+
+/* FORM */
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:.66rem;color:var(--text-muted);font-weight:600;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+.inp{width:100%;padding:8px 11px;background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Inter',sans-serif;font-size:.85rem;outline:none;transition:all .14s;}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(247,129,102,.1);}
+.inp::placeholder{color:var(--text-dim);}
+select.inp option{background:var(--s2);}
+textarea.inp{resize:vertical;min-height:72px;}
+.mono{font-family:'Fira Code',monospace;font-size:.8rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+
+/* BUTTONS */
+.btn{padding:8px 14px;border-radius:var(--radius);border:none;font-family:'Inter',sans-serif;font-weight:600;font-size:.79rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);}
+.btn-ghost{background:var(--s2);border:1px solid var(--border);color:var(--text-muted);}
+.btn-ghost:hover{color:var(--text);border-color:var(--accent);}
+.btn-success{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.2);color:var(--success);}
+.btn-success:hover{background:rgba(63,185,80,.15);}
+.btn-danger{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);color:var(--danger);}
+.btn-danger:hover{background:rgba(248,81,73,.15);}
+.btn-warn{background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.2);color:var(--warn);}
+.btn-sm{padding:5px 10px;font-size:.72rem;}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:3px;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:4px;font-family:'Fira Code',monospace;}
+.pill-approved{background:rgba(63,185,80,.1);color:var(--success);border:1px solid rgba(63,185,80,.2);}
+.pill-pending{background:rgba(210,153,34,.1);color:var(--warn);border:1px solid rgba(210,153,34,.2);}
+.pill-rejected{background:rgba(248,81,73,.1);color:var(--danger);border:1px solid rgba(248,81,73,.2);}
+.pill-admin{background:rgba(247,129,102,.1);color:var(--accent);border:1px solid rgba(247,129,102,.2);}
+.pill-on{background:rgba(63,185,80,.1);color:var(--success);border:1px solid rgba(63,185,80,.2);}
+.pill-off{background:var(--s3);color:var(--text-dim);border:1px solid var(--border-sub);}
+.diff-Easy{background:rgba(63,185,80,.1);color:var(--success);border:1px solid rgba(63,185,80,.2);font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:4px;}
+.diff-Medium,.diff-Intermediate{background:rgba(210,153,34,.1);color:var(--warn);border:1px solid rgba(210,153,34,.2);font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:4px;}
+.diff-Hard{background:rgba(248,81,73,.1);color:var(--danger);border:1px solid rgba(248,81,73,.2);font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:4px;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s;backdrop-filter:blur(6px);}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius-lg);width:min(660px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(14px) scale(.97);transition:transform .22s;box-shadow:0 24px 64px rgba(0,0,0,.8);}
+.modal-bg.open .modal{transform:none;}
+.modal-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:800;}
+.modal-close{width:26px;height:26px;border-radius:7px;background:var(--s2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.72rem;transition:color .14s;}
+.modal-close:hover{color:var(--text);}
+.modal-body{padding:18px 20px 22px;overflow-y:auto;}
+
+/* TOAST */
+#toast-area{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:7px;}
+@keyframes toastIn{from{transform:translateX(50px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast{padding:9px 14px;border-radius:var(--radius);font-size:.78rem;font-weight:600;color:#fff;animation:toastIn .22s ease;display:flex;align-items:center;gap:7px;box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.toast.ok{background:rgba(63,185,80,.92);}
+.toast.err{background:rgba(248,81,73,.92);}
+.toast.info{background:rgba(247,129,102,.92);}
+
+/* ACTIVITY TABLE */
+.act-table{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+
+.empty{text-align:center;padding:40px;color:var(--text-muted);}
+.empty i{font-size:1.8rem;margin-bottom:10px;display:block;color:var(--text-dim);}
+.empty p{font-size:.82rem;}
+@keyframes spin{to{transform:rotate(360deg);}}.spin{animation:spin .7s linear infinite;}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:45;}
+.mob-overlay.show{display:block;}
+@media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){.sidebar{position:fixed;left:-100%;height:100vh;}.sidebar.open{left:0;}.mob-overlay.show{display:block;}.ham-btn{display:flex;}.content{padding:14px;}.form-row,.form-row3{grid-template-columns:1fr;}}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div id="mob-overlay" class="mob-overlay" onclick="closeSb()"></div>
+<div id="toast-area"></div>
+
+<!-- CHALLENGE MODAL -->
+<div class="modal-bg" id="chal-modal" onclick="if(event.target===this)closeChalModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="chal-modal-title">Add Challenge</div>
+      <button class="modal-close" onclick="closeChalModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <div class="form-row">
+        <div class="field"><label>Title *</label><input class="inp" id="cf-title" placeholder="SQL Injection 101"></div>
+        <div class="field"><label>Points *</label><input class="inp" type="number" id="cf-pts" placeholder="100" min="1"></div>
+      </div>
+      <div class="form-row3">
+        <div class="field"><label>Category</label>
+          <select class="inp" id="cf-cat"><option>Web</option><option>Crypto</option><option>Pwn</option><option>Forensics</option><option>Rev</option><option>Misc</option></select>
+        </div>
+        <div class="field"><label>Difficulty</label>
+          <select class="inp" id="cf-diff"><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select>
+        </div>
+        <div class="field"><label>Visible</label>
+          <select class="inp" id="cf-visible"><option value="true">Published</option><option value="false">Hidden</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Description *</label><textarea class="inp" id="cf-desc" placeholder="What must the player do?"></textarea></div>
+      <div class="field"><label>Vulnerability Knowledge</label><textarea class="inp" id="cf-vuln" placeholder="Educational content about the vulnerability type…"></textarea></div>
+      <div class="form-row">
+        <div class="field"><label>Hint 1 (general)</label><input class="inp" id="cf-hint1" placeholder="First nudge…"></div>
+        <div class="field"><label>Hint 2 (specific)</label><input class="inp" id="cf-hint2" placeholder="More direct…"></div>
+      </div>
+      <div class="field"><label>Hint 3 (strongest)</label><input class="inp" id="cf-hint3" placeholder="Almost gives it away…"></div>
+      <div class="field"><label>Challenge URL (hosted environment)</label><input class="inp" id="cf-url" placeholder="https://challenge.ctf-academy.web.app"></div>
+      <div class="field"><label>Flag * (exact string)</label><input class="inp mono" id="cf-flag" placeholder="CTF{your_flag_here}"></div>
+      <div class="field"><label>Tags (comma separated)</label><input class="inp" id="cf-tags" placeholder="sql, injection, auth"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
+        <button class="btn btn-ghost" onclick="closeChalModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveChal()"><i class="fas fa-save"></i> Save Challenge</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROLE MODAL -->
+<div class="modal-bg" id="role-modal" onclick="if(event.target===this)closeRoleModal()">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-hd"><div class="modal-title">Change Role</div><button class="modal-close" onclick="closeRoleModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="role-uid">
+      <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:14px;">Set role for <strong id="role-uname" style="color:var(--text);"></strong></p>
+      <div class="field"><label>Role</label>
+        <select class="inp" id="role-select"><option value="player">Player</option><option value="admin">Admin</option></select>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn btn-ghost" onclick="closeRoleModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveRole()"><i class="fas fa-check"></i> Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><i class="fas fa-shield-alt"></i></div>
+    <div class="sb-brand-name">CTF Admin</div>
+    <span class="sb-brand-badge">ROOT</span>
+  </div>
+  <nav class="sb-nav">
+    <p class="nav-label">Overview</p>
+    <a class="active" id="nav-overview" onclick="go('overview')"><i class="fas fa-grid-2"></i> Overview</a>
+    <a id="nav-requests" onclick="go('requests')"><i class="fas fa-user-clock"></i> Access Requests <span class="notif-dot" id="req-badge" style="display:none;">0</span></a>
+    <p class="nav-label">Manage</p>
+    <a id="nav-challenges" onclick="go('challenges')"><i class="fas fa-layer-group"></i> Challenges</a>
+    <a id="nav-users" onclick="go('users')"><i class="fas fa-users"></i> Users</a>
+    <a id="nav-solves" onclick="go('solves')"><i class="fas fa-flag"></i> All Solves</a>
+    <a id="nav-leaderboard" onclick="go('leaderboard')"><i class="fas fa-trophy"></i> Leaderboard</a>
+    <p class="nav-label">Tools</p>
+    <a onclick="window.open('dashboard.html','_blank')"><i class="fas fa-arrow-up-right-from-square"></i> View Site</a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-admin">
+      <div class="admin-av" id="admin-av">A</div>
+      <div style="min-width:0;flex:1;">
+        <div class="admin-name" id="admin-name">Admin</div>
+        <div class="admin-sub">Administrator</div>
+      </div>
+    </div>
+    <button class="sb-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <button class="ham-btn" onclick="openSb()"><i class="fas fa-bars"></i></button>
+    <div class="topbar-title" id="page-title">Overview</div>
+    <div class="topbar-right">
+      <div class="live-pill"><div class="live-dot"></div>Live</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div id="view-overview" class="view active">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(88,166,255,.1);color:var(--blue);"><i class="fas fa-layer-group"></i></div><div class="stat-label">Challenges</div><div class="stat-value" id="ov-chals"><i class="fas fa-spinner spin" style="font-size:1rem;"></i></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(63,185,80,.1);color:var(--success);"><i class="fas fa-users"></i></div><div class="stat-label">Approved Players</div><div class="stat-value" id="ov-players"><i class="fas fa-spinner spin" style="font-size:1rem;"></i></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(247,129,102,.1);color:var(--accent);"><i class="fas fa-flag"></i></div><div class="stat-label">Total Solves</div><div class="stat-value" id="ov-solves"><i class="fas fa-spinner spin" style="font-size:1rem;"></i></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(210,153,34,.1);color:var(--warn);"><i class="fas fa-user-clock"></i></div><div class="stat-label">Pending Approvals</div><div class="stat-value" id="ov-pending" style="color:var(--warn);"><i class="fas fa-spinner spin" style="font-size:1rem;"></i></div></div>
+      </div>
+      <div class="sec-hd"><div class="sec-title">Recent Activity</div><span style="font-size:.7rem;color:var(--text-dim);font-family:'Fira Code',monospace;"><span class="live-dot" style="display:inline-block;margin-right:4px;"></span>Live feed</span></div>
+      <div class="act-table" id="ov-activity"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading…</p></div></div>
+    </div>
+
+    <!-- ACCESS REQUESTS -->
+    <div id="view-requests" class="view">
+      <div class="sec-hd"><div class="sec-title">Pending Requests</div><span style="font-size:.76rem;color:var(--text-muted);">Approve or reject new registrations</span></div>
+      <div id="pending-list"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading…</p></div></div>
+      <div class="sec-hd" style="margin-top:20px;"><div class="sec-title">Approved Users</div></div>
+      <div id="approved-list"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading…</p></div></div>
+    </div>
+
+    <!-- CHALLENGES -->
+    <div id="view-challenges" class="view">
+      <div class="sec-hd"><div class="sec-title">Challenges</div><button class="btn btn-primary btn-sm" onclick="openAddChal()"><i class="fas fa-plus"></i> Add Challenge</button></div>
+      <div class="data-table" id="chal-table"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading…</p></div></div>
+    </div>
+
+    <!-- USERS -->
+    <div id="view-users" class="view">
+      <div class="sec-hd"><div class="sec-title">All Users</div><span style="font-size:.76rem;color:var(--text-muted);" id="users-count"></span></div>
+      <div class="data-table" id="users-table"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading…</p></div></div>
+    </div>
+
+    <!-- ALL SOLVES -->
+    <div id="view-solves" class="view">
+      <div class="sec-hd"><div class="sec-title">All Solves</div></div>
+      <div class="data-table" id="solves-table"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading…</p></div></div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div id="view-leaderboard" class="view">
+      <div class="sec-hd"><div class="sec-title">Leaderboard</div><button class="btn btn-ghost btn-sm" onclick="loadLb()"><i class="fas fa-sync"></i> Refresh</button></div>
+      <div class="data-table" id="lb-table"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading…</p></div></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { auth, db } from "./js/firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  doc, collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
+  onSnapshot, query, orderBy, limit, where, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+const av = s => (s||"A")[0].toUpperCase();
+
+function toast(msg, type="info") {
+  const el=document.createElement("div");
+  el.className=`toast ${type}`;
+  el.innerHTML=`<i class="fas ${type==="ok"?"fa-check-circle":type==="err"?"fa-times-circle":"fa-info-circle"}"></i>${msg}`;
+  $("toast-area").appendChild(el);
+  setTimeout(()=>el.remove(),3400);
+}
+
+let me=null, myData=null, allChals=[], allUsers=[];
+let unsubOverview=null, unsubRequests=null, unsubApproved=null, unsubSolves=null;
+
+// ── AUTH GUARD ────────────────────────────────────────────────
+onAuthStateChanged(auth, async user=>{
+  if(!user){ window.location.href="login.html"; return; }
+  me=user;
+  let snap;
+  try{ snap=await getDoc(doc(db,"users",user.uid)); }
+  catch(e){ alert("Firebase error: "+e.message); return; }
+  myData=snap.exists()?snap.data():{};
+  if(myData.role!=="admin"){ alert("Access denied."); window.location.href="dashboard.html"; return; }
+  const name=myData.name||user.email||"Admin";
+  $("admin-av").textContent=av(name);
+  $("admin-name").textContent=name;
+  if(myData.photo||user.photoURL){
+    const img=`<img src="${myData.photo||user.photoURL}" alt="${name}" onerror="this.parentElement.textContent='${av(name)}'">`;
+    $("admin-av").innerHTML=img;
+  }
+  loadAll();
+});
+
+function loadAll(){ loadOverview(); listenRequests(); loadChals(); loadUsers(); listenSolves(); loadLb(); }
+
+// ── NAV ───────────────────────────────────────────────────────
+const VIEWS=["overview","requests","challenges","users","solves","leaderboard"];
+const TITLES={overview:"Overview",requests:"Access Requests",challenges:"Challenges",users:"Users",solves:"All Solves",leaderboard:"Leaderboard"};
+window.go=function(v){
+  VIEWS.forEach(x=>{ $("view-"+x)?.classList.toggle("active",x===v); $("nav-"+x)?.classList.toggle("active",x===v); });
+  $("page-title").textContent=TITLES[v]||v;
+  closeSb();
+};
+window.openSb=()=>{ $("sidebar").classList.add("open"); $("mob-overlay").classList.add("show"); };
+window.closeSb=()=>{ $("sidebar").classList.remove("open"); $("mob-overlay").classList.remove("show"); };
+
+// ── OVERVIEW ─────────────────────────────────────────────────
+function loadOverview(){
+  // FIX: simple collection listeners, no compound queries needing indexes
+  onSnapshot(collection(db,"challenges"),snap=>{ $("ov-chals").textContent=snap.size; },err=>{ $("ov-chals").textContent="—"; console.error(err); });
+
+  // Approved players count
+  onSnapshot(query(collection(db,"users"),where("status","==","approved")),snap=>{
+    $("ov-players").textContent=snap.size;
+  },err=>{ getDocs(collection(db,"users")).then(s=>$("ov-players").textContent=s.size).catch(()=>{$("ov-players").textContent="—";}); });
+
+  onSnapshot(collection(db,"solves"),snap=>{ $("ov-solves").textContent=snap.size; },err=>{ $("ov-solves").textContent="—"; });
+
+  // FIX: no orderBy needed for pending count
+  onSnapshot(query(collection(db,"users"),where("status","==","pending")),snap=>{
+    const n=snap.size;
+    $("ov-pending").textContent=n;
+    const b=$("req-badge"); b.textContent=n; b.style.display=n>0?"flex":"none";
+  },err=>{ $("ov-pending").textContent="—"; });
+
+  // Activity: orderBy ts is fine here (single-field index auto-created by Firestore)
+  const q=query(collection(db,"solves"),orderBy("ts","desc"),limit(25));
+  if(unsubOverview) unsubOverview();
+  unsubOverview=onSnapshot(q,snap=>{
+    const rows=[]; snap.forEach(d=>rows.push(d.data()));
+    const tbl=$("ov-activity");
+    if(!rows.length){ tbl.innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><p>No activity yet.</p></div>`; return; }
+    tbl.innerHTML=`<div class="dt-row dt-head" style="grid-template-columns:1fr 150px 80px 120px;"><span>Player</span><span>Challenge</span><span>Points</span><span>Time</span></div>`+
+    rows.map(r=>`<div class="dt-row" style="grid-template-columns:1fr 150px 80px 120px;">
+      <span style="font-size:.83rem;font-weight:600;">${r.name||"?"}</span>
+      <span style="font-size:.78rem;color:var(--text-muted);">${r.title||"?"}</span>
+      <span style="font-family:'Fira Code',monospace;font-size:.8rem;color:var(--accent);">+${r.pts}</span>
+      <span style="font-size:.68rem;color:var(--text-dim);">${r.ts?.toDate?r.ts.toDate().toLocaleString("en-IN",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}):"—"}</span>
+    </div>`).join("");
+  },err=>{ $("ov-activity").innerHTML=`<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Error: ${err.message}</p></div>`; });
+}
+
+// ── ACCESS REQUESTS ───────────────────────────────────────────
+// FIX: removed orderBy("joinedAt","desc") — requires composite index that
+// doesn't exist by default. Sort client-side after fetch instead.
+function listenRequests(){
+  if(unsubRequests) unsubRequests();
+  if(unsubApproved) unsubApproved();
+
+  unsubRequests=onSnapshot(
+    query(collection(db,"users"),where("status","==","pending")),
+    snap=>{
+      const list=[]; snap.forEach(d=>list.push({id:d.id,...d.data()}));
+      list.sort((a,b)=>(b.joinedAt?.toMillis?b.joinedAt.toMillis():0)-(a.joinedAt?.toMillis?a.joinedAt.toMillis():0));
+      const n=list.length;
+      $("req-badge").textContent=n; $("req-badge").style.display=n>0?"flex":"none";
+      $("ov-pending").textContent=n;
+      renderReqList("pending-list",list,true);
+    },
+    err=>{ $("pending-list").innerHTML=`<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Error: ${err.message}</p></div>`; console.error(err); }
+  );
+
+  unsubApproved=onSnapshot(
+    query(collection(db,"users"),where("status","==","approved"),limit(50)),
+    snap=>{
+      const list=[]; snap.forEach(d=>list.push({id:d.id,...d.data()}));
+      list.sort((a,b)=>(b.joinedAt?.toMillis?b.joinedAt.toMillis():0)-(a.joinedAt?.toMillis?a.joinedAt.toMillis():0));
+      renderReqList("approved-list",list,false);
+    },
+    err=>{ $("approved-list").innerHTML=`<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Error: ${err.message}</p></div>`; }
+  );
+}
+
+function renderReqList(targetId, users, isPending){
+  const el=$(targetId);
+  if(!users.length){
+    el.innerHTML=`<div style="padding:20px 16px;text-align:center;color:var(--text-muted);font-size:.82rem;background:var(--s1);border:1px solid var(--border);border-radius:var(--radius-lg);">${isPending?"No pending requests ✓":"No approved users yet."}</div>`;
+    return;
+  }
+  el.innerHTML=`<div class="req-list">`+users.map(u=>`
+    <div class="req-card ${isPending?"pending-card":""}">
+      <div class="req-av">${av(u.name||u.email)}</div>
+      <div class="req-info">
+        <div class="req-name">${u.name||"—"}</div>
+        <div class="req-email">${u.email||"—"}</div>
+        <div class="req-meta">📱 ${u.mobile||"—"} &nbsp;·&nbsp; Joined: ${u.joinedAt?.toDate?u.joinedAt.toDate().toLocaleDateString("en-IN"):"—"}${!isPending?` &nbsp;·&nbsp; Score: <span style="color:var(--accent)">${(u.score||0).toLocaleString()} pts</span>`:""}</div>
+      </div>
+      <div class="req-actions">
+        ${isPending
+          ?`<button class="btn btn-success btn-sm" onclick="approveUser('${u.id}','${(u.name||"").replace(/'/g,"\\'")}')"><i class="fas fa-check"></i> Approve</button>
+            <button class="btn btn-danger btn-sm" onclick="rejectUser('${u.id}')"><i class="fas fa-times"></i> Reject</button>`
+          :`<span class="pill pill-approved">Approved</span>
+            <button class="btn btn-ghost btn-sm" onclick="openRoleModal('${u.id}','${(u.name||"").replace(/'/g,"\\'")}','${u.role||"player"}')" title="Role"><i class="fas fa-user-shield"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="revokeUser('${u.id}')" title="Revoke"><i class="fas fa-ban"></i></button>`}
+      </div>
+    </div>`).join("")+"</div>";
+}
+
+window.approveUser=async function(uid,name){
+  try{ await updateDoc(doc(db,"users",uid),{status:"approved"}); toast(`${name||uid} approved ✓`,"ok"); }
+  catch(e){ toast("Error: "+e.message,"err"); }
+};
+window.rejectUser=async function(uid){
+  if(!confirm("Reject this user? They won't be able to access the platform.")) return;
+  try{ await updateDoc(doc(db,"users",uid),{status:"rejected"}); toast("User rejected.","info"); }
+  catch(e){ toast("Error: "+e.message,"err"); }
+};
+window.revokeUser=async function(uid){
+  if(!confirm("Revoke access? User will be set back to pending.")) return;
+  try{ await updateDoc(doc(db,"users",uid),{status:"pending"}); toast("Access revoked.","info"); }
+  catch(e){ toast("Error: "+e.message,"err"); }
+};
+
+// ── CHALLENGES ────────────────────────────────────────────────
+async function loadChals(){
+  try{
+    const snap=await getDocs(collection(db,"challenges"));
+    allChals=[]; snap.forEach(d=>allChals.push({id:d.id,...d.data()}));
+    allChals.sort((a,b)=>a.title?.localeCompare(b.title)||0);
+    renderChalTable();
+  } catch(e){ $("chal-table").innerHTML=`<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Error: ${e.message}</p></div>`; }
+}
+function renderChalTable(){
+  const tbl=$("chal-table");
+  if(!allChals.length){ tbl.innerHTML=`<div class="empty"><i class="fas fa-layer-group"></i><p>No challenges yet. Add one!</p></div>`; return; }
+  tbl.innerHTML=`<div class="dt-row dt-head" style="grid-template-columns:1fr 80px 100px 55px 65px 60px 90px;">
+    <span>Title</span><span>Category</span><span>Difficulty</span><span>Pts</span><span>Solves</span><span>Visible</span><span>Actions</span>
+  </div>`+
+  allChals.map(c=>`<div class="dt-row" style="grid-template-columns:1fr 80px 100px 55px 65px 60px 90px;">
+    <span style="font-size:.83rem;font-weight:600;">${c.title||"—"}</span>
+    <span style="font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(88,166,255,.08);color:var(--blue);border:1px solid rgba(88,166,255,.15);">${c.category||"—"}</span>
+    <span class="diff-${c.difficulty||"Easy"}">${c.difficulty||"—"}</span>
+    <span style="font-family:'Fira Code',monospace;font-size:.8rem;color:var(--accent);">${c.points||0}</span>
+    <span style="font-size:.8rem;color:var(--text-muted);">${c.solves||0}</span>
+    <span class="pill ${c.visible!==false?"pill-on":"pill-off"}">${c.visible!==false?"On":"Off"}</span>
+    <div style="display:flex;gap:5px;">
+      <button class="btn btn-ghost btn-sm" onclick="editChal('${c.id}')"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-danger btn-sm" onclick="delChal('${c.id}')"><i class="fas fa-trash"></i></button>
+    </div>
+  </div>`).join("");
+}
+window.openAddChal=function(){
+  $("edit-id").value=""; $("chal-modal-title").textContent="Add Challenge";
+  ["cf-title","cf-pts","cf-desc","cf-vuln","cf-hint1","cf-hint2","cf-hint3","cf-url","cf-flag","cf-tags"].forEach(id=>$(id).value="");
+  $("cf-pts").value="100"; $("cf-cat").value="Web"; $("cf-diff").value="Easy"; $("cf-visible").value="true";
+  $("chal-modal").classList.add("open");
+};
+window.editChal=function(id){
+  const c=allChals.find(x=>x.id===id); if(!c) return;
+  $("edit-id").value=id; $("chal-modal-title").textContent="Edit Challenge";
+  $("cf-title").value=c.title||""; $("cf-pts").value=c.points||100;
+  $("cf-cat").value=c.category||"Web"; $("cf-diff").value=c.difficulty||"Easy";
+  $("cf-desc").value=c.description||""; $("cf-vuln").value=c.vulnerability||"";
+  $("cf-hint1").value=c.hint1||c.hint||""; $("cf-hint2").value=c.hint2||""; $("cf-hint3").value=c.hint3||"";
+  $("cf-url").value=c.challengeUrl||""; $("cf-flag").value=c.flag||"";
+  $("cf-tags").value=(c.tags||[]).join(", ");
+  $("cf-visible").value=c.visible!==false?"true":"false";
+  $("chal-modal").classList.add("open");
+};
+window.closeChalModal=()=>$("chal-modal").classList.remove("open");
+window.saveChal=async function(){
+  const editId=$("edit-id").value;
+  const data={
+    title:$("cf-title").value.trim(), points:parseInt($("cf-pts").value)||100,
+    category:$("cf-cat").value, difficulty:$("cf-diff").value,
+    description:$("cf-desc").value.trim(), vulnerability:$("cf-vuln").value.trim(),
+    hint1:$("cf-hint1").value.trim(), hint2:$("cf-hint2").value.trim(), hint3:$("cf-hint3").value.trim(),
+    challengeUrl:$("cf-url").value.trim(), flag:$("cf-flag").value.trim(),
+    tags:$("cf-tags").value.split(",").map(t=>t.trim()).filter(Boolean),
+    visible:$("cf-visible").value==="true", updatedAt:serverTimestamp()
+  };
+  if(!data.title) return toast("Title is required.","err");
+  if(!data.flag)  return toast("Flag is required.","err");
+  try{
+    if(editId){ await updateDoc(doc(db,"challenges",editId),data); toast("Challenge updated ✓","ok"); }
+    else{ data.createdAt=serverTimestamp(); data.solves=0; await addDoc(collection(db,"challenges"),data); toast("Challenge created ✓","ok"); }
+    closeChalModal(); loadChals();
+  } catch(e){ toast("Error: "+e.message,"err"); }
+};
+window.delChal=async function(id){
+  if(!confirm("Delete this challenge permanently?")) return;
+  try{ await deleteDoc(doc(db,"challenges",id)); toast("Challenge deleted.","info"); loadChals(); }
+  catch(e){ toast("Error: "+e.message,"err"); }
+};
+
+// ── USERS ──────────────────────────────────────────────────────
+async function loadUsers(){
+  try{
+    const snap=await getDocs(collection(db,"users"));
+    allUsers=[]; snap.forEach(d=>allUsers.push({id:d.id,...d.data()}));
+    allUsers.sort((a,b)=>(b.score||0)-(a.score||0));
+    $("users-count").textContent=allUsers.length+" total";
+    renderUserTable();
+  } catch(e){ $("users-table").innerHTML=`<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Error: ${e.message}</p></div>`; }
+}
+function renderUserTable(){
+  const tbl=$("users-table");
+  if(!allUsers.length){ tbl.innerHTML=`<div class="empty"><i class="fas fa-users"></i><p>No users yet.</p></div>`; return; }
+  tbl.innerHTML=`<div class="dt-row dt-head" style="grid-template-columns:1fr 130px 50px 70px 65px 80px 110px;">
+    <span>Name / Email</span><span>Mobile</span><span>Slvs</span><span>Score</span><span>Role</span><span>Status</span><span>Actions</span>
+  </div>`+
+  allUsers.map(u=>`<div class="dt-row" style="grid-template-columns:1fr 130px 50px 70px 65px 80px 110px;">
+    <div>
+      <div style="font-size:.82rem;font-weight:600;">${u.name||"?"}</div>
+      <div style="font-size:.66rem;color:var(--text-muted);font-family:'Fira Code',monospace;overflow:hidden;text-overflow:ellipsis;">${u.email||""}</div>
+    </div>
+    <span style="font-size:.72rem;color:var(--text-muted);">${u.mobile||"—"}</span>
+    <span style="font-size:.82rem;">${u.solves||0}</span>
+    <span style="font-family:'Fira Code',monospace;font-size:.78rem;color:var(--accent);">${(u.score||0).toLocaleString()}</span>
+    <span class="pill ${u.role==="admin"?"pill-admin":"pill-off"}">${u.role||"player"}</span>
+    <span class="pill pill-${u.status||"pending"}">${u.status||"pending"}</span>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="openRoleModal('${u.id}','${(u.name||"").replace(/'/g,"\\'")}','${u.role||"player"}')" title="Role"><i class="fas fa-user-shield"></i></button>
+      <button class="btn btn-warn btn-sm" onclick="resetScore('${u.id}')" title="Reset score"><i class="fas fa-undo"></i></button>
+    </div>
+  </div>`).join("");
+}
+window.resetScore=async function(uid){
+  if(!confirm("Reset this player's score to 0?")) return;
+  try{
+    await updateDoc(doc(db,"users",uid),{score:0,solves:0,solvedIds:[]});
+    await updateDoc(doc(db,"leaderboard",uid),{score:0,solves:0}).catch(()=>{});
+    toast("Score reset.","info"); loadUsers();
+  } catch(e){ toast("Error: "+e.message,"err"); }
+};
+window.openRoleModal=function(uid,name,role){ $("role-uid").value=uid; $("role-uname").textContent=name||uid; $("role-select").value=role; $("role-modal").classList.add("open"); };
+window.closeRoleModal=()=>$("role-modal").classList.remove("open");
+window.saveRole=async function(){
+  const uid=$("role-uid").value, role=$("role-select").value;
+  try{ await updateDoc(doc(db,"users",uid),{role}); toast("Role updated ✓","ok"); closeRoleModal(); loadUsers(); }
+  catch(e){ toast("Error: "+e.message,"err"); }
+};
+
+// ── SOLVES ─────────────────────────────────────────────────────
+function listenSolves(){
+  if(unsubSolves) unsubSolves();
+  unsubSolves=onSnapshot(query(collection(db,"solves"),orderBy("ts","desc"),limit(100)),snap=>{
+    const rows=[]; snap.forEach(d=>rows.push(d.data()));
+    const tbl=$("solves-table");
+    if(!rows.length){ tbl.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet.</p></div>`; return; }
+    tbl.innerHTML=`<div class="dt-row dt-head" style="grid-template-columns:1fr 1fr 70px 130px;">
+      <span>Player</span><span>Challenge</span><span>Points</span><span>Time</span></div>`+
+    rows.map(r=>`<div class="dt-row" style="grid-template-columns:1fr 1fr 70px 130px;">
+      <span style="font-size:.83rem;font-weight:600;">${r.name||"?"}</span>
+      <span style="font-size:.79rem;color:var(--text-muted);">${r.title||r.challengeId||"?"}</span>
+      <span style="font-family:'Fira Code',monospace;font-size:.8rem;color:var(--accent);">+${r.pts}</span>
+      <span style="font-size:.68rem;color:var(--text-dim);">${r.ts?.toDate?r.ts.toDate().toLocaleString("en-IN",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}):"—"}</span>
+    </div>`).join("");
+  },err=>{ console.error("solves err:",err); });
+}
+
+// ── LEADERBOARD ───────────────────────────────────────────────
+window.loadLb=async function(){
+  const tbl=$("lb-table");
+  tbl.innerHTML=`<div class="empty"><i class="fas fa-spinner spin"></i></div>`;
+  try{
+    const snap=await getDocs(query(collection(db,"leaderboard"),orderBy("score","desc"),limit(50)));
+    const rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()}));
+    if(!rows.length){ tbl.innerHTML=`<div class="empty"><i class="fas fa-trophy"></i><p>No players yet.</p></div>`; return; }
+    tbl.innerHTML=`<div class="dt-row dt-head" style="grid-template-columns:48px 1fr 1fr 80px 80px;">
+      <span>Rank</span><span>Name</span><span>Email</span><span>Solves</span><span>Score</span></div>`+
+    rows.map((r,i)=>`<div class="dt-row" style="grid-template-columns:48px 1fr 1fr 80px 80px;">
+      <span style="font-family:'Fira Code',monospace;font-size:.9rem;color:${i===0?"#e3a008":i===1?"#9ca3af":i===2?"#b45309":"var(--text-muted)"};">#${i+1}</span>
+      <span style="font-size:.83rem;font-weight:600;">${r.name||"?"}</span>
+      <span style="font-size:.72rem;color:var(--text-muted);font-family:'Fira Code',monospace;">${r.email||"—"}</span>
+      <span style="font-size:.8rem;color:var(--text-muted);">${r.solves||0}</span>
+      <span style="font-family:'Fira Code',monospace;font-size:.82rem;color:var(--accent);">${(r.score||0).toLocaleString()}</span>
+    </div>`).join("");
+  } catch(e){ tbl.innerHTML=`<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Error: ${e.message}</p></div>`; }
+};
+
+window.doLogout=async function(){ await signOut(auth); window.location.href="login.html"; };
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeChalModal(); closeRoleModal(); } });
+</script>
+</body>
+</html>

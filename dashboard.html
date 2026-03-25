@@ -703,7 +703,8 @@ textarea.inp{resize:vertical;min-height:70px;}
 <script type="module">
 import { auth, db } from "./js/firebase.js";
 import {
-  onAuthStateChanged, signOut, deleteUser, updatePassword, sendPasswordResetEmail
+  onAuthStateChanged, signOut, deleteUser, updatePassword, sendPasswordResetEmail, doc, collection, getDoc, getDocs, onSnapshot, setDoc,
+  updateDoc, addDoc, deleteDoc, query, orderBy, where, limit, serverTimestamp, increment, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   doc, collection, getDoc, getDocs, onSnapshot, setDoc,

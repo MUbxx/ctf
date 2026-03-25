@@ -1028,10 +1028,11 @@ textarea.inp{resize:vertical;min-height:72px;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script type="module">
 import { auth, db } from "./js/firebase.js";
 import {
-  onAuthStateChanged, signOut, deleteUser, updatePassword
+  onAuthStateChanged, signOut, deleteUser, updatePassword, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   doc, collection, getDoc, getDocs, onSnapshot, setDoc,
@@ -1040,195 +1041,229 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const $ = id => document.getElementById(id);
-const av = s => (s || "?")[0].toUpperCase();
+const av = s => (s||"?")[0].toUpperCase();
+const LOGO = "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png";
+const SITE_URL = window.location.origin + window.location.pathname.replace(/[^/]*$/, "");
 
-function toast(msg, type = "info") {
+// ── TOAST ─────────────────────────────────────────────────────
+function toast(msg, type="info") {
   const el = document.createElement("div");
   el.className = `toast ${type}`;
-  const icon = type === "ok" ? "fa-check-circle" : type === "err" ? "fa-times-circle" : "fa-info-circle";
+  const icon = type==="ok"?"fa-check-circle":type==="err"?"fa-times-circle":"fa-info-circle";
   el.innerHTML = `<i class="fas ${icon}"></i>${msg}`;
   $("toast-area").appendChild(el);
-  setTimeout(() => el.remove(), 3400);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transform="translateX(30px)"; el.style.transition="all .3s"; setTimeout(()=>el.remove(),300); }, 3200);
 }
 
-// Global variables
-let me = null, myData = null, allChals = [], activeModal = null, lbUnsub = null, timelineChart = null;
-let catFilter = "All", diffFilter = "All", statusFilter = "All", shareTarget = null;
-let solveHistory = [];
+let me=null, myData=null, allChals=[], activeModal=null, lbUnsub=null, timelineChart=null;
+let catFilter="All", diffFilter="All", statusFilter="All", shareTarget=null;
+let solveHistory = [], notes=[], activeNoteId=null;
+const CATS = ["Web","Crypto","Pwn","Forensics","Rev","Misc"];
+const CAT_ICONS = {Web:"🌐",Crypto:"🔐",Pwn:"💣",Forensics:"🔬",Rev:"⚙️",Misc:"🎭"};
+const CAT_COLORS = {Web:"var(--cyan)",Crypto:"var(--purple)",Pwn:"var(--pink)",Forensics:"var(--orange)",Rev:"var(--yellow)",Misc:"var(--green)"};
+const AV_COLORS = ["#00e5ff","#9d4edd","#ff006e","#00ff9d","#ffd60a","#ff6b35","#00b8d9","#a5d6ff"];
 
-// Constants
-const CATS = ["Web", "Crypto", "Pwn", "Forensics", "Rev", "Misc"];
-const CAT_ICONS = { Web: "🌐", Crypto: "🔐", Pwn: "💣", Forensics: "🔬", Rev: "⚙️", Misc: "🎭" };
-const AV_COLORS = ["#00e5ff", "#9d4edd", "#ff006e", "#00ff9d", "#ffd60a", "#ff6b35"];
-
-// ==================== SESSION ====================
+// ── SESSION ──────────────────────────────────────────────────
 let sessionStart = Date.now(), sessionInterval = null;
-const SESSION_MS = 60 * 60 * 1000, WARN_MS = 5 * 60 * 1000;
-
+const SESSION_MS = 60*60*1000, WARN_MS = 5*60*1000;
 function startSession() {
   sessionStart = Date.now();
   if (sessionInterval) clearInterval(sessionInterval);
-  sessionInterval = setInterval(() => {
-    const rem = SESSION_MS - (Date.now() - sessionStart);
-    if (rem <= 0) {
-      clearInterval(sessionInterval);
-      toast("Session expired.", "err");
-      setTimeout(() => signOut(auth).then(() => location.href = "login.html"), 1500);
-      return;
-    }
-    if (rem <= WARN_MS) {
-      const m = Math.floor(rem / 60000), s = Math.floor((rem % 60000) / 1000);
-      $("session-timer").textContent = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  sessionInterval = setInterval(()=>{
+    const rem = SESSION_MS - (Date.now()-sessionStart);
+    if (rem<=0) { clearInterval(sessionInterval); toast("Session expired.","err"); setTimeout(()=>signOut(auth).then(()=>location.href="login.html"),1500); return; }
+    if (rem<=WARN_MS) {
+      const m=Math.floor(rem/60000), s=Math.floor((rem%60000)/1000);
+      $("session-timer").textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
       $("session-banner").classList.add("show");
     }
-  }, 1000);
+  },1000);
 }
-window.extendSession = () => {
-  sessionStart = Date.now();
-  $("session-banner").classList.remove("show");
-  toast("Session extended", "ok");
-};
+window.extendSession = function() { sessionStart=Date.now(); $("session-banner").classList.remove("show"); toast("Session extended","ok"); };
 
-// ==================== THEME ====================
+// ── THEME ────────────────────────────────────────────────────
+let isLight = false;
 function applyTheme(light) {
-  const icon = $("theme-icon");
-  if (icon) icon.className = light ? "fas fa-moon" : "fas fa-sun";
-}
-window.toggleTheme = () => applyTheme(!document.body.classList.contains("light"));
-
-// ==================== AUTH - FIREBASE CONNECTION ====================
-onAuthStateChanged(auth, async user => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
+  isLight = light;
+  if(light){
+    document.body.style.background="#e8edf8";
+    document.body.style.setProperty('--bg','#e8edf8');
+    document.body.style.setProperty('--s1','#ffffff');
+    document.body.style.setProperty('--s2','#f0f4ff');
+    document.body.style.setProperty('--s3','#e0e8fa');
+    document.body.style.setProperty('--text','#1a2040');
+    document.body.style.setProperty('--text-muted','#4a5580');
+    document.body.style.setProperty('--border','rgba(0,100,200,.15)');
+    document.body.style.setProperty('--text-dim','#8090b8');
+  } else {
+    document.body.style.background="";
+    document.body.style.setProperty('--bg','#000428');
+    document.body.style.setProperty('--s1','#06101f');
+    document.body.style.setProperty('--s2','#0b1929');
+    document.body.style.setProperty('--s3','#101e30');
+    document.body.style.setProperty('--text','#d4e3ff');
+    document.body.style.setProperty('--text-muted','#6e85b0');
+    document.body.style.setProperty('--border','#1a2d4a');
+    document.body.style.setProperty('--text-dim','#2e3f62');
   }
+  const icon=$("theme-icon"); if(icon) icon.className=light?"fas fa-moon":"fas fa-sun";
+  try{ localStorage.setItem("ctf-theme",light?"light":"dark"); }catch(e){}
+}
+window.toggleTheme = ()=>{ applyTheme(!isLight); };
+try{ const t=localStorage.getItem("ctf-theme"); if(t) applyTheme(t==="light"); }catch(e){}
+
+// ── AUTH ──────────────────────────────────────────────────────
+onAuthStateChanged(auth, async user=>{
+  if (!user) { window.location.href="login.html"; return; }
   me = user;
   startSession();
 
-  onSnapshot(doc(db, "users", user.uid), snap => {
-    myData = snap.data() || {};
+  // Check achievement viewer URL params
+  const params = new URLSearchParams(window.location.search);
+  if(params.has("viewach")){
+    const data = JSON.parse(atob(params.get("viewach")));
+    showAchViewer(data);
+  }
+
+  onSnapshot(doc(db,"users",user.uid), snap=>{
+    myData = snap.data()||{};
+    if (myData.status==="pending"||myData.status==="rejected") { signOut(auth).then(()=>location.href="login.html"); return; }
     refreshSidebar();
     refreshDash();
     if ($("view-profile").classList.contains("active")) renderProfile();
     if ($("view-security").classList.contains("active")) renderSecurity();
   });
-
   loadChallenges();
   startLeaderboard();
   loadSolveHistory();
+  loadNotes();
 });
 
-// ==================== SIDEBAR & NAVIGATION ====================
-function refreshSidebar() {
-  const name = myData.name || me.displayName || "Hacker";
-  const photo = myData.photo || me.photoURL || "";
-  if (photo) {
-    $("sb-av").innerHTML = `<img src="${photo}" alt="${name}" onerror="this.parentElement.textContent='${av(name)}'">`;
-    $("top-av").innerHTML = `<img src="${photo}" alt="${name}" onerror="this.parentElement.textContent='${av(name)}'">`;
-  } else {
-    $("sb-av").textContent = av(name);
-    $("top-av").textContent = av(name);
-  }
-  $("sb-name").textContent = name;
-  $("sb-role").textContent = myData.role || "player";
-  $("sb-score").textContent = (myData.score || 0).toLocaleString() + " pts";
+// ── PHOTO ─────────────────────────────────────────────────────
+window.handlePhotoUpload = async function(e) {
+  const file=e.target.files[0]; if(!file||!me) return;
+  if(file.size>2*1024*1024) { toast("Image must be under 2MB","err"); return; }
+  const reader=new FileReader();
+  reader.onload=async ev=>{
+    const dataUrl=ev.target.result;
+    try {
+      await updateDoc(doc(db,"users",me.uid),{photo:dataUrl});
+      await updateDoc(doc(db,"leaderboard",me.uid),{photo:dataUrl}).catch(()=>{});
+      updateAvatarUI(dataUrl);
+      toast("Profile photo updated!","ok");
+    } catch(err){ toast("Failed to save photo: "+err.message,"err"); }
+  };
+  reader.readAsDataURL(file);
+};
+function updateAvatarUI(photoURL){
+  ["sb-av","top-av","prof-av"].forEach(id=>{
+    const el=$(id); if(!el) return;
+    const name=myData?.name||me?.displayName||"?";
+    if(photoURL){ el.innerHTML=`<img src="${photoURL}" alt="${name}" onerror="this.parentElement.textContent='${av(name)}'">`; }
+    else { el.textContent=av(name); }
+  });
 }
 
-const VIEWS = ["dashboard","challenges","progress","notes","leaderboard","profile","security"];
-const TITLES = {dashboard:"DASHBOARD",challenges:"CHALLENGES",progress:"MY PROGRESS",notes:"CTF NOTES",leaderboard:"LEADERBOARD",profile:"PROFILE",security:"SECURITY"};
+// ── SIDEBAR ───────────────────────────────────────────────────
+function refreshSidebar() {
+  const name=myData.name||me.displayName||"Hacker";
+  const photo=myData.photo||me.photoURL||"";
+  if(photo) {
+    $("sb-av").innerHTML=`<img src="${photo}" alt="${name}" onerror="this.parentElement.textContent='${av(name)}'">`;
+    $("top-av").innerHTML=`<img src="${photo}" alt="${name}" onerror="this.parentElement.textContent='${av(name)}'">`;
+  } else {
+    $("sb-av").textContent=av(name);
+    $("top-av").textContent=av(name);
+  }
+  $("sb-name").textContent=name;
+  $("sb-role").textContent=myData.role||"player";
+  $("sb-score").textContent=(myData.score||0).toLocaleString()+" pts";
+}
 
-window.go = function(v) {
-  VIEWS.forEach(x => {
-    $("view-" + x)?.classList.toggle("active", x === v);
-    $("nav-" + x)?.classList.toggle("active", x === v);
-  });
-  $("page-title").textContent = TITLES[v] || v.toUpperCase();
+// ── NAVIGATION ────────────────────────────────────────────────
+const VIEWS=["dashboard","challenges","progress","notes","leaderboard","profile","security"];
+const TITLES={dashboard:"DASHBOARD",challenges:"CHALLENGES",progress:"MY PROGRESS",notes:"CTF NOTES",leaderboard:"LEADERBOARD",profile:"PROFILE",security:"SECURITY"};
+window.go=function(v){
+  VIEWS.forEach(x=>{ $("view-"+x)?.classList.toggle("active",x===v); $("nav-"+x)?.classList.toggle("active",x===v); });
+  $("page-title").textContent=TITLES[v]||v.toUpperCase();
   closeSb();
-  if (v === "challenges") renderChals();
-  if (v === "leaderboard") startLeaderboard();
-  if (v === "progress") renderProgressView();
-  if (v === "profile") renderProfile();
-  if (v === "security") renderSecurity();
+  if(v==="challenges") renderChals();
+  if(v==="leaderboard") startLeaderboard();
+  if(v==="progress") renderProgressView();
+  if(v==="profile") renderProfile();
+  if(v==="security") renderSecurity();
+  if(v==="notes") renderNotesList();
 };
+window.openSb=()=>{ $("sidebar").classList.add("open"); $("mob-overlay").classList.add("show"); };
+window.closeSb=()=>{ $("sidebar").classList.remove("open"); $("mob-overlay").classList.remove("show"); };
 
-window.openSb = () => { $("sidebar").classList.add("open"); $("mob-overlay").classList.add("show"); };
-window.closeSb = () => { $("sidebar").classList.remove("open"); $("mob-overlay").classList.remove("show"); };
-
-// ==================== FILTER DROPDOWNS ====================
-window.toggleDropdown = function(id) {
-  const el = document.getElementById(id);
-  const wasOpen = el.classList.contains("open");
-  document.querySelectorAll(".filter-dropdown.open").forEach(d => d.classList.remove("open"));
-  if (!wasOpen) el.classList.add("open");
+// ── FILTER DROPDOWNS ─────────────────────────────────────────
+window.toggleDropdown=function(id){
+  const el=document.getElementById(id);
+  const wasOpen=el.classList.contains("open");
+  document.querySelectorAll(".filter-dropdown.open").forEach(d=>d.classList.remove("open"));
+  if(!wasOpen) el.classList.add("open");
 };
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".filter-dropdown")) document.querySelectorAll(".filter-dropdown.open").forEach(d=>d.classList.remove("open"));
+});
+window.setCatDD=function(el,cat){ catFilter=cat; document.querySelectorAll("#dd-category .filter-opt").forEach(o=>o.classList.remove("sel")); el.classList.add("sel"); $("dd-cat-label").textContent="Category: "+cat; document.getElementById("dd-category").classList.remove("open"); renderChals(); };
+window.setDiffDD=function(el,d){ diffFilter=d; document.querySelectorAll("#dd-difficulty .filter-opt").forEach(o=>o.classList.remove("sel")); el.classList.add("sel"); $("dd-diff-label").textContent="Difficulty: "+d; document.getElementById("dd-difficulty").classList.remove("open"); renderChals(); };
+window.setStatusDD=function(el,s){ statusFilter=s; document.querySelectorAll("#dd-status .filter-opt").forEach(o=>o.classList.remove("sel")); el.classList.add("sel"); $("dd-status-label").textContent="Status: "+s; document.getElementById("dd-status").classList.remove("open"); renderChals(); };
+window.clearFilters=function(){ catFilter="All"; diffFilter="All"; statusFilter="All"; $("dd-cat-label").textContent="Category: All"; $("dd-diff-label").textContent="Difficulty: All"; $("dd-status-label").textContent="Status: All"; document.querySelectorAll(".filter-opt[data-cat='All'],.filter-opt[data-diff='All'],.filter-opt[data-status='All']").forEach(el=>el.classList.add("sel")); renderChals(); };
 
-window.setCatDD = function(el, cat) { catFilter = cat; document.querySelectorAll("#dd-category .filter-opt").forEach(o => o.classList.remove("sel")); el.classList.add("sel"); $("dd-cat-label").textContent = "Category: " + cat; document.getElementById("dd-category").classList.remove("open"); renderChals(); };
-window.setDiffDD = function(el, d) { diffFilter = d; document.querySelectorAll("#dd-difficulty .filter-opt").forEach(o => o.classList.remove("sel")); el.classList.add("sel"); $("dd-diff-label").textContent = "Difficulty: " + d; document.getElementById("dd-difficulty").classList.remove("open"); renderChals(); };
-window.setStatusDD = function(el, s) { statusFilter = s; document.querySelectorAll("#dd-status .filter-opt").forEach(o => o.classList.remove("sel")); el.classList.add("sel"); $("dd-status-label").textContent = "Status: " + s; document.getElementById("dd-status").classList.remove("open"); renderChals(); };
-window.clearFilters = function() {
-  catFilter = "All"; diffFilter = "All"; statusFilter = "All";
-  $("dd-cat-label").textContent = "Category: All";
-  $("dd-diff-label").textContent = "Difficulty: All";
-  $("dd-status-label").textContent = "Status: All";
-  document.querySelectorAll(".filter-opt[data-cat='All'],.filter-opt[data-diff='All'],.filter-opt[data-status='All']").forEach(el => el.classList.add("sel"));
-  renderChals();
-};
-
-// ==================== CHALLENGES ====================
+// ── CHALLENGES ────────────────────────────────────────────────
 async function loadChallenges() {
   try {
-    const snap = await getDocs(collection(db, "challenges"));
-    allChals = [];
-    snap.forEach(d => allChals.push({ id: d.id, ...d.data() }));
-    allChals = allChals.filter(c => c.visible !== false).map(({ flag: _f, ...rest }) => rest);
-    const unsolved = allChals.length - (myData?.solvedIds || []).length;
-    $("sb-open").textContent = unsolved;
-    $("d-solved-sub").textContent = "of " + allChals.length + " total";
+    const snap=await getDocs(collection(db,"challenges"));
+    allChals=[];
+    snap.forEach(d=>allChals.push({id:d.id,...d.data()}));
+    allChals=allChals.filter(c=>c.visible!==false).map(({flag:_f,...rest})=>rest);
+    const unsolved=allChals.length-(myData?.solvedIds||[]).length;
+    $("sb-open").textContent=unsolved;
+    $("d-solved-sub").textContent="of "+allChals.length+" total";
     renderChals();
-  } catch (e) { console.error("loadChallenges:", e); }
+    renderRecentSolves();
+    renderDashSkillMap();
+    renderActivityHeatmap();
+  } catch(e){ console.error("loadChallenges:",e); }
 }
 
-function renderChals() {
-  const q = ($("search-inp").value || "").toLowerCase();
-  const solvedIds = myData?.solvedIds || [];
-  const filtered = allChals.filter(c => {
-    if (catFilter !== "All" && c.category !== catFilter) return false;
-    if (diffFilter !== "All" && c.difficulty !== diffFilter) return false;
-    if (statusFilter === "Solved" && !solvedIds.includes(c.id)) return false;
-    if (statusFilter === "Unsolved" && solvedIds.includes(c.id)) return false;
-    if (q && !c.title?.toLowerCase().includes(q) && !c.category?.toLowerCase().includes(q)) return false;
+function renderChals(){
+  const q=($("search-inp").value||"").toLowerCase();
+  const solvedIds=myData?.solvedIds||[];
+  const filtered=allChals.filter(c=>{
+    if(catFilter!=="All"&&c.category!==catFilter) return false;
+    if(diffFilter!=="All"&&c.difficulty!==diffFilter) return false;
+    if(statusFilter==="Solved"&&!solvedIds.includes(c.id)) return false;
+    if(statusFilter==="Unsolved"&&solvedIds.includes(c.id)) return false;
+    if(q&&!c.title?.toLowerCase().includes(q)&&!c.category?.toLowerCase().includes(q)&&!c.description?.toLowerCase().includes(q)) return false;
     return true;
   });
-
-  const grid = $("chal-grid");
-  const badge = $("chal-count-badge");
-  if (badge) badge.textContent = filtered.length + " challenge" + (filtered.length !== 1 ? "s" : "");
-
-  if (!filtered.length) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-search"></i><p>No challenges match your filters.</p></div>`;
-    return;
-  }
-
-  grid.innerHTML = filtered.map((c, i) => {
-    const solved = solvedIds.includes(c.id);
-    const icon = CAT_ICONS[c.category] || "🚩";
-    const imgHtml = c.imageUrl ? `<img src="${c.imageUrl}" alt="${c.title}" onerror="this.style.display='none'">` : "";
+  const grid=$("chal-grid");
+  const badge=$("chal-count-badge");
+  if(badge) badge.textContent=filtered.length+" challenge"+(filtered.length!==1?"s":"");
+  if(!filtered.length){ grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><i class="fas fa-search"></i><p>No challenges match your filters.</p></div>`; return; }
+  grid.innerHTML=filtered.map((c,i)=>{
+    const solved=solvedIds.includes(c.id);
+    const icon=CAT_ICONS[c.category]||"🚩";
+    const imgHtml=c.imageUrl?`<img src="${c.imageUrl}" alt="${c.title}" onerror="this.style.display='none'">`:"";
     return `
-    <div class="chal-card ${solved ? "solved" : ""}" onclick="openChal('${c.id}')" style="animation-delay:${i * 25}ms">
+    <div class="chal-card ${solved?"solved":""}" onclick="openChal('${c.id}')" style="animation-delay:${i*25}ms">
       <div class="chal-thumb">
         ${imgHtml}
         <div class="chal-thumb-fallback">${icon}</div>
         <div class="chal-thumb-overlay"></div>
         <span class="chal-cat-tag cat-${c.category} pos-abs">${c.category}</span>
-        ${solved ? `<div class="solved-mark"><i class="fas fa-check"></i></div>` : ""}
+        ${solved?`<div class="solved-mark"><i class="fas fa-check"></i></div>`:""}
       </div>
       <div class="chal-body">
         <div class="chal-title">${c.title}</div>
-        <div class="chal-desc">${c.description || ""}</div>
+        <div class="chal-desc">${c.description||""}</div>
         <div class="chal-foot">
           <div>
-            <div class="chal-pts" style="color:${solved ? "var(--green)" : "var(--cyan)"};">${c.points} pts</div>
-            <div class="chal-meta-row"><i class="fas fa-users" style="font-size:.58rem;"></i>${c.solves || 0} solves</div>
+            <div class="chal-pts" style="color:${solved?"var(--green)":"var(--cyan)"};">${c.points} pts</div>
+            <div class="chal-meta-row"><i class="fas fa-users" style="font-size:.58rem;"></i>${c.solves||0} solves</div>
           </div>
           <span class="diff-tag diff-${c.difficulty}">${c.difficulty}</span>
         </div>
@@ -1236,66 +1271,312 @@ function renderChals() {
     </div>`;
   }).join("");
 }
+window.onSearch=()=>{ if($("view-challenges").classList.contains("active")) renderChals(); };
 
-window.onSearch = () => {
-  if ($("view-challenges").classList.contains("active")) renderChals();
+// ── MODAL ─────────────────────────────────────────────────────
+window.openChal=function(id){
+  activeModal=allChals.find(c=>c.id===id); if(!activeModal) return;
+  const heroEl=$("m-hero");
+  const existingImg=heroEl.querySelector("img.hero-img");
+  if(existingImg) existingImg.remove();
+  if(activeModal.imageUrl){
+    const img=document.createElement("img");
+    img.className="hero-img";
+    img.src=activeModal.imageUrl;
+    img.style.cssText="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.65;";
+    img.onerror=()=>img.remove();
+    heroEl.insertBefore(img,heroEl.firstChild);
+  }
+  $("m-hero-icon").textContent=CAT_ICONS[activeModal.category]||"🚩";
+  $("m-title").textContent=activeModal.title;
+  $("m-pts").textContent=activeModal.points+" pts";
+  $("m-solves").textContent=(activeModal.solves||0)+" solves";
+  $("m-cat-badge").className=`chal-cat-tag cat-${activeModal.category}`;
+  $("m-cat-badge").textContent=activeModal.category;
+  $("m-diff-badge").className=`diff-tag diff-${activeModal.difficulty}`;
+  $("m-diff-badge").textContent=activeModal.difficulty;
+  $("m-desc").textContent=activeModal.description||"";
+  $("m-vuln").textContent=activeModal.vulnerability||"Study the category to understand common attack vectors.";
+  const ab=$("m-access-btn");
+  ab.href=activeModal.challengeUrl||"#";
+  ab.style.display=activeModal.challengeUrl?"inline-flex":"none";
+  const hints=[activeModal.hint1||activeModal.hint,activeModal.hint2,activeModal.hint3].filter(Boolean);
+  $("m-hints").innerHTML=hints.length?hints.map((h,i)=>`
+    <div class="hint-item" id="hint-${i}" onclick="revealHint(${i})">
+      <div class="hint-num">// HINT ${i+1}</div>
+      <div class="hint-text">${h}</div>
+      <div class="hint-mist"><i class="fas fa-eye"></i> TAP TO REVEAL HINT ${i+1}</div>
+    </div>`).join(""):`<p style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-muted);letter-spacing:.3px;">No hints available.</p>`;
+  $("m-flag").value="";
+  const fr=$("m-result"); fr.style.display="none"; fr.className="flag-result";
+  $("chal-modal").classList.add("open");
 };
-</script>
+window.closeModal=()=>$("chal-modal").classList.remove("open");
+window.revealHint=i=>document.getElementById("hint-"+i)?.classList.add("revealed");
+window.trackAccess=()=>toast("Challenge environment opening…","info");
 
-// Add the remaining functions (openChal, submitFlag, renderProfile, etc.) if needed.
-// For now, this should fix the main connection and filter errors.
+// ── FLAG SUBMIT ───────────────────────────────────────────────
+window.submitFlag=async function(){
+  if(!activeModal||!me) return;
+  const input=$("m-flag").value.trim(); const fr=$("m-result"); if(!input) return;
+  fr.textContent="Checking…"; fr.className="flag-result info"; fr.style.display="block";
+  let correctFlag;
+  try { const s=await getDoc(doc(db,"challenges",activeModal.id)); correctFlag=s.data()?.flag; }
+  catch(e){ fr.textContent="Error verifying. Try again."; fr.className="flag-result err"; return; }
+  if(input===correctFlag){
+    const alreadySolved=(myData?.solvedIds||[]).includes(activeModal.id);
+    if(alreadySolved){ fr.textContent="✓ Already solved! Share from Progress tab."; fr.className="flag-result ok"; return; }
+    fr.textContent=`✓ Correct! +${activeModal.points} pts`;
+    fr.className="flag-result ok";
+    const newSolvedIds=[...(myData?.solvedIds||[]),activeModal.id];
+    const newScore=(myData?.score||0)+activeModal.points;
+    const newSolves=(myData?.solves||0)+1;
+    const photo=myData?.photo||me.photoURL||"";
+    await updateDoc(doc(db,"users",me.uid),{solvedIds:newSolvedIds,score:newScore,solves:newSolves});
+    await setDoc(doc(db,"leaderboard",me.uid),{name:myData.name||"Hacker",email:myData.email||me.email||"",photo,score:newScore,solves:newSolves,uid:me.uid},{merge:true});
+    await addDoc(collection(db,"solves"),{uid:me.uid,name:myData.name||"Hacker",challengeId:activeModal.id,title:activeModal.title,pts:activeModal.points,category:activeModal.category,ts:serverTimestamp()});
+    await updateDoc(doc(db,"challenges",activeModal.id),{solves:increment(1)});
+    showCyberSolve(activeModal);
+  } else {
+    fr.textContent="✗ Wrong flag. Keep trying!"; fr.className="flag-result err"; toast("Wrong flag.","err");
+  }
+};
 
-function renderSolvedHistory() {
-  const container = $("solved-history");
-  if (!me) return;
+function showCyberSolve(chal){
+  const overlay=$("cyber-solve-overlay");
+  $("cs-title").textContent="ACCESS GRANTED";
+  $("cs-sub").textContent=chal.title.toUpperCase()+" — COMPLETED";
+  $("cs-pts").textContent="+"+chal.points+" PTS";
+  overlay.classList.add("show");
+  toast(`🚩 +${chal.points} pts!`,"ok");
+  setTimeout(()=>{ overlay.classList.remove("show"); closeModal(); openSharePopup(chal); }, 3600);
+}
 
+// ── SHARE ─────────────────────────────────────────────────────
+function buildAchLink(type, data){
+  const payload = { type, ...data, player: myData?.name||me?.displayName||"A Hacker", date: new Date().toISOString().split("T")[0] };
+  return `${SITE_URL}achievement.html?viewach=${btoa(JSON.stringify(payload))}`;
+}
+
+function openSharePopup(chal){
+  shareTarget=chal;
+  const emojis={Web:"🌐",Crypto:"🔐",Pwn:"💣",Forensics:"🔬",Rev:"⚙️",Misc:"🎭"};
+  const user=myData?.name||me?.displayName||"A hacker";
+  const achLink = buildAchLink("challenge", {chalId:chal.id,chalTitle:chal.title,category:chal.category,difficulty:chal.difficulty,points:chal.points});
+  $("share-heading").textContent="CHALLENGE CONQUERED!";
+  $("share-sub").textContent=`${user} completed "${chal.title}" and earned ${chal.points} points!`;
+  $("share-badge-icon").textContent=emojis[chal.category]||"🏆";
+  $("share-badge-name").textContent=chal.title;
+  $("share-badge-meta").textContent=`${chal.category} · ${chal.difficulty} · ${chal.points} pts`;
+  $("share-link-url").textContent=achLink;
+  $("share-modal").classList.add("open");
+}
+window.closeShare=()=>$("share-modal").classList.remove("open");
+window.shareFromProgress=function(chalId){ const c=allChals.find(x=>x.id===chalId); if(c) openSharePopup(c); else toast("Challenge not found","err"); };
+window.copyShareLink=function(){
+  const url=$("share-link-url").textContent;
+  navigator.clipboard.writeText(url).then(()=>toast("Link copied!","ok")).catch(()=>toast("Copy failed","err"));
+};
+window.shareOn=function(platform){
+  if(!shareTarget) return;
+  const user=myData?.name||me?.displayName||"A hacker";
+  const achLink=$("share-link-url").textContent;
+  const text=`🏴 ${user} just conquered the "${shareTarget.title}" challenge on Cyber Buddy Academy!\n\n`+
+    `📂 Category: ${shareTarget.category}\n`+
+    `⚡ Difficulty: ${shareTarget.difficulty}\n`+
+    `🏆 Points earned: +${shareTarget.points}\n\n`+
+    `Sharpening real-world cybersecurity skills — one flag at a time. 💻\n`+
+    `View achievement: ${achLink}\n`+
+    `#CTF #CyberSecurity #EthicalHacking #CyberBuddyAcademy #InfoSec`;
+  const encText=encodeURIComponent(text);
+  const encUrl=encodeURIComponent(achLink);
+  const links={
+    linkedin:`https://www.linkedin.com/sharing/share-offsite/?url=${encUrl}`,
+    twitter:`https://twitter.com/intent/tweet?text=${encText}`,
+    whatsapp:`https://wa.me/?text=${encodeURIComponent(text)}`,
+    telegram:`https://t.me/share/url?url=${encUrl}&text=${encText}`,
+  };
+  if(platform==="copy"){ navigator.clipboard.writeText(text).then(()=>toast("Copied to clipboard!","ok")).catch(()=>toast("Copy failed","err")); return; }
+  if(links[platform]) window.open(links[platform],"_blank","width=620,height=480,noopener");
+};
+
+// ── ACHIEVEMENT VIEWER ────────────────────────────────────────
+function showAchViewer(data){
+  $("avr-icon").childNodes[0].textContent = data.icon||"🏆";
+  $("avr-ach-name").textContent = data.achName || data.chalTitle || "Achievement";
+  $("avr-player").innerHTML = `earned by <strong>${data.player||"A Hacker"}</strong>`;
+  $("avr-desc").textContent = data.desc || (data.chalTitle ? `${data.category} · ${data.difficulty} · ${data.points} pts` : "");
+  $("avr-date").textContent = data.date || new Date().toLocaleDateString();
+  $("ach-viewer").classList.add("open");
+}
+window.closeAchViewer=function(){ $("ach-viewer").classList.remove("open"); };
+
+// ── LEADERBOARD ───────────────────────────────────────────────
+function startLeaderboard(){
+  if(lbUnsub) lbUnsub();
+  lbUnsub=onSnapshot(query(collection(db,"leaderboard"),orderBy("score","desc"),limit(50)),snap=>{
+    const rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()}));
+    renderLb(rows);
+    $("d-players").textContent=rows.length;
+    const myIdx=rows.findIndex(r=>r.id===me?.uid);
+    if(myIdx>=0){ $("d-rank").textContent="#"+(myIdx+1); $("ps-rank").textContent="#"+(myIdx+1); }
+  });
+}
+function renderLb(rows){
+  const body=$("lb-body");
+  if(!rows.length){ body.innerHTML=`<div class="empty"><i class="fas fa-trophy"></i><p>No players yet.</p></div>`; return; }
+  body.innerHTML=rows.map((r,i)=>{
+    const rank=i+1, isMe=r.id===me?.uid;
+    const rankCls=rank===1?"r1":rank===2?"r2":rank===3?"r3":"";
+    const color=AV_COLORS[i%AV_COLORS.length];
+    const badge=rank<=3?"ELITE":rank<=10?"ADVANCED":"RISING";
+    const badgeCls=rank<=3?"diff-Easy":rank<=10?"diff-Medium":"diff-Hard";
+    const photoHtml=r.photo?`<img src="${r.photo}" alt="${r.name||"?"}" onerror="this.parentElement.style.backgroundImage='none'">`:av(r.name);
+    return `
+    <div class="lb-row" style="${isMe?"background:rgba(0,229,255,.03);border-left:2px solid var(--cyan);":''}">
+      <span class="lb-rank ${rankCls}">#${rank}</span>
+      <div class="lb-user">
+        <div class="lb-av" style="${r.photo?"":"background:"+color+";color:#000;"}">${photoHtml}</div>
+        <div>
+          <div class="lb-name">${r.name||"Hacker"}${isMe?`<span class="lb-me">YOU</span>`:""}</div>
+          <div class="lb-email">${r.email||""}</div>
+        </div>
+      </div>
+      <span class="lb-solves">${r.solves||0}</span>
+      <span class="lb-score">${(r.score||0).toLocaleString()}</span>
+      <span class="diff-tag ${badgeCls}" style="font-size:.56rem;">${badge}</span>
+    </div>`;
+  }).join("");
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+function refreshDash(){
+  $("d-pts").textContent=(myData?.score||0).toLocaleString();
+  $("d-solved").textContent=myData?.solves||0;
+  $("ps-pts").textContent=(myData?.score||0).toLocaleString();
+  $("ps-solves").textContent=myData?.solves||0;
+}
+
+function renderDashSkillMap(){
+  const solvedIds=myData?.solvedIds||[];
+  const colors={Web:"#00e5ff",Crypto:"#9d4edd",Pwn:"#ff006e",Forensics:"#ff6b35",Rev:"#ffd60a",Misc:"#00ff9d"};
+  const el=$("dash-skill-map"); if(!el) return;
+  el.innerHTML=CATS.map(cat=>{
+    const total=allChals.filter(c=>c.category===cat).length;
+    const solved=allChals.filter(c=>c.category===cat&&solvedIds.includes(c.id)).length;
+    const pct=total?Math.round(solved/total*100):0;
+    return `
+    <div class="skill-bar-row">
+      <div class="skill-name">${cat}</div>
+      <div class="skill-track"><div class="skill-fill" style="width:${pct}%;background:${colors[cat]};box-shadow:0 0 6px ${colors[cat]}55;"></div></div>
+      <div class="skill-pct">${pct}%</div>
+    </div>`;
+  }).join("");
+}
+
+function renderActivityHeatmap(){
+  const el=$("dash-heatmap"); if(!el) return;
+  // Generate fake-but-meaningful heatmap based on solve history dates
+  const counts={};
+  solveHistory.forEach(s=>{ if(s.ts?.toDate){ const d=s.ts.toDate().toDateString(); counts[d]=(counts[d]||0)+1; }});
+  const cells=[];
+  const today=new Date();
+  for(let i=83;i>=0;i--){
+    const d=new Date(today); d.setDate(d.getDate()-i);
+    const c=counts[d.toDateString()]||0;
+    const lvl=c===0?0:c===1?1:c===2?2:c<=4?3:4;
+    cells.push(`<div class="hm-cell hm-${lvl}" title="${d.toDateString()}: ${c} solve${c!==1?"s":""}"></div>`);
+  }
+  el.innerHTML=cells.join("");
+}
+
+function renderRecentSolves(){
+  const list=$("recent-list");
+  if(!me) return;
   onSnapshot(
-    query(collection(db, "solves"), where("uid", "==", me.uid), limit(100)),
-    snap => {
-      const items = [];
-      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-
-      items.sort((a, b) => {
-        const ta = a.ts?.toMillis ? a.ts.toMillis() : 0;
-        const tb = b.ts?.toMillis ? b.ts.toMillis() : 0;
-        return tb - ta;
-      });
-
-      if (!items.length) {
-        container.innerHTML = `<div class="empty"><i class="fas fa-flag"></i><p>No solves yet. Go hack!</p></div>`;
-        return;
-      }
-
-      const chalById = id => allChals.find(c => c.id === id) || {};
-
-      let html = '';
-      for (const s of items) {
-        const ch = chalById(s.challengeId);
-        html += `
-          <div class="solve-row">
-            <div class="solve-icon">${CAT_ICONS[s.category] || "🚩"}</div>
-            <div style="flex:1;min-width:0;">
-              <div class="solve-name">${s.title || "?"}</div>
-              <div class="solve-meta">
-                ${s.category ? `<span class="chal-cat-tag cat-${s.category}" style="font-size:.56rem;padding:1px 5px;">${s.category}</span>` : ''}
-                ${ch.difficulty ? `<span class="diff-tag diff-${ch.difficulty}" style="font-size:.56rem;padding:1px 5px;">${ch.difficulty}</span>` : ''}
-                <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-dim);">
-                  ${s.ts?.toDate ? s.ts.toDate().toLocaleDateString() : ''}
-                </span>
-              </div>
+    query(collection(db,"solves"),where("uid","==",me.uid),limit(20)),
+    snap=>{
+      const items=[]; snap.forEach(d=>items.push(d.data()));
+      items.sort((a,b)=>(b.ts?.toMillis?b.ts.toMillis():0)-(a.ts?.toMillis?a.ts.toMillis():0));
+      const recent=items.slice(0,6);
+      if(!recent.length){ list.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet. Start hacking!</p></div>`; return; }
+      list.innerHTML=recent.map(s=>`
+        <div class="solve-row">
+          <div class="solve-icon">${CAT_ICONS[s.category]||"🚩"}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="solve-name">${s.title||"?"}</div>
+            <div class="solve-meta">
+              <span class="chal-cat-tag cat-${s.category||""}" style="font-size:.56rem;padding:1px 5px;position:relative;">${s.category||""}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-dim);">${s.ts?.toDate?s.ts.toDate().toLocaleDateString():""}</span>
             </div>
-            <div class="solve-pts">+${s.pts || 0}</div>
-            <button class="solve-share-btn" onclick="shareFromProgress('${s.challengeId}')" title="Share">
-              <i class="fas fa-share-alt"></i>
-            </button>
-          </div>`;
-      }
-      container.innerHTML = html;
+          </div>
+          <div class="solve-pts">+${s.pts}</div>
+        </div>`).join("");
+      // also refresh heatmap
+      renderActivityHeatmap();
     },
-    err => {
-      container.innerHTML = `<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error loading solves.</p></div>`;
-      console.error(err);
-    }
+    ()=>{ list.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet.</p></div>`; }
+  );
+}
+
+function loadSolveHistory(){
+  if(!me) return;
+  onSnapshot(
+    query(collection(db,"solves"),where("uid","==",me.uid),limit(100)),
+    snap=>{
+      solveHistory=[];
+      snap.forEach(d=>solveHistory.push(d.data()));
+      solveHistory.sort((a,b)=>(a.ts?.toMillis?a.ts.toMillis():0)-(b.ts?.toMillis?b.ts.toMillis():0));
+      if($("view-progress").classList.contains("active")) renderTimeline();
+    },
+    err=>console.error("solveHistory:",err)
+  );
+}
+
+// ── PROGRESS ─────────────────────────────────────────────────
+function renderProgressView(){ renderCatProgress("prog-grid"); renderTimeline(); renderSolvedHistory(); }
+function renderCatProgress(targetId){
+  const solvedIds=myData?.solvedIds||[];
+  const colors={Web:"#00e5ff",Crypto:"#9d4edd",Pwn:"#ff006e",Forensics:"#ff6b35",Rev:"#ffd60a",Misc:"#00ff9d"};
+  const grid=$(targetId); if(!grid) return;
+  grid.innerHTML=CATS.map(cat=>{
+    const total=allChals.filter(c=>c.category===cat).length;
+    const solved=allChals.filter(c=>c.category===cat&&solvedIds.includes(c.id)).length;
+    const pct=total?Math.round(solved/total*100):0;
+    return `
+    <div class="prog-card">
+      <div class="prog-hd"><div class="prog-name">${CAT_ICONS[cat]} ${cat}</div><div class="prog-count">${solved}/${total}</div></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${colors[cat]||"#00e5ff"};box-shadow:0 0 8px ${colors[cat]}55;"></div></div>
+      <div class="prog-pct">${pct}% complete</div>
+    </div>`;
+  }).join("");
+}
+
+function renderSolvedHistory(){
+  const container=$("solved-history"); if(!me) return;
+  onSnapshot(
+    query(collection(db,"solves"),where("uid","==",me.uid),limit(100)),
+    snap=>{
+      const items=[]; snap.forEach(d=>items.push({id:d.id,...d.data()}));
+      items.sort((a,b)=>(b.ts?.toMillis?b.ts.toMillis():0)-(a.ts?.toMillis?a.ts.toMillis():0));
+      if(!items.length){ container.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet. Go hack!</p></div>`; return; }
+      const chalById=id=>allChals.find(c=>c.id===id)||{};
+      container.innerHTML=items.map(s=>`
+        <div class="solve-row">
+          <div class="solve-icon">${CAT_ICONS[s.category]||"🚩"}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="solve-name">${s.title||"?"}</div>
+            <div class="solve-meta">
+              <span class="chal-cat-tag cat-${s.category||""}" style="font-size:.56rem;padding:1px 5px;position:relative;">${s.category||""}</span>
+              ${chalById(s.challengeId).difficulty?`<span class="diff-tag diff-${chalById(s.challengeId).difficulty}" style="font-size:.56rem;padding:1px 5px;">${chalById(s.challengeId).difficulty}</span>`:""}
+              <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-dim);">${s.ts?.toDate?s.ts.toDate().toLocaleDateString():""}</span>
+            </div>
+          </div>
+          <div class="solve-pts">+${s.pts}</div>
+          <button class="solve-share-btn" onclick="shareFromProgress('${s.challengeId}')" title="Share"><i class="fas fa-share-alt"></i></button>
+        </div>`).join("");
+    },
+    ()=>{ container.innerHTML=`<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error loading.</p></div>`; }
   );
 }
 

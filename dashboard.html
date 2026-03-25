@@ -703,8 +703,7 @@ textarea.inp{resize:vertical;min-height:70px;}
 <script type="module">
 import { auth, db } from "./js/firebase.js";
 import {
-  onAuthStateChanged, signOut, deleteUser, updatePassword, sendPasswordResetEmail, doc, collection, getDoc, getDocs, onSnapshot, setDoc,
-  updateDoc, addDoc, deleteDoc, query, orderBy, where, limit, serverTimestamp, increment, writeBatch
+  onAuthStateChanged, signOut, deleteUser, updatePassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   doc, collection, getDoc, getDocs, onSnapshot, setDoc,
@@ -714,13 +713,11 @@ import {
 
 const $ = id => document.getElementById(id);
 const av = s => (s||"?")[0].toUpperCase();
-const LOGO = "https://raw.githubusercontent.com/Mubyyy404/Cyber-Buddy/refs/heads/main/mylogo.png";
-const SITE_URL = window.location.origin + window.location.pathname.replace("dashboard.html","");
 
 function toast(msg, type="info") {
   const el = document.createElement("div");
   el.className = `toast ${type}`;
-  const icon = type==="ok"?"fa-check-circle":type==="err"?"fa-times-circle":"fa-info-circle";
+  const icon = type==="ok"?"fa-check-circle":type==="err"?"fa-times-circle":"fa-terminal";
   el.innerHTML = `<i class="fas ${icon}"></i>${msg}`;
   $("toast-area").appendChild(el);
   setTimeout(()=>el.remove(), 3400);

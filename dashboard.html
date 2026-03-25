@@ -1245,31 +1245,57 @@ window.onSearch = () => {
 // Add the remaining functions (openChal, submitFlag, renderProfile, etc.) if needed.
 // For now, this should fix the main connection and filter errors.
 
-function renderSolvedHistory(){
-  const container=$("solved-history"); if(!me) return;
+function renderSolvedHistory() {
+  const container = $("solved-history");
+  if (!me) return;
+
   onSnapshot(
-    query(collection(db,"solves"),where("uid","==",me.uid),limit(100)),
-    snap=>{
-      const items=[]; snap.forEach(d=>items.push({id:d.id,...d.data()}));
-      items.sort((a,b)=>(b.ts?.toMillis?b.ts.toMillis():0)-(a.ts?.toMillis?a.ts.toMillis():0));
-      if(!items.length){ container.innerHTML=`<div class="empty"><i class="fas fa-flag"></i><p>No solves yet. Go hack!</p></div>`; return; }
-      const chalById=id=>allChals.find(c=>c.id===id)||{};
-      container.innerHTML=items.map(s=>`
-        <div class="solve-row">
-          <div class="solve-icon">${CAT_ICONS[s.category]||"🚩"}</div>
-          <div style="flex:1;min-width:0;">
-            <div class="solve-name">${s.title||"?"}</div>
-            <div class="solve-meta">
-              <span class="chal-cat-tag cat-${s.category||""}" style="font-size:.56rem;padding:1px 5px;position:relative;">${s.category||""}</span>
-              ${chalById(s.challengeId).difficulty?`<span class="diff-tag diff-${chalById(s.challengeId).difficulty}" style="font-size:.56rem;padding:1px 5px;">${chalById(s.challengeId).difficulty}</span>`:""}
-              <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-dim);">${s.ts?.toDate?s.ts.toDate().toLocaleDateString():""}</span>
+    query(collection(db, "solves"), where("uid", "==", me.uid), limit(100)),
+    snap => {
+      const items = [];
+      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+
+      items.sort((a, b) => {
+        const ta = a.ts?.toMillis ? a.ts.toMillis() : 0;
+        const tb = b.ts?.toMillis ? b.ts.toMillis() : 0;
+        return tb - ta;
+      });
+
+      if (!items.length) {
+        container.innerHTML = `<div class="empty"><i class="fas fa-flag"></i><p>No solves yet. Go hack!</p></div>`;
+        return;
+      }
+
+      const chalById = id => allChals.find(c => c.id === id) || {};
+
+      let html = '';
+      for (const s of items) {
+        const ch = chalById(s.challengeId);
+        html += `
+          <div class="solve-row">
+            <div class="solve-icon">${CAT_ICONS[s.category] || "🚩"}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="solve-name">${s.title || "?"}</div>
+              <div class="solve-meta">
+                ${s.category ? `<span class="chal-cat-tag cat-${s.category}" style="font-size:.56rem;padding:1px 5px;">${s.category}</span>` : ''}
+                ${ch.difficulty ? `<span class="diff-tag diff-${ch.difficulty}" style="font-size:.56rem;padding:1px 5px;">${ch.difficulty}</span>` : ''}
+                <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-dim);">
+                  ${s.ts?.toDate ? s.ts.toDate().toLocaleDateString() : ''}
+                </span>
+              </div>
             </div>
-          </div>
-          <div class="solve-pts">+${s.pts}</div>
-          <button class="solve-share-btn" onclick="shareFromProgress('${s.challengeId}')" title="Share"><i class="fas fa-share-alt"></i></button>
-        </div>`).join("");
+            <div class="solve-pts">+${s.pts || 0}</div>
+            <button class="solve-share-btn" onclick="shareFromProgress('${s.challengeId}')" title="Share">
+              <i class="fas fa-share-alt"></i>
+            </button>
+          </div>`;
+      }
+      container.innerHTML = html;
     },
-    ()=>{ container.innerHTML=`<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error loading.</p></div>`; }
+    err => {
+      container.innerHTML = `<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error loading solves.</p></div>`;
+      console.error(err);
+    }
   );
 }
 

@@ -515,197 +515,167 @@ body {
 
 /* ─── CHALLENGE MODAL ─── */
 .modal-wrap {
-  position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  position: fixed; inset: 0; background: rgba(0,0,0,.75);
   z-index: 200; display: flex; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity .25s;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
 }
 .modal-wrap.open { opacity: 1; pointer-events: all; }
 .modal {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--rl); width: min(640px, 96vw); max-height: 92vh;
+  border-radius: var(--rl); width: min(660px, 96vw); max-height: 92vh;
   display: flex; flex-direction: column; overflow: hidden;
   transform: translateY(20px) scale(.96); transition: transform .28s var(--ease-spring);
-  box-shadow: 0 30px 80px rgba(0,0,0,.7);
+  box-shadow: 0 30px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(108,99,255,.08);
 }
 .modal-wrap.open .modal { transform: none; }
 .modal-hero {
-  width: 100%; height: 170px; flex-shrink: 0;
+  width: 100%; height: 180px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   position: relative; overflow: hidden; background: var(--surface2);
 }
-.modal-hero img { width: 100%; height: 100%; object-fit: cover; opacity: .6; }
-.modal-hero-icon { position: absolute; font-size: 3.5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,.5)); }
-.modal-hero-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, var(--surface) 0%, rgba(0,0,0,.2) 60%, transparent 100%); }
-.modal-hero-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 16px; display: flex; align-items: center; gap: 7px; }
+.modal-hero img { width: 100%; height: 100%; object-fit: cover; opacity: .6; transition: transform .4s; }
+.modal-hero-icon { position: absolute; font-size: 3.8rem; filter: drop-shadow(0 4px 16px rgba(0,0,0,.6)); z-index: 1; }
+.modal-hero-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, var(--surface) 0%, rgba(0,0,0,.15) 60%, transparent 100%); z-index: 2; }
+.modal-hero-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px; display: flex; align-items: center; gap: 7px; z-index: 3; }
 .modal-close {
-  margin-left: auto; width: 28px; height: 28px; border-radius: 8px;
-  background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.1);
-  color: rgba(255,255,255,.7); cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: .72rem; transition: all .14s;
+  margin-left: auto; width: 30px; height: 30px; border-radius: 8px;
+  background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.8); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: .74rem; transition: all .14s;
 }
-.modal-close:hover { color: #fff; background: rgba(0,0,0,.6); }
-.modal-body { padding: 20px; overflow-y: auto; flex: 1; }
-.modal-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
-.modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; }
-.modal-pts { font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: var(--a1); }
-.modal-solves { font-family: var(--font-mono); font-size: .64rem; color: var(--text-dim); margin-bottom: 14px; }
-.modal-desc {
-  font-size: .86rem; color: var(--text); line-height: 1.8; margin-bottom: 16px;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(108,99,255,.06), rgba(0,212,170,.04));
-  border: 1px solid rgba(108,99,255,.18);
+.modal-close:hover { color: #fff; background: rgba(0,0,0,.75); transform: scale(1.05); }
+.modal-body { padding: 22px; overflow-y: auto; flex: 1; scrollbar-width: thin; scrollbar-color: var(--scroll-color) transparent; }
+
+/* Enhanced modal title + meta */
+.modal-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.modal-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; line-height: 1.2; }
+.modal-pts-pill {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--font-display); font-size: .88rem; font-weight: 800;
+  color: var(--a1); background: rgba(108,99,255,.1); border: 1px solid rgba(108,99,255,.25);
+  padding: 4px 12px; border-radius: 100px; white-space: nowrap; flex-shrink: 0;
+}
+.modal-solves { font-family: var(--font-mono); font-size: .63rem; color: var(--text-dim); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.modal-solves i { font-size: .6rem; }
+
+/* Enhanced description block */
+.modal-desc-block {
+  background: var(--surface2); border: 1px solid var(--border);
   border-left: 3px solid var(--a1);
-  border-radius: var(--r);
-  position: relative;
+  border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px;
+  position: relative; overflow: hidden;
 }
-.modal-desc::before {
-  content: '"'; position: absolute; top: 6px; left: 8px;
-  font-size: 2rem; color: var(--a1); opacity: .15; font-family: var(--font-display); line-height: 1;
+.modal-desc-block::before {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle at top right, rgba(108,99,255,.08), transparent);
 }
-.info-block { border-radius: var(--r); padding: 16px; margin-bottom: 14px; border: 1px solid; position: relative; overflow: hidden; }
-.info-block::before { content: ''; position: absolute; inset: 0; opacity: .03; pointer-events: none; }
-.info-block.violet {
-  background: linear-gradient(135deg, rgba(108,99,255,.07), rgba(108,99,255,.02));
-  border-color: rgba(108,99,255,.25);
-  box-shadow: 0 2px 16px rgba(108,99,255,.07), inset 0 1px 0 rgba(108,99,255,.1);
-}
-.info-block.amber  {
-  background: linear-gradient(135deg, rgba(245,166,35,.08), rgba(245,166,35,.02));
-  border-color: rgba(245,166,35,.28);
-  box-shadow: 0 2px 16px rgba(245,166,35,.07), inset 0 1px 0 rgba(245,166,35,.1);
-}
-.block-label {
-  font-family: var(--font-mono); font-size: .62rem; text-transform: uppercase;
-  letter-spacing: 2px; font-weight: 600; margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
-}
+.modal-desc-label { font-family: var(--font-mono); font-size: .58rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--a1); margin-bottom: 7px; display: flex; align-items: center; gap: 5px; }
+.modal-desc { font-size: .86rem; color: var(--text-muted); line-height: 1.8; }
+
+/* Info blocks */
+.info-block { border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px; border: 1px solid; position: relative; overflow: hidden; }
+.info-block.violet { background: rgba(108,99,255,.05); border-color: rgba(108,99,255,.18); border-left: 3px solid var(--a1); }
+.info-block.teal   { background: rgba(0,212,170,.04); border-color: rgba(0,212,170,.18); border-left: 3px solid var(--a2); }
+.info-block.amber  { background: rgba(245,166,35,.04); border-color: rgba(245,166,35,.18); border-left: 3px solid var(--a4); }
+.block-label { font-family: var(--font-mono); font-size: .62rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 9px; display: flex; align-items: center; gap: 7px; }
 .block-label.violet { color: var(--a1); }
+.block-label.teal   { color: var(--a2); }
 .block-label.amber  { color: var(--a4); }
-.block-label .label-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  animation: labelPulse 2s ease-in-out infinite;
-}
-.block-label.violet .label-dot { background: var(--a1); box-shadow: 0 0 6px var(--a1); }
-.block-label.amber  .label-dot { background: var(--a4); box-shadow: 0 0 6px var(--a4); }
-@keyframes labelPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
 .block-text { font-size: .83rem; color: var(--text-muted); line-height: 1.75; }
 
-/* ─── MIST HINTS ─── */
-.hints-area { margin-bottom: 14px; }
+/* ─── ENHANCED MIST HINTS ─── */
+.hints-section { margin-bottom: 16px; }
+.hints-section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.hints-section-label { font-family: var(--font-mono); font-size: .62rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: var(--a4); display: flex; align-items: center; gap: 6px; }
+.hints-section-count { font-family: var(--font-mono); font-size: .58rem; color: var(--text-dim); background: var(--surface3); border-radius: 100px; padding: 2px 8px; }
 .hint-item {
   position: relative; border-radius: var(--r);
-  border: 1px solid rgba(245,166,35,.2);
-  background: linear-gradient(135deg, rgba(245,166,35,.06), rgba(245,166,35,.02));
-  box-shadow: 0 2px 12px rgba(245,166,35,.06), inset 0 1px 0 rgba(245,166,35,.08);
-  padding: 16px; cursor: pointer; margin-bottom: 10px;
-  overflow: hidden; transition: border-color .25s, box-shadow .25s;
-  min-height: 58px;
+  border: 1px solid rgba(245,166,35,.18);
+  background: linear-gradient(135deg, rgba(245,166,35,.04), rgba(245,166,35,.02));
+  padding: 16px; cursor: pointer; margin-bottom: 8px;
+  overflow: hidden; transition: border-color .3s, box-shadow .3s;
+  min-height: 62px;
 }
-.hint-item:hover {
-  border-color: rgba(245,166,35,.4);
-  box-shadow: 0 4px 20px rgba(245,166,35,.12);
-}
-.hint-item.revealed {
-  border-color: rgba(245,166,35,.35);
-  background: linear-gradient(135deg, rgba(245,166,35,.08), rgba(245,166,35,.03));
-}
+.hint-item:hover { border-color: rgba(245,166,35,.4); box-shadow: 0 0 20px rgba(245,166,35,.08); }
+.hint-item.revealed { border-color: rgba(245,166,35,.3); cursor: default; }
 .hint-num {
-  font-family: var(--font-mono); font-size: .58rem; color: var(--a4);
-  margin-bottom: 7px; letter-spacing: 2px;
+  font-family: var(--font-mono); font-size: .6rem; color: var(--a4);
+  margin-bottom: 7px; letter-spacing: 1px; font-weight: 600;
   display: flex; align-items: center; gap: 6px;
 }
-.hint-num::before {
-  content: '';
-  width: 14px; height: 2px;
-  background: linear-gradient(90deg, var(--a4), transparent);
-  border-radius: 2px;
-}
-.hint-text { font-size: .83rem; color: var(--text); line-height: 1.65; }
-/* The mist overlay */
+.hint-num::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--a4); flex-shrink: 0; box-shadow: 0 0 6px rgba(245,166,35,.6); }
+.hint-text { font-size: .84rem; color: var(--text); line-height: 1.65; }
+
+/* The mist overlay - enhanced */
 .hint-mist {
   position: absolute; inset: 0; z-index: 3;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: linear-gradient(135deg, rgba(245,166,35,.12), rgba(245,166,35,.06));
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  background: linear-gradient(135deg, rgba(245,166,35,.14), rgba(245,166,35,.07), rgba(245,107,35,.08));
   border-radius: var(--r);
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  font-family: var(--font-mono); font-size: .7rem; color: var(--a4); letter-spacing: 1.5px;
-  transition: opacity .5s, backdrop-filter .5s;
-  cursor: pointer;
-  user-select: none;
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px;
+  transition: opacity .6s ease, backdrop-filter .6s ease;
+  cursor: pointer; user-select: none;
 }
-.hint-mist::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at center, rgba(245,166,35,.08) 0%, transparent 70%);
-  border-radius: var(--r);
-}
-.hint-mist-icon {
-  font-size: 1.2rem;
-  animation: floatIcon 3s ease-in-out infinite;
-}
-@keyframes floatIcon {
-  0%,100%{transform:translateY(0) scale(1);opacity:.8}
-  50%{transform:translateY(-4px) scale(1.05);opacity:1}
-}
-/* On hover, thin the mist slightly */
-.hint-item:hover .hint-mist {
-  backdrop-filter: blur(6px);
-  background: linear-gradient(135deg, rgba(245,166,35,.2), rgba(245,166,35,.1));
-}
-/* Revealed: fade mist out with blur dissolve */
-.hint-item.revealed .hint-mist {
-  opacity: 0; pointer-events: none;
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-}
-.hint-particle-area {
-  position: absolute; inset: 0; pointer-events: none;
-  overflow: hidden; border-radius: var(--r);
-}
-.hint-particle {
-  position: absolute; width: 4px; height: 4px; border-radius: 50%;
-  background: var(--a4); opacity: 0;
-  animation: none;
-}
-.hint-item.revealed .hint-particle { animation: particleBurst .8s ease-out forwards; }
-@keyframes particleBurst {
-  0%{opacity:.8;transform:translate(0,0) scale(1)}
-  100%{opacity:0;transform:var(--dir,translate(20px,-30px)) scale(0)}
-}
+.hint-mist-inner { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: .7rem; color: var(--a4); letter-spacing: 1.5px; }
+.hint-mist-icon { font-size: 1.4rem; animation: floatIcon 3s ease-in-out infinite; }
+@keyframes floatIcon { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-5px) scale(1.06)} }
+.hint-mist-hint { font-family: var(--font-mono); font-size: .58rem; color: rgba(245,166,35,.55); letter-spacing: .5px; }
+/* Hover: mist thins = tease the content */
+.hint-item:hover .hint-mist { backdrop-filter: blur(5px) saturate(1.1); -webkit-backdrop-filter: blur(5px); background: linear-gradient(135deg, rgba(245,166,35,.22), rgba(245,166,35,.12)); }
+/* Revealed */
+.hint-item.revealed .hint-mist { opacity: 0; pointer-events: none; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
+/* Particles */
+.hint-particle-area { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: var(--r); z-index: 4; }
+.hint-particle { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--a4); opacity: 0; }
+.hint-item.revealed .hint-particle { animation: particleBurst .9s ease-out forwards; }
+@keyframes particleBurst { 0%{opacity:.9;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:var(--dir,translate(20px,-30px)) scale(0)} }
 
 /* ─── STEPS + FLAG ─── */
-.steps-block { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 16px; }
-.step { display: flex; gap: 10px; margin-bottom: 10px; }
+.steps-block { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 16px; }
+.steps-block-label { font-family: var(--font-mono); font-size: .62rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; font-weight: 600; }
+.step { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
 .step:last-child { margin-bottom: 0; }
 .step-n { width: 22px; height: 22px; border-radius: 50%; background: rgba(108,99,255,.1); border: 1px solid rgba(108,99,255,.25); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: .6rem; font-weight: 700; color: var(--a1); flex-shrink: 0; margin-top: 1px; }
-.step-t { font-size: .82rem; color: var(--text-muted); line-height: 1.6; }
-.step-t code { font-family: var(--font-mono); background: var(--surface3); padding: 1px 5px; border-radius: 4px; color: var(--a1); font-size: .74rem; }
-.flag-block { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; }
-.flag-block.flag-solved { background: rgba(0,212,170,.04); border-color: rgba(0,212,170,.25); }
-.flag-label { font-family: var(--font-mono); font-size: .62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+.step-t { font-size: .83rem; color: var(--text-muted); line-height: 1.65; }
+.step-t code { font-family: var(--font-mono); background: var(--surface3); padding: 1px 6px; border-radius: 4px; color: var(--a2); font-size: .75rem; border: 1px solid rgba(0,212,170,.15); }
+
+/* ─── ENHANCED FLAG BLOCK ─── */
+.flag-block {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 18px; position: relative; overflow: hidden;
+  transition: border-color .3s;
+}
+.flag-block::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--a2), transparent); opacity: .5; }
+.flag-block.is-solved { border-color: rgba(0,212,170,.35); background: rgba(0,212,170,.03); }
+.flag-block.is-solved::before { opacity: 1; }
+.flag-label { font-family: var(--font-mono); font-size: .62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 7px; font-weight: 600; }
+.flag-label.solved-label { color: var(--a2); }
 .flag-row { display: flex; gap: 7px; }
 .flag-input {
-  flex: 1; padding: 10px 14px; background: var(--input-bg);
+  flex: 1; padding: 11px 14px; background: var(--input-bg);
   border: 1px solid var(--border); border-radius: var(--r);
-  font-family: var(--font-mono); font-size: .84rem; color: var(--a2); outline: none; transition: all .18s;
+  font-family: var(--font-mono); font-size: .85rem; color: var(--a2); outline: none; transition: all .18s;
 }
-.flag-input:focus { border-color: rgba(0,212,170,.4); box-shadow: 0 0 0 3px rgba(0,212,170,.07); }
+.flag-input:focus { border-color: rgba(0,212,170,.45); box-shadow: 0 0 0 3px rgba(0,212,170,.08); }
+.flag-input:disabled { opacity: .5; cursor: not-allowed; background: var(--surface3); }
 .flag-input::placeholder { color: var(--text-dim); }
-.flag-input:disabled { opacity: .5; cursor: not-allowed; }
-.flag-input.flag-solved-input { border-color: rgba(0,212,170,.35); background: rgba(0,212,170,.04); color: var(--a2); }
-.flag-result { margin-top: 9px; padding: 9px 13px; border-radius: var(--r); font-family: var(--font-mono); font-size: .76rem; font-weight: 600; display: none; }
-.flag-result.ok   { background: rgba(0,212,170,.07); color: var(--a2); border: 1px solid rgba(0,212,170,.2); }
-.flag-result.err  { background: rgba(255,77,109,.07); color: var(--a3); border: 1px solid rgba(255,77,109,.2); }
-.flag-result.info { background: rgba(108,99,255,.07); color: var(--a1); border: 1px solid rgba(108,99,255,.2); }
-.flag-already-solved {
-  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
-  background: rgba(0,212,170,.06); border: 1px solid rgba(0,212,170,.25);
-  border-radius: var(--r); margin-top: 9px;
-  font-family: var(--font-mono); font-size: .76rem; color: var(--a2); font-weight: 600;
+/* Already solved banner */
+.solved-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(0,212,170,.08); border: 1px solid rgba(0,212,170,.25);
+  border-radius: var(--r); padding: 12px 14px; margin-bottom: 10px;
+  animation: popIn .4s var(--ease-spring);
 }
-.flag-already-solved i { font-size: 1rem; }
+.solved-banner-icon { font-size: 1.4rem; flex-shrink: 0; }
+.solved-banner-text { font-family: var(--font-mono); font-size: .76rem; font-weight: 600; color: var(--a2); }
+.solved-banner-sub { font-family: var(--font-mono); font-size: .62rem; color: var(--text-dim); margin-top: 2px; }
+.flag-result { margin-top: 10px; padding: 10px 14px; border-radius: var(--r); font-family: var(--font-mono); font-size: .77rem; font-weight: 600; display: none; animation: popIn .25s var(--ease-spring); }
+.flag-result.ok   { background: rgba(0,212,170,.08); color: var(--a2); border: 1px solid rgba(0,212,170,.25); }
+.flag-result.err  { background: rgba(255,77,109,.08); color: var(--a3); border: 1px solid rgba(255,77,109,.25); }
+.flag-result.info { background: rgba(108,99,255,.08); color: var(--a1); border: 1px solid rgba(108,99,255,.25); }
 
 /* ─── BUTTONS ─── */
 .btn { padding: 8px 16px; border-radius: var(--r); border: none; font-family: var(--font-body); font-weight: 600; font-size: .84rem; cursor: pointer; transition: all .18s; display: inline-flex; align-items: center; gap: 6px; }
@@ -882,76 +852,135 @@ textarea.inp { resize: vertical; min-height: 72px; }
 .note-add-btn:hover { border-color: rgba(108,99,255,.5); color: var(--a1); }
 
 /* ─── COMMUNITY CHAT ─── */
-.chat-layout { display: grid; grid-template-columns: 260px 1fr; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; height: calc(100vh - 160px); min-height: 500px; max-height: 800px; }
+.community-tabs { display: flex; gap: 4px; margin-bottom: 14px; background: var(--surface2); border-radius: var(--r); padding: 4px; border: 1px solid var(--border); width: fit-content; }
+.comm-tab { font-family: var(--font-mono); font-size: .7rem; padding: 6px 14px; border-radius: 7px; cursor: pointer; transition: all .18s; color: var(--text-muted); border: 1px solid transparent; }
+.comm-tab.active { background: var(--surface); color: var(--a1); border-color: rgba(108,99,255,.25); box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+.comm-tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,.03); }
+
+.chat-layout { display: grid; grid-template-columns: 270px 1fr; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; height: calc(100vh - 200px); min-height: 500px; max-height: 780px; }
 .chat-sidebar { border-right: 1px solid var(--border); display: flex; flex-direction: column; background: var(--surface2); overflow: hidden; transition: border-color .3s; }
-.chat-sidebar-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.chat-sidebar-title { font-family: var(--font-mono); font-size: .66rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); }
-.create-group-btn { width: 28px; height: 28px; border-radius: 8px; background: rgba(108,99,255,.1); border: 1px solid rgba(108,99,255,.2); color: var(--a1); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .7rem; transition: all .18s; }
+.chat-sidebar-header { padding: 14px 14px 12px; border-bottom: 1px solid var(--border); }
+.chat-sidebar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.chat-sidebar-title { font-family: var(--font-mono); font-size: .65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; }
+.create-group-btn { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 8px; background: rgba(108,99,255,.1); border: 1px solid rgba(108,99,255,.2); color: var(--a1); cursor: pointer; font-family: var(--font-mono); font-size: .64rem; transition: all .18s; }
 .create-group-btn:hover { background: rgba(108,99,255,.2); }
-.group-list { flex: 1; overflow-y: auto; padding: 8px; }
+.chat-group-search { width: 100%; padding: 7px 10px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); font-family: var(--font-mono); font-size: .68rem; outline: none; transition: all .18s; }
+.chat-group-search:focus { border-color: var(--border-hi); }
+.group-list { flex: 1; overflow-y: auto; padding: 6px; }
+.group-list-label { font-family: var(--font-mono); font-size: .55rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); padding: 8px 8px 4px; }
 .group-item {
-  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-  border-radius: var(--r); cursor: pointer; transition: all .15s; margin-bottom: 3px;
-  border: 1px solid transparent;
+  display: flex; align-items: center; gap: 10px; padding: 10px 10px;
+  border-radius: var(--r); cursor: pointer; transition: all .15s; margin-bottom: 2px;
+  border: 1px solid transparent; position: relative;
 }
 .group-item:hover { background: var(--hover-bg); }
 .group-item.active-group { background: rgba(108,99,255,.08); border-color: rgba(108,99,255,.2); }
+.group-item.public-group { opacity: .75; }
+.group-item.public-group:hover { opacity: 1; }
 .group-av {
-  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
   background: linear-gradient(135deg, var(--a1), var(--a2));
-  display: flex; align-items: center; justify-content: center; font-size: .95rem;
-  overflow: hidden;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  overflow: hidden; border: 1px solid rgba(255,255,255,.06);
 }
-.group-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
-.group-name { font-size: .86rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.group-last { font-family: var(--font-mono); font-size: .6rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.group-unread { min-width: 18px; height: 18px; padding: 0 5px; background: var(--a1); border-radius: 100px; font-family: var(--font-mono); font-size: .56rem; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; margin-left: auto; }
+.group-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; }
+.group-name { font-size: .85rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.group-last { font-family: var(--font-mono); font-size: .59rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.group-meta-row { display: flex; align-items: center; gap: 4px; margin-top: 1px; }
+.group-member-count { font-family: var(--font-mono); font-size: .56rem; color: var(--text-dim); display: flex; align-items: center; gap: 3px; }
+.group-public-badge { font-family: var(--font-mono); font-size: .52rem; background: rgba(0,212,170,.08); color: var(--a2); border: 1px solid rgba(0,212,170,.15); border-radius: 4px; padding: 1px 5px; }
+.group-private-badge { font-family: var(--font-mono); font-size: .52rem; background: rgba(108,99,255,.08); color: var(--a1); border: 1px solid rgba(108,99,255,.15); border-radius: 4px; padding: 1px 5px; }
+.group-unread { min-width: 18px; height: 18px; padding: 0 5px; background: var(--a1); border-radius: 100px; font-family: var(--font-mono); font-size: .56rem; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; margin-left: auto; flex-shrink: 0; }
+
+/* Request notification bell */
+.notif-badge { position: relative; }
+.notif-badge-count { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: var(--a3); border-radius: 50%; font-family: var(--font-mono); font-size: .52rem; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; border: 2px solid var(--surface); }
 
 .chat-main { display: flex; flex-direction: column; overflow: hidden; }
 .chat-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; transition: border-color .3s; }
-.chat-group-av { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg,var(--a1),var(--a2)); display: flex; align-items: center; justify-content: center; font-size: .9rem; overflow: hidden; flex-shrink: 0; }
-.chat-group-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
-.chat-group-name { font-size: .9rem; font-weight: 700; }
-.chat-group-meta { font-family: var(--font-mono); font-size: .6rem; color: var(--text-muted); }
+.chat-group-av-lg { width: 40px; height: 40px; border-radius: 11px; background: linear-gradient(135deg,var(--a1),var(--a2)); display: flex; align-items: center; justify-content: center; font-size: 1rem; overflow: hidden; flex-shrink: 0; }
+.chat-group-av-lg img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; }
+.chat-group-name { font-size: .92rem; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+.chat-group-meta { font-family: var(--font-mono); font-size: .6rem; color: var(--text-muted); margin-top: 1px; display: flex; align-items: center; gap: 6px; }
+.online-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--a2); flex-shrink: 0; animation: pulse 2s infinite; }
 .chat-actions { margin-left: auto; display: flex; gap: 6px; }
-.chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-.msg-bubble-wrap { display: flex; gap: 8px; align-items: flex-end; animation: msgIn .25s var(--ease-out); }
-@keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.chat-messages { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; }
+.msg-date-sep { text-align: center; margin: 8px 0; }
+.msg-date-sep span { font-family: var(--font-mono); font-size: .58rem; color: var(--text-dim); background: var(--surface2); border: 1px solid var(--border); padding: 3px 10px; border-radius: 100px; }
+.msg-bubble-wrap { display: flex; gap: 8px; align-items: flex-end; animation: msgIn .22s var(--ease-out); }
+@keyframes msgIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 .msg-bubble-wrap.is-me { flex-direction: row-reverse; }
-.msg-av { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,var(--a1),var(--a2)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: .65rem; font-weight: 800; color: #fff; flex-shrink: 0; overflow: hidden; }
+.msg-av { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,var(--a1),var(--a2)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: .65rem; font-weight: 800; color: #fff; flex-shrink: 0; overflow: hidden; cursor: pointer; }
+.msg-av:hover { box-shadow: 0 0 0 2px var(--a1); }
 .msg-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.msg-content { max-width: 68%; }
-.msg-sender { font-family: var(--font-mono); font-size: .6rem; color: var(--text-dim); margin-bottom: 3px; display: flex; align-items: center; gap: 5px; }
-.msg-sender .leader-tag { background: rgba(245,166,35,.12); color: var(--a4); border: 1px solid rgba(245,166,35,.2); padding: 1px 5px; border-radius: 4px; font-size: .52rem; }
-.msg-sender .admin-tag  { background: rgba(255,77,109,.12); color: var(--a3); border: 1px solid rgba(255,77,109,.2); padding: 1px 5px; border-radius: 4px; font-size: .52rem; }
+.msg-content { max-width: 66%; }
+.msg-sender { font-family: var(--font-mono); font-size: .6rem; color: var(--text-dim); margin-bottom: 3px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.msg-sender .leader-tag { background: rgba(245,166,35,.12); color: var(--a4); border: 1px solid rgba(245,166,35,.2); padding: 1px 5px; border-radius: 4px; font-size: .52rem; font-weight: 600; }
+.msg-sender .admin-tag  { background: rgba(255,77,109,.12); color: var(--a3); border: 1px solid rgba(255,77,109,.2); padding: 1px 5px; border-radius: 4px; font-size: .52rem; font-weight: 600; }
 .msg-bubble {
-  padding: 9px 13px; border-radius: 14px;
-  font-size: .84rem; line-height: 1.55; word-break: break-word;
-  position: relative;
+  padding: 9px 14px; border-radius: 14px;
+  font-size: .85rem; line-height: 1.6; word-break: break-word;
+  position: relative; transition: all .15s;
 }
-.msg-bubble-wrap:not(.is-me) .msg-bubble { background: var(--surface2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-.msg-bubble-wrap.is-me .msg-bubble { background: rgba(108,99,255,.15); border: 1px solid rgba(108,99,255,.25); border-bottom-right-radius: 4px; color: var(--text); }
-.msg-time { font-family: var(--font-mono); font-size: .58rem; color: var(--text-dim); margin-top: 3px; }
-.msg-bubble-wrap.is-me .msg-time { text-align: right; }
+.msg-bubble:hover { filter: brightness(1.04); }
+.msg-bubble-wrap:not(.is-me) .msg-bubble { background: var(--surface2); border: 1px solid var(--border); border-bottom-left-radius: 3px; }
+.msg-bubble-wrap.is-me .msg-bubble { background: rgba(108,99,255,.18); border: 1px solid rgba(108,99,255,.3); border-bottom-right-radius: 3px; }
+.msg-time { font-family: var(--font-mono); font-size: .57rem; color: var(--text-dim); margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+.msg-bubble-wrap.is-me .msg-time { justify-content: flex-end; }
 
-.chat-empty { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--text-dim); }
-.chat-empty i { font-size: 2rem; }
-.chat-empty p { font-family: var(--font-mono); font-size: .76rem; }
+/* System messages */
+.msg-system { text-align: center; }
+.msg-system-text { font-family: var(--font-mono); font-size: .64rem; color: var(--text-dim); background: var(--surface2); border: 1px solid var(--border); padding: 5px 12px; border-radius: 100px; display: inline-flex; align-items: center; gap: 5px; }
 
-.chat-input-row { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; transition: border-color .3s; }
+.chat-empty { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: var(--text-dim); }
+.chat-empty i { font-size: 2.2rem; }
+.chat-empty p { font-family: var(--font-mono); font-size: .76rem; text-align: center; line-height: 1.6; }
+
+.chat-input-row { padding: 12px 14px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; transition: border-color .3s; flex-shrink: 0; }
 .chat-inp {
   flex: 1; padding: 10px 14px; background: var(--input-bg);
   border: 1px solid var(--border); border-radius: var(--rl);
   color: var(--text); font-family: var(--font-body); font-size: .86rem;
   outline: none; resize: none; line-height: 1.5; max-height: 120px; transition: all .18s;
 }
-.chat-inp:focus { border-color: var(--border-hi); }
+.chat-inp:focus { border-color: var(--border-hi); box-shadow: 0 0 0 3px rgba(108,99,255,.06); }
 .chat-inp::placeholder { color: var(--text-dim); }
+
+/* Join Request Card */
+.req-card {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+  margin-bottom: 8px; transition: all .18s;
+}
+.req-card:hover { border-color: var(--border-hi); }
+.req-card-info { flex: 1; min-width: 0; }
+.req-card-title { font-size: .86rem; font-weight: 600; }
+.req-card-sub { font-family: var(--font-mono); font-size: .62rem; color: var(--text-dim); margin-top: 2px; }
+.req-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.req-join-btn { padding: 5px 12px; border-radius: 8px; background: rgba(0,212,170,.1); border: 1px solid rgba(0,212,170,.25); color: var(--a2); font-family: var(--font-mono); font-size: .68rem; font-weight: 600; cursor: pointer; transition: all .18s; }
+.req-join-btn:hover { background: rgba(0,212,170,.2); }
+.req-del-btn { padding: 5px 12px; border-radius: 8px; background: rgba(255,77,109,.06); border: 1px solid rgba(255,77,109,.2); color: var(--a3); font-family: var(--font-mono); font-size: .68rem; cursor: pointer; transition: all .18s; }
+.req-del-btn:hover { background: rgba(255,77,109,.14); }
+
+/* Discover public groups */
+.discover-card {
+  display: flex; align-items: center; gap: 12px; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl);
+  margin-bottom: 10px; transition: all .2s var(--ease-out); cursor: default;
+}
+.discover-card:hover { border-color: var(--border-hi); transform: translateX(2px); }
+.discover-av { width: 42px; height: 42px; border-radius: 11px; background: linear-gradient(135deg,var(--a1),var(--a2)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; overflow: hidden; flex-shrink: 0; }
+.discover-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; }
+.discover-name { font-size: .9rem; font-weight: 700; }
+.discover-meta { font-family: var(--font-mono); font-size: .62rem; color: var(--text-muted); margin-top: 2px; }
+.request-join-btn { margin-left: auto; padding: 6px 14px; border-radius: 100px; background: rgba(108,99,255,.1); border: 1px solid rgba(108,99,255,.25); color: var(--a1); font-family: var(--font-mono); font-size: .68rem; font-weight: 600; cursor: pointer; transition: all .18s; flex-shrink: 0; }
+.request-join-btn:hover { background: rgba(108,99,255,.2); box-shadow: var(--glow-a1); }
+.request-join-btn:disabled { opacity: .5; cursor: not-allowed; }
 
 /* ─── CREATE GROUP MODAL ─── */
 .cg-modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; backdrop-filter: blur(10px); }
 .cg-modal-wrap.open { opacity: 1; pointer-events: all; }
-.cg-modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); width: min(480px, 96vw); padding: 28px 24px; transform: scale(.94) translateY(16px); transition: transform .28s var(--ease-spring); box-shadow: 0 30px 70px rgba(0,0,0,.7); max-height: 90vh; overflow-y: auto; }
+.cg-modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); width: min(480px, 96vw); padding: 28px 24px; transform: scale(.94) translateY(16px); transition: transform .28s var(--ease-spring); box-shadow: 0 30px 70px rgba(0,0,0,.7); }
 .cg-modal-wrap.open .cg-modal { transform: none; }
 .cg-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 .cg-photo-row { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
@@ -967,66 +996,6 @@ textarea.inp { resize: vertical; min-height: 72px; }
 .cg-member-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .cg-check { margin-left: auto; width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: .6rem; transition: all .14s; }
 .cg-member-row.sel .cg-check { background: var(--a1); border-color: var(--a1); color: #fff; }
-
-/* ─── GROUP JOIN REQUESTS PANEL ─── */
-.join-requests-badge {
-  min-width: 18px; height: 18px; padding: 0 5px; background: var(--a3); border-radius: 100px;
-  font-family: var(--font-mono); font-size: .56rem; font-weight: 700; color: #fff;
-  display: inline-flex; align-items: center; justify-content: center;
-  animation: pulse 2s infinite;
-}
-.join-req-card {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r);
-  padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
-  animation: fadeIn .3s var(--ease-out);
-}
-.join-req-card:last-child { margin-bottom: 0; }
-.join-req-info { flex: 1; min-width: 0; }
-.join-req-name { font-size: .84rem; font-weight: 600; }
-.join-req-msg { font-family: var(--font-mono); font-size: .6rem; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.join-req-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.btn-join-accept {
-  padding: 5px 12px; border-radius: 7px; border: 1px solid rgba(0,212,170,.3);
-  background: rgba(0,212,170,.08); color: var(--a2); font-family: var(--font-mono);
-  font-size: .66rem; font-weight: 600; cursor: pointer; transition: all .15s;
-  display: flex; align-items: center; gap: 4px;
-}
-.btn-join-accept:hover { background: rgba(0,212,170,.18); border-color: rgba(0,212,170,.5); }
-.btn-join-reject {
-  padding: 5px 12px; border-radius: 7px; border: 1px solid rgba(255,77,109,.25);
-  background: rgba(255,77,109,.06); color: var(--a3); font-family: var(--font-mono);
-  font-size: .66rem; font-weight: 600; cursor: pointer; transition: all .15s;
-  display: flex; align-items: center; gap: 4px;
-}
-.btn-join-reject:hover { background: rgba(255,77,109,.15); border-color: rgba(255,77,109,.4); }
-
-/* ─── GROUP SETTINGS DROPDOWN ─── */
-.group-settings-menu {
-  position: absolute; right: 12px; top: 54px; z-index: 20;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r); box-shadow: var(--shadow);
-  min-width: 180px; overflow: hidden;
-  animation: fadeIn .18s var(--ease-out);
-}
-.group-settings-item {
-  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-  font-size: .82rem; cursor: pointer; transition: background .14s;
-  border-bottom: 1px solid var(--border);
-}
-.group-settings-item:last-child { border-bottom: none; }
-.group-settings-item:hover { background: var(--hover-bg); }
-.group-settings-item.danger { color: var(--a3); }
-.group-settings-item i { width: 14px; text-align: center; font-size: .76rem; color: var(--text-muted); }
-.group-settings-item.danger i { color: var(--a3); }
-
-/* ─── GROUP VISIBILITY BADGE ─── */
-.group-vis-badge {
-  font-family: var(--font-mono); font-size: .52rem; padding: 2px 7px; border-radius: 100px;
-  display: inline-flex; align-items: center; gap: 4px; margin-left: 4px;
-}
-.group-vis-public { background: rgba(0,212,170,.1); color: var(--a2); border: 1px solid rgba(0,212,170,.2); }
-.group-vis-private { background: rgba(108,99,255,.1); color: var(--a1); border: 1px solid rgba(108,99,255,.2); }
-.group-vis-invite  { background: rgba(245,166,35,.1); color: var(--a4); border: 1px solid rgba(245,166,35,.2); }
 
 /* ─── SOLVE ANIMATION ─── */
 .solve-blast { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; background: rgba(0,0,0,.5); }
@@ -1141,52 +1110,35 @@ textarea.inp { resize: vertical; min-height: 72px; }
 <!-- CREATE GROUP MODAL -->
 <div class="cg-modal-wrap" id="cg-modal-wrap" onclick="if(event.target===this)closeCGModal()">
   <div class="cg-modal">
-    <div class="cg-title"><i class="fas fa-users" style="color:var(--a1);font-size:.9rem;"></i> Create Community Group</div>
+    <div class="cg-title"><i class="fas fa-users" style="color:var(--a1);font-size:.9rem;"></i> Create Group</div>
     <div class="cg-photo-row">
       <div class="cg-photo-preview" id="cg-photo-preview" onclick="document.getElementById('cg-photo-inp').click()">
         <span id="cg-photo-emoji">💬</span>
         <img id="cg-photo-img" style="display:none;" alt="group">
       </div>
       <input type="file" id="cg-photo-inp" accept="image/*" style="display:none" onchange="handleGroupPhoto(event)">
-      <div class="cg-photo-hint">Click to upload group photo.<br><span style="color:var(--a1);">You will be the group leader & admin.</span></div>
+      <div class="cg-photo-hint">Click to add group image.<br>You will be the group <strong style="color:var(--a4);">leader</strong>.</div>
     </div>
-    <div class="field"><label>Group Name *</label><input class="inp" id="cg-name" placeholder="e.g. Web Warriors, Team Zero…"></div>
-    <div class="field"><label>Description</label><input class="inp" id="cg-desc" placeholder="What is this group about?"></div>
-    <div class="field">
-      <label style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px;">Visibility</label>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
-        <label style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;text-align:center;" id="vis-public-lbl">
-          <input type="radio" name="cg-visibility" value="public" checked onchange="updateVisLabel()" style="accent-color:var(--a2);margin-bottom:2px;">
-          <span style="font-size:.8rem;">🌐</span>
-          <span style="font-size:.75rem;font-weight:600;color:var(--text);">Public</span>
-          <span style="font-family:var(--font-mono);font-size:.54rem;color:var(--text-muted);">Anyone can see &amp; request</span>
-        </label>
-        <label style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;text-align:center;" id="vis-invite-lbl">
-          <input type="radio" name="cg-visibility" value="invite" onchange="updateVisLabel()" style="accent-color:var(--a4);margin-bottom:2px;">
-          <span style="font-size:.8rem;">🔗</span>
-          <span style="font-size:.75rem;font-weight:600;color:var(--text);">Invite Only</span>
-          <span style="font-family:var(--font-mono);font-size:.54rem;color:var(--text-muted);">Invite link only</span>
-        </label>
-        <label style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;text-align:center;" id="vis-private-lbl">
-          <input type="radio" name="cg-visibility" value="private" onchange="updateVisLabel()" style="accent-color:var(--a1);margin-bottom:2px;">
-          <span style="font-size:.8rem;">🔒</span>
-          <span style="font-size:.75rem;font-weight:600;color:var(--text);">Private</span>
-          <span style="font-family:var(--font-mono);font-size:.54rem;color:var(--text-muted);">Hidden from all</span>
-        </label>
+    <div class="field"><label>Group Name</label><input class="inp" id="cg-name" placeholder="e.g. Web Warriors, Team Zero…"></div>
+    <div class="field"><label>Group Description (optional)</label><input class="inp" id="cg-desc" placeholder="What's this group about?"></div>
+    <!-- Privacy toggle -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;">
+      <div>
+        <div style="font-size:.84rem;font-weight:600;" id="cg-privacy-label">Private Group</div>
+        <div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted);" id="cg-privacy-sub">Members join via invite only</div>
       </div>
-      <p id="vis-hint" style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-muted);padding:7px 10px;background:var(--surface2);border-radius:7px;">🌐 Anyone can see this group and request to join. Requests will need your approval.</p>
+      <label class="sw"><input type="checkbox" id="cg-private-toggle" checked onchange="updatePrivacyLabel()"><div class="sw-track"></div><div class="sw-thumb"></div></label>
     </div>
     <div class="field">
-      <label>Add Members (send join request)</label>
+      <label>Invite Members</label>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;margin-bottom:6px;">
         <input style="width:100%;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:.7rem;outline:none;padding:2px 6px;" id="cg-member-search" placeholder="Search players…" oninput="filterCGMembers()">
       </div>
       <div class="cg-members-list" id="cg-members-list"></div>
-      <div id="cg-selected-count" style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-muted);margin-top:6px;"></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:4px;justify-content:flex-end;">
       <button class="btn btn-ghost btn-sm" onclick="closeCGModal()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="createGroup()"><i class="fas fa-plus"></i> Create Group</button>
+      <button class="btn btn-primary btn-sm" id="cg-create-btn" onclick="createGroup()"><i class="fas fa-plus"></i> Create Group</button>
     </div>
   </div>
 </div>
@@ -1206,33 +1158,48 @@ textarea.inp { resize: vertical; min-height: 72px; }
     <div class="modal-body">
       <div class="modal-title-row">
         <div class="modal-title" id="m-title">Challenge</div>
-        <div class="modal-pts" id="m-pts">100 pts</div>
+        <div class="modal-pts-pill"><i class="fas fa-star" style="font-size:.7rem;"></i><span id="m-pts">100 pts</span></div>
       </div>
-      <div class="modal-solves" id="m-solves">0 solves</div>
-      <div class="modal-desc" id="m-desc"></div>
+      <div class="modal-solves" id="m-solves"><i class="fas fa-users"></i>0 solves</div>
+
+      <!-- Enhanced description block -->
+      <div class="modal-desc-block">
+        <div class="modal-desc-label"><i class="fas fa-align-left"></i> Challenge Description</div>
+        <div class="modal-desc" id="m-desc"></div>
+      </div>
+
       <div class="info-block violet">
         <div class="block-label violet"><i class="fas fa-book-open"></i> Vulnerability Knowledge</div>
         <div class="block-text" id="m-vuln">—</div>
       </div>
-      <div class="hints-area" id="m-hints-area">
-        <div class="block-label amber" style="margin-bottom:8px;"><i class="fas fa-lightbulb"></i> Hints — Touch to reveal</div>
+
+      <div class="hints-section" id="m-hints-area">
+        <div class="hints-section-header">
+          <div class="hints-section-label"><i class="fas fa-cloud"></i> Hints</div>
+          <span class="hints-section-count" id="m-hints-count">0 hints</span>
+        </div>
         <div id="m-hints"></div>
       </div>
+
       <a id="m-access-btn" href="#" target="_blank" class="btn-access" onclick="trackAccess()">
         <i class="fas fa-external-link-alt"></i> Access Challenge Environment
       </a>
+
       <div class="steps-block">
-        <div class="block-label" style="color:var(--text-muted);margin-bottom:10px;"><i class="fas fa-list-ol"></i> How to solve</div>
+        <div class="steps-block-label"><i class="fas fa-list-ol"></i> How to solve</div>
         <div class="step"><div class="step-n">1</div><div class="step-t">Click <strong>Access Challenge</strong> to open the challenge environment.</div></div>
         <div class="step"><div class="step-n">2</div><div class="step-t">Explore and identify the vulnerability. Use hints if needed.</div></div>
         <div class="step"><div class="step-n">3</div><div class="step-t">Exploit it to retrieve the flag. Format: <code>CTF{xxxx_xxxx}</code></div></div>
         <div class="step"><div class="step-n">4</div><div class="step-t">Paste your flag below and click <strong>Submit</strong> to claim your points.</div></div>
       </div>
-      <div class="flag-block">
-        <div class="flag-label">Submit Your Flag</div>
-        <div class="flag-row">
+
+      <!-- Flag submit block - will be locked after solve -->
+      <div class="flag-block" id="m-flag-block">
+        <div class="flag-label" id="m-flag-label">Submit Your Flag</div>
+        <div id="m-solved-banner" style="display:none;"></div>
+        <div class="flag-row" id="m-flag-row">
           <input class="flag-input" id="m-flag" placeholder="CTF{your_flag_here}">
-          <button class="btn btn-primary btn-sm" onclick="submitFlag()"><i class="fas fa-paper-plane"></i> Submit</button>
+          <button class="btn btn-primary btn-sm" id="m-submit-btn" onclick="submitFlag()"><i class="fas fa-paper-plane"></i> Submit</button>
         </div>
         <div class="flag-result" id="m-result"></div>
       </div>
@@ -1523,24 +1490,56 @@ textarea.inp { resize: vertical; min-height: 72px; }
 
     <!-- ▸ COMMUNITY CHAT -->
     <div id="view-community" class="view">
-      <div class="chat-layout">
-        <!-- Group list sidebar -->
-        <div class="chat-sidebar">
-          <div class="chat-sidebar-header">
-            <div class="chat-sidebar-title">Groups</div>
-            <button class="create-group-btn" onclick="openCGModal()" title="Create Group"><i class="fas fa-plus"></i></button>
-          </div>
-          <div class="group-list" id="group-list">
-            <div class="empty" style="padding:28px;font-size:.7rem;"><i class="fas fa-spinner spin"></i></div>
-          </div>
-        </div>
-        <!-- Chat area -->
-        <div class="chat-main" id="chat-main-area">
-          <div class="chat-empty">
-            <i class="fas fa-comment-dots"></i>
-            <p>Select a group to start chatting</p>
+      <!-- Tabs: My Groups | Discover | Requests -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div class="community-tabs" id="comm-tabs">
+          <div class="comm-tab active" data-tab="groups" onclick="switchCommTab('groups')">My Groups</div>
+          <div class="comm-tab" data-tab="discover" onclick="switchCommTab('discover')">Discover</div>
+          <div class="comm-tab notif-badge" data-tab="requests" onclick="switchCommTab('requests')" id="comm-req-tab">
+            Requests
+            <span class="notif-badge-count" id="req-notif-count" style="display:none;">0</span>
           </div>
         </div>
+        <button class="btn btn-primary btn-sm" onclick="openCGModal()"><i class="fas fa-plus"></i> New Group</button>
+      </div>
+
+      <!-- Tab: My Groups + Chat Layout -->
+      <div id="comm-tab-groups">
+        <div class="chat-layout">
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+              <div class="chat-sidebar-top">
+                <div class="chat-sidebar-title"><i class="fas fa-layer-group" style="margin-right:5px;color:var(--a1);"></i>My Groups</div>
+              </div>
+              <input class="chat-group-search" id="group-search-inp" placeholder="Search groups…" oninput="filterGroupList()">
+            </div>
+            <div class="group-list" id="group-list">
+              <div class="empty" style="padding:28px;"><i class="fas fa-spinner spin"></i></div>
+            </div>
+          </div>
+          <div class="chat-main" id="chat-main-area">
+            <div class="chat-empty">
+              <i class="fas fa-comments"></i>
+              <p>Select a group to start chatting<br><span style="font-size:.7rem;opacity:.6;">or create a new group</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Discover public groups -->
+      <div id="comm-tab-discover" style="display:none;">
+        <div style="margin-bottom:12px;">
+          <input class="inp" id="discover-search" placeholder="Search public groups…" oninput="renderDiscoverGroups()" style="max-width:400px;">
+        </div>
+        <div id="discover-list"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+      </div>
+
+      <!-- Tab: Join Requests (for group leaders/admins) -->
+      <div id="comm-tab-requests" style="display:none;">
+        <div style="margin-bottom:12px;font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);">
+          Pending join requests for your groups
+        </div>
+        <div id="join-requests-list"><div class="empty"><i class="fas fa-inbox"></i><p>No pending requests.</p></div></div>
       </div>
     </div>
 
@@ -1644,7 +1643,6 @@ import {
 ───────────────────────────────────── */
 const $  = id => document.getElementById(id);
 const av = s  => (s||"?")[0].toUpperCase();
-function escapeHtml(t) { return String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 const SITE_URL = window.location.origin + window.location.pathname.replace(/[^/]*$/, "");
 const AV_COLORS = ["#6c63ff","#00d4aa","#ff4d6d","#f5a623","#3b82f6","#8b5cf6","#06b6d4","#ec4899"];
 const CAT_ICONS = {Web:"🌐",Crypto:"🔐",Pwn:"💣",Forensics:"🔬",Rev:"⚙️",Misc:"🎭"};
@@ -1705,7 +1703,6 @@ onAuthStateChanged(auth, async user => {
     }
     refreshSidebar();
     refreshDashStats();
-    startGroupsListener(); // restart so admin-mode query applies if role changed
     if ($("view-profile").classList.contains("active")) renderProfile();
     if ($("view-security").classList.contains("active")) renderSecurity();
   });
@@ -1715,7 +1712,6 @@ onAuthStateChanged(auth, async user => {
   loadSolveHistory();
   loadNotes();
   startGroupsListener();
-  startJoinRequestsListener();
 });
 
 /* ─────────────────────────────────────
@@ -1777,7 +1773,7 @@ window.go = function(v) {
   if(v==="profile")    renderProfile();
   if(v==="security")   renderSecurity();
   if(v==="notes")      renderNotesList();
-  if(v==="community")  { refreshGroupListUI(); renderJoinRequestsInbox(); }
+  if(v==="community")  { refreshGroupListUI(); if(currentCommTab!=="groups") switchCommTab(currentCommTab); }
 };
 window.openSb  = () => { $("sidebar").classList.add("open");    $("mob-overlay").classList.add("show"); };
 window.closeSb = () => { $("sidebar").classList.remove("open"); $("mob-overlay").classList.remove("show"); };
@@ -1873,14 +1869,14 @@ window.openChal = function(id) {
     const img = document.createElement("img");
     img.className = "hero-img";
     img.src = activeModal.imageUrl;
-    img.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6;";
+    img.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6;z-index:0;";
     img.onerror = () => img.remove();
     heroEl.insertBefore(img, heroEl.firstChild);
   }
   $("m-hero-icon").textContent = CAT_ICONS[activeModal.category]||"🚩";
   $("m-title").textContent = activeModal.title;
   $("m-pts").textContent = activeModal.points+" pts";
-  $("m-solves").textContent = (activeModal.solves||0)+" solves";
+  $("m-solves").innerHTML = `<i class="fas fa-users"></i>${activeModal.solves||0} solves`;
   $("m-cat-badge").className = `cat-tag cat-${activeModal.category}`;
   $("m-cat-badge").textContent = activeModal.category;
   $("m-diff-badge").className = `diff-tag diff-${activeModal.difficulty}`;
@@ -1890,39 +1886,60 @@ window.openChal = function(id) {
   const ab = $("m-access-btn");
   ab.href = activeModal.challengeUrl||"#";
   ab.style.display = activeModal.challengeUrl?"inline-flex":"none";
-  // Hints with mist
+
+  // Hints
   const hints = [activeModal.hint1||activeModal.hint, activeModal.hint2, activeModal.hint3].filter(Boolean);
+  if($("m-hints-count")) $("m-hints-count").textContent = hints.length + (hints.length===1?" hint":" hints");
   $("m-hints").innerHTML = hints.length ? hints.map((h,i) => `
     <div class="hint-item" id="hint-${i}">
-      <div class="hint-num">// HINT ${i+1}</div>
+      <div class="hint-num">HINT ${i+1}</div>
       <div class="hint-text">${h}</div>
       <div class="hint-particle-area" id="hint-particles-${i}"></div>
       <div class="hint-mist" id="hint-mist-${i}" onclick="revealHint(${i})">
-        <span class="hint-mist-icon">🌫</span>
-        <span>TOUCH TO REVEAL</span>
+        <div class="hint-mist-inner">
+          <span class="hint-mist-icon">🌫️</span>
+          <span>Touch to reveal hint ${i+1}</span>
+        </div>
+        <div class="hint-mist-hint">Hover to preview · Click to reveal</div>
       </div>
-    </div>`).join("") : `<p style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);">No hints available.</p>`;
-  $("m-flag").value = "";
-  $("m-flag").disabled = false;
-  $("m-flag").classList.remove("flag-solved-input");
-  const fr = $("m-result"); fr.style.display="none"; fr.className="flag-result";
-  // Check if already solved and disable flag input
+    </div>`).join("") : `<p style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);padding:10px 0;">No hints available for this challenge.</p>`;
+
+  // Check if already solved → lock flag block
   const alreadySolved = (myData?.solvedIds||[]).includes(activeModal.id);
+  const flagBlock = $("m-flag-block");
+  const flagRow = $("m-flag-row");
+  const flagLabel = $("m-flag-label");
+  const solvedBanner = $("m-solved-banner");
+  const flagInp = $("m-flag");
+  const submitBtn = $("m-submit-btn");
+  const fr = $("m-result");
+  fr.style.display="none"; fr.className="flag-result";
+
   if(alreadySolved) {
-    $("m-flag").disabled = true;
-    $("m-flag").classList.add("flag-solved-input");
-    $("m-flag").value = "Challenge already solved!";
-    fr.innerHTML = `<i class="fas fa-check-circle" style="margin-right:6px;"></i>You've already solved this challenge! Score: +${activeModal.points} pts`;
-    fr.className = "flag-result ok"; fr.style.display = "block";
-    const submitBtn = document.querySelector(".flag-row .btn-primary");
-    if(submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = ".5"; submitBtn.style.cursor = "not-allowed"; }
-    const flagBlock = $("m-flag").closest(".flag-block");
-    if(flagBlock) flagBlock.classList.add("flag-solved");
+    flagBlock.classList.add("is-solved");
+    flagLabel.className = "flag-label solved-label";
+    flagLabel.innerHTML = `<i class="fas fa-check-circle"></i> Challenge Solved!`;
+    solvedBanner.style.display = "flex";
+    solvedBanner.innerHTML = `
+      <div class="solved-banner">
+        <div class="solved-banner-icon">✅</div>
+        <div>
+          <div class="solved-banner-text">You already solved this challenge!</div>
+          <div class="solved-banner-sub">Points were awarded. Share your achievement below.</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="shareFromProgress('${activeModal.id}');closeModal();"><i class="fas fa-share-alt"></i> Share</button>
+      </div>`;
+    flagRow.style.display = "none";
   } else {
-    const submitBtn = document.querySelector(".flag-row .btn-primary");
-    if(submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ""; submitBtn.style.cursor = ""; }
-    const flagBlock = $("m-flag").closest(".flag-block");
-    if(flagBlock) flagBlock.classList.remove("flag-solved");
+    flagBlock.classList.remove("is-solved");
+    flagLabel.className = "flag-label";
+    flagLabel.innerHTML = `<i class="fas fa-flag"></i> Submit Your Flag`;
+    solvedBanner.style.display = "none";
+    solvedBanner.innerHTML = "";
+    flagRow.style.display = "flex";
+    flagInp.value = "";
+    flagInp.disabled = false;
+    if(submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Submit`; }
   }
   $("chal-modal").classList.add("open");
 };
@@ -1953,40 +1970,49 @@ window.revealHint = function(i) {
 ───────────────────────────────────── */
 window.submitFlag = async function() {
   if(!activeModal || !me) return;
-  const input = $("m-flag"); const val = input.value.trim();
-  const fr = $("m-result"); if(!val) return;
-  // Already solved check
-  const already = (myData?.solvedIds||[]).includes(activeModal.id);
-  if(already) {
-    fr.textContent="✓ Already solved! Share from Progress tab."; fr.className="flag-result ok"; fr.style.display="block";
-    return;
+  const input = $("m-flag").value.trim();
+  const fr = $("m-result"); if(!input) { toast("Enter your flag first","err"); return; }
+  // Block if already solved
+  if((myData?.solvedIds||[]).includes(activeModal.id)) {
+    fr.textContent="✓ You already solved this challenge!"; fr.className="flag-result ok"; fr.style.display="block"; return;
   }
-  fr.textContent = "Verifying…"; fr.className="flag-result info"; fr.style.display="block";
+  const submitBtn = $("m-submit-btn");
+  if(submitBtn) { submitBtn.disabled=true; submitBtn.innerHTML=`<i class="fas fa-spinner spin"></i>`; }
+  fr.textContent="Verifying…"; fr.className="flag-result info"; fr.style.display="block";
   let correctFlag;
   try { const s = await getDoc(doc(db,"challenges",activeModal.id)); correctFlag = s.data()?.flag; }
-  catch(e) { fr.textContent="Error verifying. Try again."; fr.className="flag-result err"; return; }
-  if(val === correctFlag) {
-    fr.textContent = `✓ Correct! +${activeModal.points} pts`;
+  catch(e) {
+    fr.textContent="Error verifying. Try again."; fr.className="flag-result err";
+    if(submitBtn) { submitBtn.disabled=false; submitBtn.innerHTML=`<i class="fas fa-paper-plane"></i> Submit`; }
+    return;
+  }
+  if(input === correctFlag) {
+    fr.textContent = `✓ Correct! +${activeModal.points} pts earned!`;
     fr.className = "flag-result ok";
-    // Disable the flag input and submit button
-    input.disabled = true;
-    input.classList.add("flag-solved-input");
-    const submitBtn = document.querySelector(".flag-row .btn-primary");
-    if(submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = ".5"; submitBtn.style.cursor = "not-allowed"; }
-    // Mark flag block
-    const flagBlock = input.closest(".flag-block");
-    if(flagBlock) flagBlock.classList.add("flag-solved");
+    // Lock input immediately
+    const flagInp = $("m-flag");
+    if(flagInp) { flagInp.disabled=true; flagInp.style.opacity=".55"; }
+    if(submitBtn) { submitBtn.disabled=true; submitBtn.innerHTML=`<i class="fas fa-check"></i> Solved`; submitBtn.style.background="rgba(0,212,170,.15)"; submitBtn.style.color="var(--a2)"; submitBtn.style.borderColor="rgba(0,212,170,.3)"; }
+    // Show solved banner inline
+    const solvedBanner = $("m-solved-banner");
+    if(solvedBanner) {
+      solvedBanner.style.display="flex";
+      solvedBanner.innerHTML=`<div class="solved-banner"><div class="solved-banner-icon">🎉</div><div><div class="solved-banner-text">Challenge Solved! +${activeModal.points} pts</div><div class="solved-banner-sub">Awesome work! Share your victory.</div></div><button class="btn btn-ghost btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="shareFromProgress('${activeModal.id}')"><i class="fas fa-share-alt"></i> Share</button></div>`;
+    }
     const newIds = [...(myData?.solvedIds||[]), activeModal.id];
     const newScore = (myData?.score||0) + activeModal.points;
     const newSolves = (myData?.solves||0) + 1;
     const photo = myData?.photo || me.photoURL || "";
-    await updateDoc(doc(db,"users",me.uid), {solvedIds:newIds, score:newScore, solves:newSolves});
-    await setDoc(doc(db,"leaderboard",me.uid), {name:myData.name||"Hacker",email:myData.email||me.email||"",photo,score:newScore,solves:newSolves,uid:me.uid,role:myData.role||"player"}, {merge:true});
-    await addDoc(collection(db,"solves"), {uid:me.uid,name:myData.name||"Hacker",challengeId:activeModal.id,title:activeModal.title,pts:activeModal.points,category:activeModal.category,ts:serverTimestamp()});
-    await updateDoc(doc(db,"challenges",activeModal.id), {solves:increment(1)});
+    try {
+      await updateDoc(doc(db,"users",me.uid), {solvedIds:newIds, score:newScore, solves:newSolves});
+      await setDoc(doc(db,"leaderboard",me.uid), {name:myData.name||"Hacker",email:myData.email||me.email||"",photo,score:newScore,solves:newSolves,uid:me.uid,role:myData.role||"player"}, {merge:true});
+      await addDoc(collection(db,"solves"), {uid:me.uid,name:myData.name||"Hacker",challengeId:activeModal.id,title:activeModal.title,pts:activeModal.points,category:activeModal.category,ts:serverTimestamp()});
+      await updateDoc(doc(db,"challenges",activeModal.id), {solves:increment(1)});
+    } catch(e) { console.error("solve write:", e); }
     showSolveBlast(activeModal);
   } else {
-    fr.textContent="✗ Wrong flag. Keep trying!"; fr.className="flag-result err"; toast("Wrong flag.","err");
+    fr.textContent="✗ Wrong flag. Keep hacking!"; fr.className="flag-result err"; toast("Wrong flag — keep trying!","err");
+    if(submitBtn) { submitBtn.disabled=false; submitBtn.innerHTML=`<i class="fas fa-paper-plane"></i> Submit`; }
   }
 };
 
@@ -2064,24 +2090,19 @@ function startLeaderboard() {
 }
 
 function getDesignation(row, rank) {
-  if(row.role==="admin") return {label:"⚙ Admin", cls:"desig-admin"};
-  const score = row.score || 0;
-  if(rank===1)         return {label:"🏆 Champion",  cls:"desig-elite"};
-  if(rank<=3)          return {label:"💎 Elite",      cls:"desig-elite"};
-  if(rank<=10)         return {label:"⚡ Advanced",   cls:"desig-advanced"};
-  if(score>=5000)      return {label:"🔥 Legend",     cls:"desig-elite"};
-  if(score>=2500)      return {label:"🎯 Expert",     cls:"desig-advanced"};
-  if(score>=1000)      return {label:"🛡 Pro",         cls:"desig-advanced"};
-  if(score>=500)       return {label:"🔓 Skilled",    cls:"desig-player"};
-  if(score>=100)       return {label:"🌱 Learner",    cls:"desig-player"};
-  return {label:"🎮 Player", cls:"desig-player"};
+  if(row.role==="admin") return {label:"Admin", cls:"desig-admin"};
+  if(rank===1) return {label:"Champion", cls:"desig-elite"};
+  if(rank<=3)  return {label:"Elite",    cls:"desig-elite"};
+  if(rank<=10) return {label:"Advanced", cls:"desig-advanced"};
+  return {label:"Player", cls:"desig-player"};
 }
 function getLevelBadge(score) {
-  if(score>=5000) return {l:"Legend",  cls:"diff-Hard"};
-  if(score>=2500) return {l:"Expert",  cls:"diff-Hard"};
-  if(score>=1000) return {l:"Pro",     cls:"diff-Medium"};
-  if(score>=500)  return {l:"Skilled", cls:"diff-Easy"};
-  return {l:"Rookie", cls:"diff-Easy"};
+  if(score>=10000) return {l:"Legend 🏅",  cls:"diff-Hard"};
+  if(score>=5000)  return {l:"Master",     cls:"diff-Hard"};
+  if(score>=2500)  return {l:"Expert",     cls:"diff-Medium"};
+  if(score>=1000)  return {l:"Pro",        cls:"diff-Easy"};
+  if(score>=500)   return {l:"Skilled",    cls:"diff-Easy"};
+  return             {l:"Rookie",          cls:"diff-Easy"};
 }
 
 function renderLb(rows) {
@@ -2363,25 +2384,44 @@ window.exportNotes = function() {
 };
 
 /* ─────────────────────────────────────
-   COMMUNITY CHAT
+   COMMUNITY CHAT — FULL REWRITE
 ───────────────────────────────────── */
 let allLbPlayers = [];
 let cgSelectedMembers = new Set();
 let cgPhotoData = null;
 let groupsCache = [];
+let allGroupsCache = []; // all public groups for discover
+let pendingRequestsCache = [];
+let currentCommTab = "groups";
+
+// Privacy label toggle
+window.updatePrivacyLabel = function() {
+  const isPrivate = $("cg-private-toggle")?.checked;
+  if($("cg-privacy-label")) $("cg-privacy-label").textContent = isPrivate ? "Private Group" : "Public Group";
+  if($("cg-privacy-sub")) $("cg-privacy-sub").textContent = isPrivate ? "Members join via invite / request only" : "Anyone can discover and request to join";
+};
+
+window.switchCommTab = function(tab) {
+  currentCommTab = tab;
+  ["groups","discover","requests"].forEach(t => {
+    const el = $("comm-tab-"+t); if(el) el.style.display = t===tab?"block":"none";
+    document.querySelectorAll(".comm-tab").forEach(btn => btn.classList.toggle("active", btn.dataset.tab===tab));
+  });
+  if(tab==="discover") { loadAllPublicGroups(); renderDiscoverGroups(); }
+  if(tab==="requests") { loadJoinRequests(); }
+};
 
 // Create group modal
 window.openCGModal = async function() {
   cgSelectedMembers = new Set();
   cgPhotoData = null;
-  $("cg-name").value = "";
+  if($("cg-name")) $("cg-name").value = "";
   if($("cg-desc")) $("cg-desc").value = "";
-  $("cg-photo-emoji").textContent = "💬";
-  $("cg-photo-img").style.display = "none";
-  $("cg-photo-emoji").style.display = "block";
-  // Reset visibility to public
-  const pubRadio = document.querySelector('input[name="cg-visibility"][value="public"]');
-  if(pubRadio) { pubRadio.checked = true; updateVisLabel(); }
+  if($("cg-photo-emoji")) $("cg-photo-emoji").textContent = "💬";
+  if($("cg-photo-img")) { $("cg-photo-img").style.display="none"; }
+  if($("cg-photo-emoji")) $("cg-photo-emoji").style.display="block";
+  if($("cg-private-toggle")) $("cg-private-toggle").checked = true;
+  updatePrivacyLabel();
   // Load players from leaderboard
   allLbPlayers = allLbUsers.filter(u=>u.id!==me?.uid);
   renderCGMembersList();
@@ -2389,38 +2429,28 @@ window.openCGModal = async function() {
 };
 window.closeCGModal = () => $("cg-modal-wrap").classList.remove("open");
 
-window.updateVisLabel = function() {
-  const val = document.querySelector('input[name="cg-visibility"]:checked')?.value || "public";
-  const hints = {
-    public: "🌐 Anyone can see this group and request to join. Requests need your approval.",
-    invite: "🔗 Only visible to invited members. Others can't find it unless they have a link.",
-    private: "🔒 Completely hidden. Only admin can add members directly."
-  };
-  const el = $("vis-hint");
-  if(el) el.textContent = hints[val] || hints.public;
-};
-
 window.handleGroupPhoto = function(e) {
   const file = e.target.files[0]; if(!file) return;
   if(file.size > 2*1024*1024) { toast("Image under 2MB please","err"); return; }
   const reader = new FileReader();
   reader.onload = ev => {
     cgPhotoData = ev.target.result;
-    $("cg-photo-img").src = cgPhotoData;
-    $("cg-photo-img").style.display = "block";
-    $("cg-photo-emoji").style.display = "none";
+    const img = $("cg-photo-img"), emoji = $("cg-photo-emoji");
+    if(img) { img.src=cgPhotoData; img.style.display="block"; }
+    if(emoji) emoji.style.display="none";
   };
   reader.readAsDataURL(file);
 };
 
 window.filterCGMembers = function() { renderCGMembersList(); };
 function renderCGMembersList() {
+  const container = $("cg-members-list"); if(!container) return;
   const search = ($("cg-member-search")?.value||"").toLowerCase();
   const filtered = allLbPlayers.filter(u => !search || (u.name||"").toLowerCase().includes(search) || (u.email||"").toLowerCase().includes(search));
-  $("cg-members-list").innerHTML = filtered.map(u => {
+  container.innerHTML = filtered.map(u => {
     const sel = cgSelectedMembers.has(u.id);
     const col = AV_COLORS[Math.abs(u.id?.charCodeAt(0)||0)%AV_COLORS.length];
-    const photoHtml = u.photo ? `<img src="${u.photo}" alt="${u.name||"?"}">` : av(u.name);
+    const photoHtml = u.photo ? `<img src="${u.photo}" alt="${u.name||"?"}" onerror="this.parentElement.style.background='${col}';this.innerHTML='${av(u.name)}'">` : av(u.name);
     return `
     <div class="cg-member-row ${sel?"sel":""}" onclick="toggleCGMember('${u.id}')">
       <div class="cg-member-av" style="${u.photo?"":"background:"+col+";color:#000;"}">${photoHtml}</div>
@@ -2436,85 +2466,117 @@ window.toggleCGMember = function(uid) {
   if(cgSelectedMembers.has(uid)) cgSelectedMembers.delete(uid);
   else cgSelectedMembers.add(uid);
   renderCGMembersList();
-  const countEl = $("cg-selected-count");
-  if(countEl) {
-    const n = cgSelectedMembers.size;
-    countEl.textContent = n ? `${n} member${n!==1?"s":""} selected — they will receive a join request` : "";
-  }
 };
 
 window.createGroup = async function() {
   if(!me) return;
   const name = $("cg-name").value.trim();
   if(!name) { toast("Enter a group name","err"); return; }
-  const desc = $("cg-desc")?.value.trim() || "";
-  const visEl = document.querySelector('input[name="cg-visibility"]:checked');
-  const visibility = visEl ? visEl.value : "public";
-  const selectedMemberIds = Array.from(cgSelectedMembers);
-  const members = [me.uid]; // creator only to start; others get invites
-  const creatorName = myData?.name || me.displayName || "A member";
+  const isPrivate = $("cg-private-toggle")?.checked !== false;
+  const desc = $("cg-desc")?.value.trim()||"";
+  const invitedMembers = Array.from(cgSelectedMembers);
+  // Creator is always a confirmed member
+  const confirmedMembers = [me.uid];
+  const btn = $("cg-create-btn");
+  if(btn) { btn.disabled=true; btn.innerHTML=`<i class="fas fa-spinner spin"></i> Creating…`; }
   try {
     const groupRef = await addDoc(collection(db,"chatGroups"), {
-      name, description: desc, photo: cgPhotoData||"",
-      leaderId: me.uid, members, visibility,
-      createdAt: serverTimestamp(), lastMessage: "",
-      lastMessageAt: serverTimestamp(), messageCount: 0,
+      name, desc, photo: cgPhotoData||"",
+      leaderId: me.uid,
+      members: confirmedMembers, // only creator confirmed immediately
       admins: [me.uid],
+      isPrivate,
+      createdAt: serverTimestamp(),
+      lastMessage: `${myData?.name||"Someone"} created this group`,
+      lastMessageAt: serverTimestamp(),
+      messageCount: 0,
     });
-    const groupId = groupRef.id;
-    // Send join requests to each selected member
-    const reqPromises = selectedMemberIds.map(uid =>
-      addDoc(collection(db,"groupJoinRequests"), {
-        groupId, groupName: name, groupPhoto: cgPhotoData||"",
-        senderId: me.uid, senderName: creatorName,
-        recipientId: uid, status: "pending",
-        createdAt: serverTimestamp(),
-        message: `${creatorName} invited you to join the group "${name}"`,
+    // Send invites (join requests to invited members)
+    const invitePromises = invitedMembers.map(uid =>
+      setDoc(doc(db,"joinRequests",`${groupRef.id}_${uid}`), {
+        groupId: groupRef.id, groupName: name, groupPhoto: cgPhotoData||"",
+        fromUid: me.uid, fromName: myData?.name||"Someone",
+        toUid: uid, status: "pending", ts: serverTimestamp(), type: "invite",
       })
     );
-    await Promise.all(reqPromises);
-    toast(`Group "${name}" created!${selectedMemberIds.length ? ` Invites sent to ${selectedMemberIds.length} player(s).` : ""}`,"ok");
+    await Promise.all(invitePromises);
+    // Post system message
+    await addDoc(collection(db,"chatGroups",groupRef.id,"messages"), {
+      uid:"system", senderName:"System", text:`${myData?.name||"Someone"} created the group "${name}"`,
+      ts:serverTimestamp(), isSystem:true,
+    });
+    toast(`Group "${name}" created! ${invitedMembers.length>0?invitedMembers.length+" invite(s) sent.":""}`, "ok");
     closeCGModal();
-    activeGroupId = groupId;
-    refreshGroupListUI();
-  } catch(e) { toast("Failed: "+e.message,"err"); }
+    activeGroupId = groupRef.id;
+    if(btn) { btn.disabled=false; btn.innerHTML=`<i class="fas fa-plus"></i> Create Group`; }
+  } catch(e) {
+    toast("Failed: "+e.message,"err");
+    if(btn) { btn.disabled=false; btn.innerHTML=`<i class="fas fa-plus"></i> Create Group`; }
+  }
 };
 
+// Listen to groups the current user is a member of
 function startGroupsListener() {
   if(!me) return;
   if(groupsUnsub) groupsUnsub();
-  // Platform admins see ALL groups; regular users see only their groups
-  const isGlobalAdmin = myData?.role === "admin";
-  const q = isGlobalAdmin
-    ? query(collection(db,"chatGroups"), orderBy("lastMessageAt","desc"))
-    : query(collection(db,"chatGroups"), where("members","array-contains",me.uid), orderBy("lastMessageAt","desc"));
-  groupsUnsub = onSnapshot(q,
+  groupsUnsub = onSnapshot(
+    query(collection(db,"chatGroups"), where("members","array-contains",me.uid), orderBy("lastMessageAt","desc")),
     snap => {
       groupsCache = [];
       snap.forEach(d => groupsCache.push({id:d.id,...d.data()}));
       refreshGroupListUI();
       if($("chat-dot")) $("chat-dot").style.display = groupsCache.length?"flex":"none";
     },
-    err => console.error("groups:", err)
+    err => console.error("groups listener:", err)
+  );
+  // Also listen for pending join requests FOR this user
+  onSnapshot(
+    query(collection(db,"joinRequests"),where("toUid","==",me.uid),where("status","==","pending")),
+    snap => {
+      pendingRequestsCache = []; snap.forEach(d=>pendingRequestsCache.push({id:d.id,...d.data()}));
+      const count = pendingRequestsCache.length;
+      const badge = $("req-notif-count");
+      if(badge) { badge.textContent=count; badge.style.display=count>0?"flex":"none"; }
+      if(currentCommTab==="requests") loadJoinRequests();
+    },
+    err => console.error("req listener:", err)
   );
 }
 
+// Admin: also listen to all groups for admin oversight
+function startAdminGroupsListener() {
+  if(!me || myData?.role!=="admin") return;
+  // Admin sees all groups — loaded on demand in discover tab
+}
+
+let groupSearchFilter = "";
+window.filterGroupList = function() {
+  groupSearchFilter = ($("group-search-inp")?.value||"").toLowerCase();
+  refreshGroupListUI();
+};
+
 function refreshGroupListUI() {
-  if(!$("view-community").classList.contains("active")) return;
+  if(!$("view-community")?.classList.contains("active")) return;
   const list = $("group-list"); if(!list) return;
-  if(!groupsCache.length) {
-    list.innerHTML = `<div class="empty" style="padding:28px;"><i class="fas fa-users"></i><p>No groups yet.<br>Create or join one!</p></div>`;
+  const filtered = groupsCache.filter(g => !groupSearchFilter || g.name?.toLowerCase().includes(groupSearchFilter));
+  if(!filtered.length) {
+    list.innerHTML = `<div class="empty" style="padding:28px;"><i class="fas fa-users"></i><p>No groups yet.<br>Create one above!</p></div>`;
     return;
   }
-  list.innerHTML = groupsCache.map(g => {
+  list.innerHTML = `<div class="group-list-label">Your Groups (${filtered.length})</div>` + filtered.map(g => {
     const isActive = g.id === activeGroupId;
-    const visIcon = g.visibility==="private" ? "🔒" : g.visibility==="invite" ? "🔗" : "🌐";
+    const memberCount = g.members?.length||0;
+    const photoHtml = g.photo ? `<img src="${g.photo}" alt="${g.name}" onerror="this.style.display='none'">` : "";
+    const isLeader = g.leaderId === me?.uid;
     return `
     <div class="group-item ${isActive?"active-group":""}" onclick="openGroup('${g.id}')">
-      <div class="group-av">${g.photo?`<img src="${g.photo}" alt="${escapeHtml(g.name)}">`:"💬"}</div>
+      <div class="group-av">${g.photo?`<img src="${g.photo}" alt="${g.name}" onerror="this.style.display='none'">`:"💬"}</div>
       <div style="flex:1;min-width:0;">
-        <div class="group-name">${escapeHtml(g.name)} <span style="font-size:.65rem;">${visIcon}</span></div>
-        <div class="group-last">${escapeHtml(g.lastMessage||"No messages yet")}</div>
+        <div class="group-name">${g.name} ${isLeader?`<i class="fas fa-crown" style="color:var(--a4);font-size:.6rem;" title="You are the leader"></i>`:""}</div>
+        <div class="group-meta-row">
+          <span class="group-member-count"><i class="fas fa-user" style="font-size:.5rem;"></i>${memberCount}</span>
+          <span class="${g.isPrivate!==false?"group-private-badge":"group-public-badge"}">${g.isPrivate!==false?"Private":"Public"}</span>
+        </div>
       </div>
     </div>`;
   }).join("");
@@ -2523,43 +2585,44 @@ function refreshGroupListUI() {
 window.openGroup = function(groupId) {
   activeGroupId = groupId;
   refreshGroupListUI();
-  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
-  const isAdmin = myData?.role==="admin" || group.admins?.includes(me?.uid);
+  const group = groupsCache.find(g=>g.id===groupId);
+  if(!group) return;
+  buildChatUI(groupId, group);
+};
+
+function buildChatUI(groupId, group) {
   const isLeader = group.leaderId === me?.uid;
-  const membersCount = group.members?.length||0;
-  const visBadge = group.visibility==="private"
-    ? `<span class="group-vis-badge group-vis-private">🔒 Private</span>`
-    : group.visibility==="invite"
-    ? `<span class="group-vis-badge group-vis-invite">🔗 Invite</span>`
-    : `<span class="group-vis-badge group-vis-public">🌐 Public</span>`;
+  const isAdmin  = myData?.role==="admin" || group.admins?.includes(me?.uid);
+  const memberCount = group.members?.length||0;
   const chatArea = $("chat-main-area");
   chatArea.innerHTML = `
-    <div class="chat-header" style="position:relative;">
-      <div class="chat-group-av">${group.photo?`<img src="${group.photo}" alt="${group.name}" onerror="this.style.display='none'">`:"💬"}</div>
+    <div class="chat-header">
+      <div class="chat-group-av-lg">${group.photo?`<img src="${group.photo}" alt="${group.name}" onerror="this.style.display='none'">`:"💬"}</div>
       <div>
-        <div class="chat-group-name">${escapeHtml(group.name)} ${visBadge}</div>
-        <div class="chat-group-meta">${membersCount} member${membersCount!==1?"s":""} ${isLeader?"· Leader":""}${isAdmin&&!isLeader?" · Admin":""}</div>
+        <div class="chat-group-name">
+          ${group.name}
+          ${isLeader?`<i class="fas fa-crown" style="color:var(--a4);font-size:.75rem;" title="You are the leader"></i>`:""}
+          ${isAdmin&&!isLeader?`<span style="font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(255,77,109,.1);color:var(--a3);border:1px solid rgba(255,77,109,.2);border-radius:4px;">ADMIN</span>`:""}
+        </div>
+        <div class="chat-group-meta">
+          <span class="online-dot"></span>
+          ${memberCount} member${memberCount!==1?"s":""}
+          · ${group.isPrivate!==false?"🔒 Private":"🌐 Public"}
+          ${group.desc?` · <em style="color:var(--text-dim);">${group.desc}</em>`:""}
+        </div>
       </div>
       <div class="chat-actions">
-        ${isAdmin?`<button class="tb-btn" onclick="showGroupMembers('${groupId}')" title="Manage Members"><i class="fas fa-users-cog"></i></button>`:""}
-        <button class="tb-btn" id="group-settings-btn-${groupId}" onclick="toggleGroupSettings('${groupId}')" title="Group Options"><i class="fas fa-ellipsis-v"></i></button>
-      </div>
-      <div class="group-settings-menu" id="group-settings-menu-${groupId}" style="display:none;">
-        ${isAdmin?`<div class="group-settings-item" onclick="showGroupMembers('${groupId}');toggleGroupSettings('${groupId}')"><i class="fas fa-users-cog"></i> Manage Members</div>`:""}
-        ${isAdmin?`<div class="group-settings-item" onclick="showGroupRequests('${groupId}');toggleGroupSettings('${groupId}')"><i class="fas fa-user-plus"></i> Join Requests</div>`:""}
-        ${isAdmin?`<div class="group-settings-item" onclick="editGroupSettings('${groupId}');toggleGroupSettings('${groupId}')"><i class="fas fa-cog"></i> Group Settings</div>`:""}
-        <div class="group-settings-item" onclick="copyGroupLink('${groupId}');toggleGroupSettings('${groupId}')"><i class="fas fa-link"></i> Copy Invite Link</div>
-        <div class="group-settings-item danger" onclick="leaveGroup('${groupId}');toggleGroupSettings('${groupId}')"><i class="fas fa-door-open"></i> Leave Group</div>
-        ${isLeader?`<div class="group-settings-item danger" onclick="deleteGroup('${groupId}');toggleGroupSettings('${groupId}')"><i class="fas fa-trash"></i> Delete Group</div>`:""}
+        ${isAdmin||isLeader?`<button class="tb-btn" onclick="showGroupMembers('${groupId}')" title="Manage Members"><i class="fas fa-users-cog"></i></button>`:""}
+        ${isLeader||isAdmin?`<button class="tb-btn" onclick="showGroupSettings('${groupId}')" title="Group Settings"><i class="fas fa-cog"></i></button>`:""}
+        <button class="tb-btn" onclick="leaveGroup('${groupId}')" title="Leave Group" style="color:var(--a3);"><i class="fas fa-door-open"></i></button>
       </div>
     </div>
-    <div class="chat-messages" id="chat-msgs-${groupId}"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
+    <div class="chat-messages" id="chat-msgs-${groupId}"><div class="empty" style="padding:30px;"><i class="fas fa-spinner spin"></i></div></div>
     <div class="chat-input-row">
-      <textarea class="chat-inp" id="chat-inp-${groupId}" placeholder="Type a message… (Enter to send)" rows="1" onkeydown="handleChatKey(event,'${groupId}')"></textarea>
+      <textarea class="chat-inp" id="chat-inp-${groupId}" placeholder="Message ${group.name}… (Enter to send, Shift+Enter for newline)" rows="1" onkeydown="handleChatKey(event,'${groupId}')"></textarea>
       <button class="btn btn-primary btn-sm" onclick="sendMsg('${groupId}')"><i class="fas fa-paper-plane"></i></button>
     </div>`;
 
-  // Start listening to messages
   if(chatUnsub) chatUnsub();
   chatUnsub = onSnapshot(
     query(collection(db,"chatGroups",groupId,"messages"), orderBy("ts","asc"), limit(100)),
@@ -2569,33 +2632,40 @@ window.openGroup = function(groupId) {
     },
     err => console.error("chat msgs:", err)
   );
-};
+}
 
 function renderChatMessages(groupId, msgs, group) {
   const container = document.getElementById("chat-msgs-"+groupId); if(!container) return;
-  if(!msgs.length) { container.innerHTML=`<div class="chat-empty"><i class="fas fa-comment-dots"></i><p>No messages yet. Say hello!</p></div>`; return; }
+  if(!msgs.length) { container.innerHTML=`<div class="chat-empty"><i class="fas fa-comment-dots"></i><p>No messages yet.<br>Say hello! 👋</p></div>`; return; }
+  let lastDate = "";
   container.innerHTML = msgs.map(msg => {
+    if(msg.isSystem) {
+      return `<div class="msg-system"><div class="msg-system-text"><i class="fas fa-info-circle" style="font-size:.6rem;"></i>${escapeHtml(msg.text||"")}</div></div>`;
+    }
     const isMe = msg.uid === me?.uid;
     const color = AV_COLORS[Math.abs((msg.uid||"a").charCodeAt(0))%AV_COLORS.length];
-    const photoHtml = msg.photo ? `<img src="${msg.photo}" alt="${msg.senderName||"?"}">` : av(msg.senderName);
     const isLeader = msg.uid === group.leaderId;
-    const isAdmin  = msg.senderRole === "admin" || group.admins?.includes(msg.uid);
-    const tagHtml = isAdmin ? `<span class="admin-tag">ADMIN</span>` : isLeader ? `<span class="leader-tag">LEADER</span>` : "";
+    const isAdminMsg = msg.senderRole==="admin" || group.admins?.includes(msg.uid);
+    const tagHtml = isAdminMsg ? `<span class="admin-tag">ADMIN</span>` : isLeader ? `<span class="leader-tag">LEADER</span>` : "";
     const timeStr = msg.ts?.toDate ? msg.ts.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}) : "";
-    return `
+    const dateStr = msg.ts?.toDate ? msg.ts.toDate().toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"}) : "";
+    let dateSep = "";
+    if(dateStr && dateStr !== lastDate) { lastDate=dateStr; dateSep=`<div class="msg-date-sep"><span>${dateStr}</span></div>`; }
+    const photoHtml = msg.photo ? `<img src="${msg.photo}" alt="${msg.senderName||"?"}" onerror="this.parentElement.style.background='${color}';this.innerHTML='${av(msg.senderName)}'">` : av(msg.senderName);
+    return `${dateSep}
     <div class="msg-bubble-wrap ${isMe?"is-me":""}">
       <div class="msg-av" style="${msg.photo?"":"background:"+color+";color:#000;"}">${photoHtml}</div>
       <div class="msg-content">
-        ${!isMe?`<div class="msg-sender">${msg.senderName||"Hacker"} ${tagHtml}</div>`:""}
+        ${!isMe?`<div class="msg-sender">${escapeHtml(msg.senderName||"Hacker")} ${tagHtml}</div>`:""}
         <div class="msg-bubble">${escapeHtml(msg.text||"")}</div>
-        <div class="msg-time">${timeStr}</div>
+        <div class="msg-time"><i class="fas fa-clock" style="font-size:.5rem;"></i>${timeStr}</div>
       </div>
     </div>`;
   }).join("");
   container.scrollTop = container.scrollHeight;
 }
 
-function escapeHtml(t) { return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function escapeHtml(t) { return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
 window.handleChatKey = function(e, groupId) {
   if(e.key==="Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(groupId); }
@@ -2612,289 +2682,288 @@ window.sendMsg = async function(groupId) {
       photo: myData?.photo||me.photoURL||"",
       text, ts: serverTimestamp(),
     });
-    await updateDoc(doc(db,"chatGroups",groupId), {lastMessage: text, lastMessageAt: serverTimestamp()});
+    await updateDoc(doc(db,"chatGroups",groupId), {
+      lastMessage: text.length>60?text.substring(0,60)+"…":text,
+      lastMessageAt: serverTimestamp(),
+      messageCount: increment(1),
+    });
   } catch(e) { toast("Failed to send: "+e.message,"err"); }
 };
 
 window.leaveGroup = async function(groupId) {
   if(!me || !confirm("Leave this group?")) return;
   try {
-    await updateDoc(doc(db,"chatGroups",groupId), {members: arrayRemove(me.uid)});
-    activeGroupId = null;
-    $("chat-main-area").innerHTML = `<div class="chat-empty"><i class="fas fa-comment-dots"></i><p>Select a group to start chatting</p></div>`;
+    await updateDoc(doc(db,"chatGroups",groupId), {members:arrayRemove(me.uid)});
+    if(activeGroupId===groupId) {
+      activeGroupId=null;
+      $("chat-main-area").innerHTML = `<div class="chat-empty"><i class="fas fa-comments"></i><p>Select a group to start chatting</p></div>`;
+    }
     toast("Left group","info");
   } catch(e) { toast("Error: "+e.message,"err"); }
 };
 
-window.toggleGroupSettings = function(groupId) {
-  const menu = $("group-settings-menu-"+groupId);
-  if(!menu) return;
-  const isOpen = menu.style.display !== "none";
-  // Close all open menus
-  document.querySelectorAll(".group-settings-menu").forEach(m => m.style.display = "none");
-  if(!isOpen) menu.style.display = "block";
+// Group settings (rename, change photo, delete)
+window.showGroupSettings = async function(groupId) {
+  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
+  const isLeader = group.leaderId===me?.uid, isAdmin=myData?.role==="admin";
+  if(!isLeader && !isAdmin) { toast("Only leader/admin can edit settings","err"); return; }
+  const msgs = document.getElementById("chat-msgs-"+groupId); if(!msgs) return;
+  const overlay = document.createElement("div");
+  overlay.style.cssText="position:absolute;inset:0;background:var(--surface);z-index:20;padding:18px;overflow-y:auto;border-radius:0;";
+  overlay.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-family:var(--font-display);font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:8px;"><i class="fas fa-cog" style="color:var(--a1);"></i> Group Settings</div>
+      <button onclick="this.closest('[style*=position]').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="field"><label>Group Name</label><input class="inp" id="gs-name" value="${escapeHtml(group.name)}"></div>
+    <div class="field"><label>Description</label><input class="inp" id="gs-desc" value="${escapeHtml(group.desc||"")}"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;">
+      <div><div style="font-size:.84rem;font-weight:600;">Privacy</div><div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted);">${group.isPrivate!==false?"Private":"Public"}</div></div>
+      <label class="sw"><input type="checkbox" id="gs-private" ${group.isPrivate!==false?"checked":""}><div class="sw-track"></div><div class="sw-thumb"></div></label>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+      <button class="btn btn-primary btn-sm" onclick="saveGroupSettings('${groupId}')"><i class="fas fa-save"></i> Save</button>
+      ${isLeader||isAdmin?`<button class="btn btn-danger btn-sm" onclick="deleteGroup('${groupId}')"><i class="fas fa-trash"></i> Delete Group</button>`:""}
+    </div>`;
+  msgs.style.position="relative";
+  msgs.appendChild(overlay);
 };
-document.addEventListener("click", e => {
-  if(!e.target.closest(".chat-actions") && !e.target.closest(".group-settings-menu")) {
-    document.querySelectorAll(".group-settings-menu").forEach(m => m.style.display = "none");
-  }
-});
+
+window.saveGroupSettings = async function(groupId) {
+  const name = $("gs-name")?.value.trim(), desc=$("gs-desc")?.value.trim();
+  const isPrivate = $("gs-private")?.checked !== false;
+  if(!name) { toast("Group name required","err"); return; }
+  try {
+    await updateDoc(doc(db,"chatGroups",groupId), {name,desc:desc||"",isPrivate});
+    toast("Settings saved","ok");
+    document.querySelector("[style*='z-index:20']")?.remove();
+  } catch(e) { toast("Error: "+e.message,"err"); }
+};
 
 window.deleteGroup = async function(groupId) {
-  if(!me || !confirm("Permanently delete this group? This cannot be undone.")) return;
-  const group = groupsCache.find(g=>g.id===groupId);
-  if(!group) return;
-  if(group.leaderId !== me.uid && myData?.role !== "admin") { toast("Only the group leader can delete it","err"); return; }
+  if(!confirm("Delete this group permanently? All messages will be lost.")) return;
   try {
-    // Delete messages subcollection
-    const msgSnap = await getDocs(collection(db,"chatGroups",groupId,"messages")).catch(()=>null);
-    if(msgSnap) { const b = writeBatch(db); msgSnap.forEach(d=>b.delete(d.ref)); await b.commit(); }
+    // Delete messages subcollection (batched)
+    const msgsSnap = await getDocs(collection(db,"chatGroups",groupId,"messages")).catch(()=>null);
+    if(msgsSnap) { const b=writeBatch(db); msgsSnap.forEach(d=>b.delete(d.ref)); await b.commit(); }
     await deleteDoc(doc(db,"chatGroups",groupId));
-    activeGroupId = null;
-    $("chat-main-area").innerHTML = `<div class="chat-empty"><i class="fas fa-comment-dots"></i><p>Select a group to start chatting</p></div>`;
+    if(activeGroupId===groupId) { activeGroupId=null; $("chat-main-area").innerHTML=`<div class="chat-empty"><i class="fas fa-comments"></i><p>Select a group</p></div>`; }
     toast("Group deleted","info");
   } catch(e) { toast("Error: "+e.message,"err"); }
 };
 
-window.copyGroupLink = function(groupId) {
-  const link = `${window.location.origin}${window.location.pathname}?join=${groupId}`;
-  navigator.clipboard.writeText(link).then(()=>toast("Invite link copied!","ok")).catch(()=>toast("Copy failed","err"));
-};
-
-window.editGroupSettings = async function(groupId) {
-  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
-  const newName = prompt("Group name:", group.name);
-  if(!newName?.trim()) return;
-  const newDesc = prompt("Description:", group.description||"");
-  const visOptions = ["public","invite","private"];
-  const currentVisIdx = visOptions.indexOf(group.visibility||"public");
-  const newVisRaw = prompt(`Visibility (public / invite / private):`, visOptions[currentVisIdx]||"public");
-  const newVis = visOptions.includes(newVisRaw?.trim()) ? newVisRaw.trim() : group.visibility||"public";
-  try {
-    await updateDoc(doc(db,"chatGroups",groupId), {name:newName.trim(), description:newDesc||"", visibility:newVis});
-    toast("Group settings updated","ok");
-  } catch(e) { toast("Error: "+e.message,"err"); }
-};
-
-window.showGroupRequests = async function(groupId) {
-  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
-  const isAdmin = myData?.role==="admin" || group.admins?.includes(me?.uid);
-  if(!isAdmin) { toast("Admin only","err"); return; }
-  try {
-    const reqSnap = await getDocs(query(collection(db,"groupJoinRequests"), where("groupId","==",groupId), where("status","==","pending")));
-    const reqs = [];
-    reqSnap.forEach(d => reqs.push({id:d.id,...d.data()}));
-    const msgs = document.getElementById("chat-msgs-"+groupId);
-    if(!msgs) return;
-    const overlay = document.createElement("div");
-    overlay.style.cssText = "position:absolute;inset:0;background:var(--surface);z-index:10;padding:16px;overflow-y:auto;border-radius:var(--rl);";
-    if(!reqs.length) {
-      overlay.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><div style="font-family:var(--font-display);font-size:.9rem;font-weight:800;">Join Requests</div><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button></div><div class="empty" style="padding:28px;"><i class="fas fa-inbox"></i><p>No pending requests.</p></div>`;
-    } else {
-      const html = reqs.map(r => `
-        <div class="join-req-card">
-          <div style="width:32px;height:32px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;flex-shrink:0;">${(r.senderName||"?")[0].toUpperCase()}</div>
-          <div class="join-req-info">
-            <div class="join-req-name">${escapeHtml(r.senderName||"Unknown")}</div>
-            <div class="join-req-msg">Wants to join this group</div>
-          </div>
-          <div class="join-req-actions">
-            <button class="btn-join-accept" onclick="adminRespondRequest('${r.id}','${groupId}','${r.senderId}','accept',this)"><i class="fas fa-check"></i> Accept</button>
-            <button class="btn-join-reject" onclick="adminRespondRequest('${r.id}','${groupId}','${r.senderId}','reject',this)"><i class="fas fa-times"></i> Reject</button>
-          </div>
-        </div>`).join("");
-      overlay.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><div style="font-family:var(--font-display);font-size:.9rem;font-weight:800;">Join Requests (${reqs.length})</div><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button></div>${html}`;
-    }
-    msgs.style.position = "relative";
-    msgs.appendChild(overlay);
-  } catch(e) { toast("Error: "+e.message,"err"); }
-};
-
-window.adminRespondRequest = async function(reqId, groupId, senderId, action, btn) {
-  try {
-    if(action === "accept") {
-      await updateDoc(doc(db,"chatGroups",groupId), {members: arrayUnion(senderId)});
-      await updateDoc(doc(db,"groupJoinRequests",reqId), {status:"accepted"});
-      toast("Member added to group","ok");
-    } else {
-      await updateDoc(doc(db,"groupJoinRequests",reqId), {status:"rejected"});
-      toast("Request rejected","info");
-    }
-    btn.closest(".join-req-card").remove();
-  } catch(e) { toast("Error: "+e.message,"err"); }
-};
-
-/* ─────────────────────────────────────
-   GROUP JOIN REQUESTS
-───────────────────────────────────── */
-let joinRequestsUnsub = null;
-let pendingJoinRequests = [];
-
-function startJoinRequestsListener() {
-  if(!me) return;
-  if(joinRequestsUnsub) joinRequestsUnsub();
-  joinRequestsUnsub = onSnapshot(
-    query(collection(db,"groupJoinRequests"), where("recipientId","==",me.uid), where("status","==","pending")),
-    snap => {
-      pendingJoinRequests = [];
-      snap.forEach(d => pendingJoinRequests.push({id:d.id,...d.data()}));
-      renderJoinRequestsBadge();
-      if($("view-community").classList.contains("active")) renderJoinRequestsInbox();
-    },
-    err => console.error("joinRequests:", err)
-  );
-  // Also listen for requests to groups I admin
-  onSnapshot(
-    query(collection(db,"groupJoinRequests"), where("status","==","pending")),
-    snap => {
-      const adminReqs = [];
-      snap.forEach(d => {
-        const data = {id:d.id,...d.data()};
-        const group = groupsCache.find(g=>g.id===data.groupId);
-        if(group && (group.admins?.includes(me.uid) || group.leaderId===me.uid) && data.senderId!==me.uid && !data.recipientId) {
-          adminReqs.push(data);
-        }
-      });
-      if(adminReqs.length && $("view-community").classList.contains("active")) renderAdminGroupRequests(adminReqs);
-    }
-  );
-}
-
-function renderJoinRequestsBadge() {
-  const n = pendingJoinRequests.length;
-  let badge = $("join-req-badge");
-  if(!badge) {
-    const navLink = $("nav-community");
-    if(!navLink) return;
-    badge = document.createElement("span");
-    badge.id = "join-req-badge";
-    badge.className = "join-requests-badge";
-    badge.style.cssText = "margin-left:auto;";
-    // Insert before any existing badges
-    navLink.appendChild(badge);
-  }
-  if(n > 0) { badge.textContent = n; badge.style.display = "inline-flex"; }
-  else { badge.style.display = "none"; }
-}
-
-function renderJoinRequestsInbox() {
-  if(!pendingJoinRequests.length) return;
-  // Show a panel at the top of community view if there are pending invites
-  let panel = $("join-req-inbox");
-  if(!panel) {
-    const commView = $("view-community");
-    if(!commView) return;
-    panel = document.createElement("div");
-    panel.id = "join-req-inbox";
-    panel.style.cssText = "margin-bottom:14px;background:var(--surface);border:1px solid rgba(245,166,35,.25);border-radius:var(--rl);padding:14px 16px;";
-    commView.insertBefore(panel, commView.firstChild);
-  }
-  panel.innerHTML = `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <i class="fas fa-envelope" style="color:var(--a4);"></i>
-      <span style="font-family:var(--font-mono);font-size:.66rem;font-weight:600;color:var(--a4);text-transform:uppercase;letter-spacing:1px;">Group Invites (${pendingJoinRequests.length})</span>
-    </div>
-    ${pendingJoinRequests.map(req => {
-      const col = AV_COLORS[Math.abs((req.groupId||"a").charCodeAt(0))%AV_COLORS.length];
-      const photoHtml = req.groupPhoto ? `<img src="${req.groupPhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" alt="group">` : "💬";
-      return `
-      <div class="join-req-card">
-        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:.9rem;overflow:hidden;flex-shrink:0;">${photoHtml}</div>
-        <div class="join-req-info">
-          <div class="join-req-name">${escapeHtml(req.senderName||"Someone")}</div>
-          <div class="join-req-msg">invited you to join <strong>${escapeHtml(req.groupName||"a group")}</strong></div>
-        </div>
-        <div class="join-req-actions">
-          <button class="btn-join-accept" onclick="respondJoinRequest('${req.id}','${req.groupId}','accept')"><i class="fas fa-check"></i> Join</button>
-          <button class="btn-join-reject" onclick="respondJoinRequest('${req.id}','${req.groupId}','reject')"><i class="fas fa-times"></i> Decline</button>
-        </div>
-      </div>`;
-    }).join("")}`;
-}
-
-function renderAdminGroupRequests(reqs) {
-  // handled inline in group chat header
-}
-
-window.respondJoinRequest = async function(reqId, groupId, action) {
-  if(!me) return;
-  try {
-    if(action === "accept") {
-      await updateDoc(doc(db,"chatGroups",groupId), {members: arrayUnion(me.uid)});
-      await updateDoc(doc(db,"groupJoinRequests",reqId), {status:"accepted"});
-      toast("Joined group!","ok");
-      activeGroupId = groupId;
-      startGroupsListener();
-    } else {
-      await updateDoc(doc(db,"groupJoinRequests",reqId), {status:"rejected"});
-      toast("Declined invite","info");
-    }
-    pendingJoinRequests = pendingJoinRequests.filter(r=>r.id!==reqId);
-    renderJoinRequestsBadge();
-    const panel = $("join-req-inbox");
-    if(panel) {
-      if(!pendingJoinRequests.length) panel.remove();
-      else renderJoinRequestsInbox();
-    }
-  } catch(e) { toast("Error: "+e.message,"err"); }
-};
-
+// Manage members panel
 window.showGroupMembers = async function(groupId) {
-  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
-  const members = group.members||[];
-  // Build simple modal inline
-  const names = await Promise.all(members.map(async uid => {
-    const snap = await getDoc(doc(db,"users",uid)).catch(()=>null);
-    return snap?.exists() ? {uid, ...snap.data()} : {uid, name:"Unknown"};
+  const group = groupsCache.find(g=>g.id===groupId)||allGroupsCache.find(g=>g.id===groupId);
+  if(!group) return;
+  const msgs = document.getElementById("chat-msgs-"+groupId); if(!msgs) return;
+  msgs.style.position="relative";
+  const overlay = document.createElement("div");
+  overlay.style.cssText="position:absolute;inset:0;background:var(--surface);z-index:20;padding:18px;overflow-y:auto;";
+  overlay.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><div style="font-family:var(--font-display);font-size:.95rem;font-weight:800;"><i class="fas fa-users" style="color:var(--a1);margin-right:6px;"></i>Members (${group.members?.length||0})</div><button onclick="this.closest('[style*=z-index]').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button></div><div id="members-list-inner"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>`;
+  msgs.appendChild(overlay);
+  // Fetch each member's data
+  const memberData = await Promise.all((group.members||[]).map(async uid => {
+    try { const s=await getDoc(doc(db,"users",uid)); return s.exists()?{uid,...s.data()}:{uid,name:"Unknown"}; }
+    catch(e) { return {uid,name:"Unknown"}; }
   }));
-  const html = names.map(u => {
-    const isAdmin = group.admins?.includes(u.uid)||u.role==="admin";
-    const isLeader = u.uid===group.leaderId;
-    const col = AV_COLORS[Math.abs((u.uid||"a").charCodeAt(0))%AV_COLORS.length];
-    const photoHtml = u.photo ? `<img src="${u.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : av(u.name);
-    return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r);background:var(--surface2);margin-bottom:6px;">
-      <div style="width:32px;height:32px;border-radius:50%;background:${u.photo?"transparent":col};display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.8rem;font-weight:800;color:#000;overflow:hidden;flex-shrink:0;">${photoHtml}</div>
-      <div style="flex:1;">
-        <div style="font-size:.86rem;font-weight:600;">${u.name||"Hacker"} ${isLeader?"<span style='font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(245,166,35,.12);color:var(--a4);border:1px solid rgba(245,166,35,.2);border-radius:4px;'>LEADER</span>":""}</div>
-        <div style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);">${u.role||"player"}</div>
-      </div>
-      ${(myData?.role==="admin"||group.admins?.includes(me?.uid)) && u.uid!==me?.uid ? `
-      <select onchange="changeMemberRole('${groupId}','${u.uid}',this.value)" style="background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-family:var(--font-mono);font-size:.66rem;padding:3px 6px;outline:none;cursor:pointer;">
-        <option value="player" ${(u.role||"player")==="player"?"selected":""}>Player</option>
-        <option value="admin" ${u.role==="admin"?"selected":""}>Admin</option>
-      </select>` : ""}
-    </div>`;
-  }).join("");
-  toast("Members list loaded - scroll messages area","info");
-  // Inject a members overlay into chat
-  const msgs = document.getElementById("chat-msgs-"+groupId);
-  if(msgs) {
-    const overlay = document.createElement("div");
-    overlay.style.cssText = "position:absolute;inset:0;background:var(--surface);z-index:10;padding:16px;overflow-y:auto;border-radius:var(--rl);";
-    overlay.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><div style="font-family:var(--font-display);font-size:.9rem;font-weight:800;">Group Members</div><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button></div>${html}`;
-    overlay.style.position = "relative";
-    msgs.style.position = "relative";
-    msgs.appendChild(overlay);
+  const canManage = myData?.role==="admin" || group.admins?.includes(me?.uid) || group.leaderId===me?.uid;
+  const inner = overlay.querySelector("#members-list-inner");
+  if(inner) {
+    inner.innerHTML = memberData.map(u => {
+      const isLeader2=u.uid===group.leaderId, isAdminM=group.admins?.includes(u.uid)||u.role==="admin";
+      const isMe2=u.uid===me?.uid;
+      const col=AV_COLORS[Math.abs((u.uid||"a").charCodeAt(0))%AV_COLORS.length];
+      const photoHtml=u.photo?`<img src="${u.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:`<span>${av(u.name)}</span>`;
+      const tagHtml = isLeader2?`<span style="font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(245,166,35,.12);color:var(--a4);border:1px solid rgba(245,166,35,.2);border-radius:4px;margin-left:5px;">LEADER</span>`
+        : isAdminM?`<span style="font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(255,77,109,.1);color:var(--a3);border:1px solid rgba(255,77,109,.2);border-radius:4px;margin-left:5px;">ADMIN</span>`:
+        `<span style="font-family:var(--font-mono);font-size:.52rem;padding:1px 5px;background:rgba(108,99,255,.08);color:var(--a1);border:1px solid rgba(108,99,255,.15);border-radius:4px;margin-left:5px;">PLAYER</span>`;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px;border-radius:var(--r);background:var(--surface2);margin-bottom:6px;border:1px solid var(--border);">
+        <div style="width:34px;height:34px;border-radius:50%;background:${u.photo?"transparent":col};display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.82rem;font-weight:800;color:#000;overflow:hidden;flex-shrink:0;">${photoHtml}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.86rem;font-weight:600;display:flex;align-items:center;flex-wrap:wrap;">${escapeHtml(u.name||"Hacker")}${isMe2?`<span class="me-tag">YOU</span>`:""}${tagHtml}</div>
+          <div style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);">${u.email||""}</div>
+        </div>
+        ${canManage && !isMe2 && !isLeader2 ? `
+        <select onchange="changeMemberRole('${groupId}','${u.uid}',this.value)" style="background:var(--input-bg);border:1px solid var(--border);border-radius:7px;color:var(--text-muted);font-family:var(--font-mono);font-size:.65rem;padding:4px 7px;outline:none;cursor:pointer;transition:all .15s;">
+          <option value="player" ${(u.role||"player")==="player"&&!isAdminM?"selected":""}>Player</option>
+          <option value="admin" ${u.role==="admin"||isAdminM?"selected":""}>Admin</option>
+        </select>
+        <button onclick="removeMember('${groupId}','${u.uid}')" style="background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:var(--a3);padding:4px 9px;border-radius:7px;cursor:pointer;font-size:.68rem;font-family:var(--font-mono);" title="Remove"><i class="fas fa-times"></i></button>` : ""}
+      </div>`;
+    }).join("");
   }
 };
 
 window.changeMemberRole = async function(groupId, targetUid, newRole) {
   if(!me) return;
-  const group = groupsCache.find(g=>g.id===groupId);
+  const group = groupsCache.find(g=>g.id===groupId)||allGroupsCache.find(g=>g.id===groupId);
   if(!group) return;
-  const canChange = myData?.role==="admin" || group.leaderId===me.uid || group.admins?.includes(me.uid);
-  if(!canChange) { toast("No permission","err"); return; }
-  // Leader can't be demoted unless you're the platform admin
-  if(targetUid===group.leaderId && myData?.role!=="admin") { toast("Cannot change the group leader's role","err"); return; }
+  const canManage = myData?.role==="admin" || group.admins?.includes(me.uid) || group.leaderId===me.uid;
+  if(!canManage) { toast("No permission","err"); return; }
   try {
     await updateDoc(doc(db,"users",targetUid), {role:newRole});
     await updateDoc(doc(db,"leaderboard",targetUid), {role:newRole}).catch(()=>{});
-    if(newRole==="admin") {
-      await updateDoc(doc(db,"chatGroups",groupId), {admins:arrayUnion(targetUid)});
+    if(newRole==="admin") { await updateDoc(doc(db,"chatGroups",groupId), {admins:arrayUnion(targetUid)}); }
+    else { await updateDoc(doc(db,"chatGroups",groupId), {admins:arrayRemove(targetUid)}); }
+    toast("Role updated to "+newRole,"ok");
+  } catch(e) { toast("Error: "+e.message,"err"); }
+};
+
+window.removeMember = async function(groupId, targetUid) {
+  if(!me || !confirm("Remove this member from the group?")) return;
+  try {
+    await updateDoc(doc(db,"chatGroups",groupId), {members:arrayRemove(targetUid)});
+    toast("Member removed","info");
+    showGroupMembers(groupId); // refresh panel
+  } catch(e) { toast("Error: "+e.message,"err"); }
+};
+
+/* ─── DISCOVER TAB ─── */
+async function loadAllPublicGroups() {
+  try {
+    // Admins see all groups; others only see public groups they're not in
+    let q;
+    if(myData?.role==="admin") {
+      q = query(collection(db,"chatGroups"), orderBy("lastMessageAt","desc"), limit(50));
     } else {
-      await updateDoc(doc(db,"chatGroups",groupId), {admins:arrayRemove(targetUid)});
+      q = query(collection(db,"chatGroups"), where("isPrivate","==",false), orderBy("lastMessageAt","desc"), limit(50));
     }
-    toast("Role updated to " + newRole,"ok");
+    const snap = await getDocs(q);
+    allGroupsCache = [];
+    snap.forEach(d => allGroupsCache.push({id:d.id,...d.data()}));
+  } catch(e) { console.error("loadAllPublicGroups:",e); }
+}
+
+window.renderDiscoverGroups = function() {
+  const container = $("discover-list"); if(!container) return;
+  const search = ($("discover-search")?.value||"").toLowerCase();
+  const myGroupIds = new Set(groupsCache.map(g=>g.id));
+  const filtered = allGroupsCache.filter(g => {
+    if(myData?.role!=="admin" && myGroupIds.has(g.id)) return false; // hide if already member (unless admin sees all)
+    if(search && !g.name?.toLowerCase().includes(search) && !g.desc?.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  if(!filtered.length) { container.innerHTML=`<div class="empty"><i class="fas fa-search"></i><p>No ${myData?.role==="admin"?"groups":"public groups"} found.</p></div>`; return; }
+  container.innerHTML = filtered.map(g => {
+    const memberCount = g.members?.length||0;
+    const inGroup = groupsCache.some(x=>x.id===g.id);
+    const isAdmin = myData?.role==="admin";
+    const photoHtml = g.photo ? `<img src="${g.photo}" alt="${g.name}" onerror="this.style.display='none'">` : "";
+    return `
+    <div class="discover-card">
+      <div class="discover-av">${g.photo?`<img src="${g.photo}" alt="${g.name}" onerror="this.style.display='none'">`:"💬"}</div>
+      <div>
+        <div class="discover-name">${escapeHtml(g.name)} ${g.isPrivate!==false?`<span class="group-private-badge">🔒 Private</span>`:`<span class="group-public-badge">🌐 Public</span>`}</div>
+        <div class="discover-meta">${memberCount} member${memberCount!==1?"s":""} ${g.desc?` · ${escapeHtml(g.desc)}`:""}</div>
+      </div>
+      ${inGroup
+        ? `<button class="request-join-btn" disabled style="opacity:.5;cursor:default;"><i class="fas fa-check"></i> Joined</button>`
+        : isAdmin
+          ? `<button class="request-join-btn" onclick="adminJoinGroup('${g.id}')"><i class="fas fa-eye"></i> View</button>`
+          : `<button class="request-join-btn" id="rjb-${g.id}" onclick="requestToJoin('${g.id}','${escapeHtml(g.name)}')"><i class="fas fa-paper-plane"></i> Request to Join</button>`
+      }
+    </div>`;
+  }).join("");
+};
+
+window.requestToJoin = async function(groupId, groupName) {
+  if(!me) return;
+  const btn = document.getElementById("rjb-"+groupId);
+  if(btn) { btn.disabled=true; btn.innerHTML=`<i class="fas fa-spinner spin"></i> Sending…`; }
+  try {
+    // Check if already requested
+    const existing = await getDoc(doc(db,"joinRequests",`${groupId}_req_${me.uid}`));
+    if(existing.exists() && existing.data().status==="pending") {
+      toast("Request already sent!","info");
+      if(btn) { btn.disabled=false; btn.innerHTML=`<i class="fas fa-paper-plane"></i> Request to Join`; }
+      return;
+    }
+    const group = allGroupsCache.find(g=>g.id===groupId);
+    await setDoc(doc(db,"joinRequests",`${groupId}_req_${me.uid}`), {
+      groupId, groupName,
+      groupPhoto: group?.photo||"",
+      fromUid: me.uid,
+      fromName: myData?.name||"Someone",
+      fromPhoto: myData?.photo||"",
+      toUid: group?.leaderId||"", // send request to leader
+      status: "pending",
+      ts: serverTimestamp(),
+      type: "join_request",
+    });
+    toast(`Request sent to join "${groupName}"!`,"ok");
+    if(btn) { btn.disabled=true; btn.innerHTML=`<i class="fas fa-clock"></i> Pending`; }
+  } catch(e) { toast("Error: "+e.message,"err"); if(btn) { btn.disabled=false; btn.innerHTML=`<i class="fas fa-paper-plane"></i> Request to Join`; } }
+};
+
+// Admin can directly join any group to monitor
+window.adminJoinGroup = async function(groupId) {
+  if(!me || myData?.role!=="admin") return;
+  try {
+    await updateDoc(doc(db,"chatGroups",groupId), {members:arrayUnion(me.uid), admins:arrayUnion(me.uid)});
+    toast("Joined group as admin","ok");
+    renderDiscoverGroups();
+  } catch(e) { toast("Error: "+e.message,"err"); }
+};
+
+/* ─── JOIN REQUESTS TAB ─── */
+async function loadJoinRequests() {
+  const container = $("join-requests-list"); if(!container) return;
+  container.innerHTML=`<div class="empty"><i class="fas fa-spinner spin"></i></div>`;
+  try {
+    // Get requests sent TO this user (invites from others, or join requests for their groups)
+    const [incomingSnap, groupReqSnap] = await Promise.all([
+      getDocs(query(collection(db,"joinRequests"),where("toUid","==",me.uid),where("status","==","pending"))),
+      // If user leads groups, also fetch join requests for those groups
+      getDocs(query(collection(db,"joinRequests"),where("status","==","pending")))
+    ]);
+    const myGroupIds = new Set(groupsCache.filter(g=>g.leaderId===me.uid||g.admins?.includes(me.uid)).map(g=>g.id));
+    const allReqs = [];
+    incomingSnap.forEach(d=>allReqs.push({id:d.id,...d.data()}));
+    // Also add join requests for groups you lead (dedup)
+    const existingIds = new Set(allReqs.map(r=>r.id));
+    groupReqSnap.forEach(d=>{ const data=d.data(); if(!existingIds.has(d.id) && myGroupIds.has(data.groupId)) allReqs.push({id:d.id,...data}); });
+    if(!allReqs.length) { container.innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><p>No pending requests.</p></div>`; return; }
+    container.innerHTML = allReqs.map(req => {
+      const isInvite = req.type==="invite";
+      return `
+      <div class="req-card" id="req-${req.id}">
+        <div style="width:38px;height:38px;border-radius:50%;background:${req.fromPhoto?"transparent":"var(--a1)"};display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.9rem;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;">
+          ${req.fromPhoto?`<img src="${req.fromPhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:`<span>${av(req.fromName)}</span>`}
+        </div>
+        <div class="req-card-info">
+          <div class="req-card-title">
+            ${isInvite
+              ? `<strong>${escapeHtml(req.fromName)}</strong> invited you to <strong>${escapeHtml(req.groupName)}</strong>`
+              : `<strong>${escapeHtml(req.fromName)}</strong> wants to join <strong>${escapeHtml(req.groupName)}</strong>`}
+          </div>
+          <div class="req-card-sub">${req.ts?.toDate?req.ts.toDate().toLocaleDateString():""} · ${isInvite?"Invite":"Join Request"}</div>
+        </div>
+        <div class="req-actions">
+          <button class="req-join-btn" onclick="respondToRequest('${req.id}','${req.groupId}','${req.fromUid}','accept')"><i class="fas fa-check"></i> ${isInvite?"Accept":"Approve"}</button>
+          <button class="req-del-btn" onclick="respondToRequest('${req.id}','${req.groupId}','${req.fromUid}','decline')"><i class="fas fa-times"></i> ${isInvite?"Decline":"Reject"}</button>
+        </div>
+      </div>`;
+    }).join("");
+  } catch(e) { container.innerHTML=`<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error loading requests.</p></div>`; console.error(e); }
+}
+
+window.respondToRequest = async function(reqId, groupId, fromUid, action) {
+  try {
+    const reqRef = doc(db,"joinRequests",reqId);
+    if(action==="accept") {
+      await updateDoc(doc(db,"chatGroups",groupId), {members:arrayUnion(fromUid)});
+      await updateDoc(reqRef, {status:"accepted"});
+      // Post system message
+      const requesterSnap = await getDoc(doc(db,"users",fromUid)).catch(()=>null);
+      const requesterName = requesterSnap?.data()?.name||"Someone";
+      await addDoc(collection(db,"chatGroups",groupId,"messages"), {uid:"system",senderName:"System",text:`${requesterName} joined the group`,ts:serverTimestamp(),isSystem:true});
+      toast("Request accepted!","ok");
+    } else {
+      await updateDoc(reqRef, {status:"declined"});
+      toast("Request declined","info");
+    }
+    document.getElementById("req-"+reqId)?.remove();
   } catch(e) { toast("Error: "+e.message,"err"); }
 };
 

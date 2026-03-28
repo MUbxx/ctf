@@ -114,10 +114,10 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:1}
-.topbar{height:var(--topbar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;position:sticky;top:0;background:var(--topbar-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:40;transition:border-color .3s,background .3s}
+.topbar{height:var(--topbar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:10px;position:sticky;top:0;background:var(--topbar-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:40;transition:border-color .3s,background .3s}
 .topbar-title{font-family:var(--font-display);font-size:.82rem;font-weight:700;letter-spacing:1px;color:var(--text);display:flex;align-items:center;gap:8px}
 .topbar-title::before{content:'';width:4px;height:16px;background:linear-gradient(to bottom,var(--a1),var(--a2));border-radius:4px;display:inline-block}
-.search-wrap{flex:1;max-width:300px;position:relative;margin-left:auto}
+.search-wrap{flex:1;max-width:300px;position:relative;margin-left:auto;margin-right:8px}
 .search-wrap input{width:100%;padding:8px 12px 8px 34px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-mono);font-size:.76rem;outline:none;transition:all .2s}
 .search-wrap input:focus{border-color:var(--border-hi);background:var(--surface2)}
 .search-wrap input::placeholder{color:var(--text-dim)}
@@ -141,10 +141,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .notif-pill{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;background:var(--a3);border-radius:100px;font-family:var(--font-mono);font-size:.52rem;font-weight:700;color:#fff;display:none;align-items:center;justify-content:center;border:2px solid var(--bg);animation:popIn .3s var(--ease-spring)}
 .notif-pill.show{display:flex}
 
-/* Topbar logout (visible on mobile / always accessible) */
-.topbar-logout-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r);border:1px solid rgba(255,77,109,.3);background:rgba(255,77,109,.07);color:var(--a3);font-family:var(--font-mono);font-size:.68rem;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
-.topbar-logout-btn:hover{background:rgba(255,77,109,.15)}
-@media(min-width:769px){.topbar-logout-btn{display:none}}
+
 
 /* CONTENT */
 .content{flex:1;padding:24px;overflow-y:auto}
@@ -627,17 +624,89 @@ textarea.inp{resize:vertical;min-height:72px}
 .empty p{font-family:var(--font-mono);font-size:.76rem;letter-spacing:.3px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{animation:spin .7s linear infinite;display:inline-block}
+/* ─── SECURITY GRID RESPONSIVE ─── */
+@media(max-width:768px){
+  #security-grid{grid-template-columns:1fr!important}
+}
 .mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:45}
 .mob-overlay.show{display:block}
+.mob-groups-toggle{display:none}
 
-/* RESPONSIVE */
+/* ─── INVITE PANEL ─── */
+.invite-panel{border-radius:0!important}
+
+/* ─── COMMUNITY EXTRA ─── */
+.group-last-msg{font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;max-width:180px}
+
+/* ─── HINT NEW STYLE ─── */
+.hints-section{padding:0 0 8px}
+.hints-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 0 8px;border-bottom:1px solid var(--border)}
+.hints-section-label{font-family:var(--font-mono);font-size:.64rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.hints-section-count{font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:2px 8px}
+
+/* ─── ENHANCED PROFILE CARDS ─── */
+.prof-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;transition:border-color .3s}
+.card-title{font-family:var(--font-mono);font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.dot-bar{width:3px;height:14px;background:linear-gradient(to bottom,var(--a1),var(--a2));border-radius:4px;flex-shrink:0}
+
+/* ─── ENHANCED ACHIEVEMENT CARDS ─── */
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ach-card{padding:12px;border:1px solid var(--border);border-radius:var(--r);text-align:center;transition:all .2s;position:relative;overflow:hidden}
+.ach-card.earned{transform:none;box-shadow:none}
+.ach-card.earned:hover{transform:translateY(-2px);box-shadow:var(--shadow-card)}
+.ach-card.locked{opacity:.45;filter:grayscale(1)}
+.ach-icon{font-size:1.5rem;margin-bottom:6px}
+.ach-name{font-size:.78rem;font-weight:700;margin-bottom:2px}
+.ach-desc{font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);line-height:1.5;margin-bottom:8px}
+.ach-share{padding:4px 10px;border-radius:100px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);color:var(--a1);font-family:var(--font-mono);font-size:.58rem;cursor:pointer;transition:all .16s}
+.ach-share:hover{background:rgba(108,99,255,.2)}
+
+/* ─── LEADERBOARD ENHANCED ─── */
+.lb-container{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.lb-head{display:grid;grid-template-columns:52px 1fr 80px 110px 90px 110px;gap:0;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);font-weight:600}
+.lb-row{display:grid;grid-template-columns:52px 1fr 80px 110px 90px 110px;gap:0;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;transition:background .15s;animation:cardUp .3s var(--ease-out)}
+.lb-row:last-child{border-bottom:none}
+.lb-row:hover{background:var(--hover-bg)}
+.lb-row.is-me{background:rgba(108,99,255,.06);border-left:3px solid var(--a1)}
+.lb-rank{font-family:var(--font-display);font-size:.88rem;font-weight:800;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px}
+.lb-rank.rank-1{background:rgba(255,215,0,.12);color:#ffd700;border:1px solid rgba(255,215,0,.25)}
+.lb-rank.rank-2{background:rgba(192,192,192,.12);color:#c0c0c0;border:1px solid rgba(192,192,192,.2)}
+.lb-rank.rank-3{background:rgba(205,127,50,.12);color:#cd7f32;border:1px solid rgba(205,127,50,.2)}
+.lb-user{display:flex;align-items:center;gap:10px;min-width:0}
+.lb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.8rem;font-weight:800;flex-shrink:0;overflow:hidden;border:2px solid rgba(255,255,255,.06)}
+.lb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.lb-name{font-size:.86rem;font-weight:700;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.lb-email{font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.lb-solves{font-family:var(--font-mono);font-size:.82rem;font-weight:600;color:var(--a2)}
+.lb-score{font-family:var(--font-display);font-size:.9rem;font-weight:800;color:var(--a1)}
+.me-tag{font-family:var(--font-mono);font-size:.5rem;padding:1px 5px;background:rgba(108,99,255,.15);color:var(--a1);border:1px solid rgba(108,99,255,.3);border-radius:4px}
+.designation-tag{font-family:var(--font-mono);font-size:.56rem;padding:2px 8px;border-radius:100px;font-weight:600;white-space:nowrap}
+.desig-admin{background:rgba(255,77,109,.1);color:var(--a3);border:1px solid rgba(255,77,109,.2)}
+.desig-elite{background:rgba(255,215,0,.1);color:#ffd700;border:1px solid rgba(255,215,0,.2)}
+.desig-advanced{background:rgba(108,99,255,.1);color:var(--a1);border:1px solid rgba(108,99,255,.2)}
+.desig-player{background:rgba(255,255,255,.05);color:var(--text-dim);border:1px solid var(--border)}
+@media(max-width:768px){
+  .mob-groups-toggle{display:flex!important}
+  .mobile-back-btn{display:flex!important}
+  .mob-close-groups{display:flex!important}
+  .chat-layout{position:relative}
+}
+
+/* ─── PROFILE IMPROVEMENTS ─── */
+.prof-social-links a:hover{border-color:var(--border-hi)!important;color:var(--text)!important}
+
+/* ─── RESPONSIVE ─── */
 @media(max-width:1100px){
   .stats-row{grid-template-columns:repeat(2,1fr)}
-  .lb-head,.lb-row{grid-template-columns:52px 1fr 80px 100px}
-  .lb-head>:nth-child(5),.lb-row>:nth-child(5),.lb-head>:nth-child(6),.lb-row>:nth-child(6){display:none}
+  .lb-head,.lb-row{grid-template-columns:52px 1fr 80px 110px 90px}
+  .lb-head>:nth-child(6),.lb-row>:nth-child(6){display:none}
   .dash-grid{grid-template-columns:1fr 1fr}
   .col-2{grid-column:span 2}
   .col-3{grid-column:span 2}
+}
+@media(max-width:900px){
+  .lb-head,.lb-row{grid-template-columns:52px 1fr 80px 110px}
+  .lb-head>:nth-child(5),.lb-row>:nth-child(5),.lb-head>:nth-child(6),.lb-row>:nth-child(6){display:none}
 }
 @media(max-width:900px){
   .prog-grid{grid-template-columns:1fr}
@@ -649,23 +718,46 @@ textarea.inp{resize:vertical;min-height:72px}
 @media(max-width:768px){
   .sidebar{position:fixed;left:-100%;height:100vh}
   .sidebar.open{left:0}
-  .ham-btn{display:flex}
-  .content{padding:14px}
-  .topbar{padding:0 12px}
+  .ham-btn{display:flex!important}
+  .content{padding:12px}
+  .topbar{padding:0 10px;gap:8px}
   .chal-grid{grid-template-columns:1fr}
   .dash-grid{grid-template-columns:1fr}
   .col-2,.col-3{grid-column:span 1}
-  .search-wrap{max-width:180px}
+  .search-wrap{max-width:140px}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .notes-grid{grid-template-columns:1fr}
+  .notes-grid > div:last-child{order:-1}
+  .chat-layout{grid-template-columns:1fr;height:calc(100vh - 200px)}
+  .chat-sidebar{display:none!important}
+  .chat-sidebar.mob-active{display:flex!important;position:absolute;z-index:10;width:100%;height:100%;top:0;left:0}
+  .lb-head,.lb-row{grid-template-columns:46px 1fr 80px}
+  .lb-head>:nth-child(4),.lb-row>:nth-child(4),.lb-head>:nth-child(5),.lb-row>:nth-child(5),.lb-head>:nth-child(6),.lb-row>:nth-child(6){display:none}
+  .prog-grid{grid-template-columns:1fr}
+  .prof-grid{grid-template-columns:1fr}
+  .profile-hero{flex-direction:column;align-items:center;text-align:center}
+  .prof-stats{margin-left:0;justify-content:center}
+  .discover-card{flex-wrap:wrap;gap:8px}
+  .req-actions{flex-wrap:wrap}
 }
 @media(max-width:480px){
+  .hide-xs{display:none}
+  .comm-tab i{display:none}
+
   .stats-row{grid-template-columns:1fr 1fr}
+  .share-btns{grid-template-columns:1fr}
+  .ach-grid{grid-template-columns:1fr 1fr}
+  .search-wrap{display:none}
+  .topbar{gap:6px}
+  .topbar-title{font-size:.7rem}
   .profile-hero{flex-direction:column;text-align:center}
   .prof-stats{margin-left:0;justify-content:center}
-  .share-btns{grid-template-columns:1fr}
   .ach-grid{grid-template-columns:1fr}
-  .lb-head,.lb-row{grid-template-columns:46px 1fr 90px}
-  .topbar-logout-btn span{display:none}
+  .lb-head,.lb-row{grid-template-columns:40px 1fr 80px}
+  .comm-tabs{flex-wrap:wrap;width:100%}
+  .comm-tab{flex:1;text-align:center;font-size:.62rem;padding:5px 8px}
 }
+
 </style>
 </head>
 <body>
@@ -710,10 +802,12 @@ textarea.inp{resize:vertical;min-height:72px}
       <label class="sw"><input type="checkbox" id="cg-private-toggle" checked onchange="updatePrivacyLabel()"><div class="sw-track"></div><div class="sw-thumb"></div></label>
     </div>
     <div class="field">
-      <label>Invite Members</label>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;margin-bottom:6px;">
-        <input style="width:100%;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:.7rem;outline:none;padding:2px 6px;" id="cg-member-search" placeholder="Search players…" oninput="filterCGMembers()">
+      <label>Invite Members <span style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);">(they must accept)</span></label>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+        <i class="fas fa-search" style="color:var(--text-dim);font-size:.65rem;flex-shrink:0;"></i>
+        <input style="width:100%;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:.7rem;outline:none;padding:2px 4px;" id="cg-member-search" placeholder="Search players by name or email…" oninput="filterCGMembers()">
       </div>
+      <div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-dim);margin-bottom:6px;">Selected members will receive an invite request. Only you (creator) join immediately.</div>
       <div class="cg-members-list" id="cg-members-list"></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:4px;justify-content:flex-end;">
@@ -832,7 +926,7 @@ textarea.inp{resize:vertical;min-height:72px}
     <a class="nav-link active" id="nav-dashboard" onclick="go('dashboard')"><i class="fas fa-th-large"></i> Dashboard</a>
     <a class="nav-link" id="nav-challenges" onclick="go('challenges')"><i class="fas fa-layer-group"></i> Challenges <span class="nav-badge" id="sb-open">—</span></a>
     <a class="nav-link" id="nav-progress" onclick="go('progress')"><i class="fas fa-chart-line"></i> Progress</a>
-    <a class="nav-link" id="nav-notes" onclick="go('notes')"><i class="fas fa-sticky-note"></i> CTF Notes</a>
+    <a class="nav-link" id="nav-notes" onclick="go('notes')"><i class="fas fa-book-open"></i> Hacker Notebook</a>
     <a class="nav-link" id="nav-community" onclick="go('community')"><i class="fas fa-comments"></i> Community <span class="nav-dot" id="chat-dot" style="display:none;"></span></a>
     <a class="nav-link" id="nav-leaderboard" onclick="go('leaderboard')"><i class="fas fa-trophy"></i> Leaderboard</a>
     <p class="nav-section-label">Account</p>
@@ -864,10 +958,7 @@ textarea.inp{resize:vertical;min-height:72px}
         <i class="fas fa-moon icon-moon"></i>
       </button>
       <div class="tb-av" id="top-av" onclick="go('profile')">?</div>
-      <!-- Visible logout for mobile users -->
-      <button class="topbar-logout-btn" onclick="doLogout()">
-        <i class="fas fa-sign-out-alt"></i><span>Sign Out</span>
-      </button>
+
     </div>
   </header>
 
@@ -875,6 +966,14 @@ textarea.inp{resize:vertical;min-height:72px}
 
     <!-- ▸ DASHBOARD -->
     <div id="view-dashboard" class="view active">
+      <div id="dash-welcome" style="display:none;margin-bottom:18px;padding:16px 20px;background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.06));border:1px solid rgba(108,99,255,.2);border-radius:var(--rl);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:1.8rem;" id="dash-welcome-emoji">👋</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:.95rem;font-weight:800;" id="dash-welcome-msg">Welcome back!</div>
+          <div style="font-family:var(--font-mono);font-size:.66rem;color:var(--text-muted);margin-top:3px;" id="dash-welcome-sub">Ready to hack?</div>
+        </div>
+        <button onclick="this.parentElement.style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:.8rem;padding:4px;"><i class="fas fa-times"></i></button>
+      </div>
       <div class="stats-row">
         <div class="stat-card" style="--card-color:var(--a1)">
           <div class="stat-glow" style="background:var(--a1);"></div>
@@ -1002,46 +1101,59 @@ textarea.inp{resize:vertical;min-height:72px}
       <div class="widget" id="solved-history" style="overflow:hidden;"><div class="empty"><i class="fas fa-spinner spin"></i></div></div>
     </div>
 
-    <!-- ▸ CTF NOTES -->
+    <!-- ▸ HACKER NOTEBOOK -->
     <div id="view-notes" class="view">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <div class="sec-title" style="font-size:1rem;"><span class="accent-bar"></span>Hacker Notebook <span style="font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim);font-weight:400;margin-left:8px;">writeups · techniques · references</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="exportNotes()"><i class="fas fa-download"></i> Export</button>
+          <button class="btn btn-primary btn-sm" onclick="newNote()"><i class="fas fa-plus"></i> New Note</button>
+        </div>
+      </div>
       <div class="notes-stats">
         <div class="nstat"><div class="nstat-val" id="ns-total">0</div><div class="nstat-lbl">Notes</div></div>
         <div class="nstat"><div class="nstat-val" id="ns-cats">0</div><div class="nstat-lbl">Categories</div></div>
         <div class="nstat"><div class="nstat-val" id="ns-words">0</div><div class="nstat-lbl">Words</div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-        <div id="notes-toolbar" style="display:flex;gap:6px;flex-wrap:wrap;flex:1;"></div>
-        <button class="btn btn-primary btn-sm" onclick="newNote()"><i class="fas fa-plus"></i> New</button>
-        <button class="btn btn-ghost btn-sm" onclick="exportNotes()"><i class="fas fa-download"></i> Export</button>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+        <i class="fas fa-filter" style="font-size:.65rem;color:var(--text-dim);"></i>
+        <div id="notes-toolbar" style="display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:0;"></div>
       </div>
       <div class="notes-grid">
         <div class="note-editor">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+            <i class="fas fa-edit" style="color:var(--a1);font-size:.8rem;"></i>
+            <span style="font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Editor</span>
+          </div>
           <input class="note-title-inp" id="note-title" placeholder="Note title…">
-          <textarea class="note-body-inp" id="note-body" placeholder="Write your CTF notes, writeups, techniques…"></textarea>
+          <textarea class="note-body-inp" id="note-body" placeholder="# Write your CTF notes, writeups, techniques…&#10;&#10;Supports markdown-style formatting."></textarea>
           <div class="note-meta-row">
             <select class="note-cat-sel" id="note-cat-sel">
               <option value="">No category</option>
-              <option value="Web">Web</option>
-              <option value="Crypto">Crypto</option>
-              <option value="Pwn">Pwn</option>
-              <option value="Forensics">Forensics</option>
-              <option value="Rev">Rev</option>
-              <option value="Misc">Misc</option>
-              <option value="Tools">Tools</option>
-              <option value="Reference">Reference</option>
+              <option value="Web">🌐 Web</option>
+              <option value="Crypto">🔐 Crypto</option>
+              <option value="Pwn">💣 Pwn</option>
+              <option value="Forensics">🔬 Forensics</option>
+              <option value="Rev">⚙️ Rev</option>
+              <option value="Misc">🎭 Misc</option>
+              <option value="Tools">🛠️ Tools</option>
+              <option value="Reference">📖 Reference</option>
+              <option value="Writeup">📝 Writeup</option>
             </select>
             <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm" onclick="duplicateNote()" title="Duplicate"><i class="fas fa-copy"></i></button>
               <button class="btn btn-ghost btn-sm" onclick="deleteNote()"><i class="fas fa-trash"></i></button>
               <button class="btn btn-primary btn-sm" onclick="saveNote()"><i class="fas fa-save"></i> Save</button>
             </div>
           </div>
         </div>
         <div>
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;margin-bottom:8px;">
-            <input class="note-search-inp" id="note-search" placeholder="🔍 Search notes…" oninput="renderNotesList()">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-search" style="color:var(--text-dim);font-size:.65rem;"></i>
+            <input class="note-search-inp" id="note-search" placeholder="Search notes…" oninput="renderNotesList()">
           </div>
           <div class="note-list-wrap" id="note-list">
-            <div class="empty" style="padding:24px;"><i class="fas fa-sticky-note"></i><p>No notes yet.</p></div>
+            <div class="empty" style="padding:24px;"><i class="fas fa-book-open"></i><p>No notes yet.<br><span style="font-size:.65rem;opacity:.6;">Click "New Note" to get started</span></p></div>
           </div>
           <button class="note-add-btn" onclick="newNote()"><i class="fas fa-plus"></i> New Note</button>
         </div>
@@ -1050,16 +1162,16 @@ textarea.inp{resize:vertical;min-height:72px}
 
     <!-- ▸ COMMUNITY CHAT -->
     <div id="view-community" class="view">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
         <div class="community-tabs" id="comm-tabs">
-          <div class="comm-tab active" data-tab="groups" onclick="switchCommTab('groups')">My Groups</div>
-          <div class="comm-tab" data-tab="discover" onclick="switchCommTab('discover')">Discover</div>
-          <div class="comm-tab" data-tab="requests" onclick="switchCommTab('requests')" id="comm-req-tab" style="position:relative;">
-            Requests
-            <span class="comm-tab-badge" id="req-notif-count">0</span>
-          </div>
+          <div class="comm-tab active" data-tab="groups" onclick="switchCommTab('groups')"><i class="fas fa-layer-group" style="font-size:.65rem;margin-right:4px;"></i>My Groups</div>
+          <div class="comm-tab" data-tab="discover" onclick="switchCommTab('discover')"><i class="fas fa-compass" style="font-size:.65rem;margin-right:4px;"></i>Discover</div>
+          <div class="comm-tab" data-tab="requests" onclick="switchCommTab('requests')" id="comm-req-tab" style="position:relative;"><i class="fas fa-bell" style="font-size:.65rem;margin-right:4px;"></i>Requests<span class="comm-tab-badge" id="req-notif-count">0</span></div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="openCGModal()"><i class="fas fa-plus"></i> New Group</button>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="btn btn-ghost btn-sm mob-groups-toggle" onclick="toggleMobileGroupList()" style="display:none"><i class="fas fa-bars"></i></button>
+          <button class="btn btn-primary btn-sm" onclick="openCGModal()"><i class="fas fa-plus"></i> <span class="hide-xs">New Group</span></button>
+        </div>
       </div>
 
       <!-- Tab: My Groups -->
@@ -1069,6 +1181,7 @@ textarea.inp{resize:vertical;min-height:72px}
             <div class="chat-sidebar-header">
               <div class="chat-sidebar-top">
                 <div class="chat-sidebar-title"><i class="fas fa-layer-group" style="margin-right:5px;color:var(--a1);"></i>My Groups</div>
+              <button class="tb-btn mob-close-groups" onclick="closeMobileGroupList()" title="Close" style="display:none"><i class="fas fa-times"></i></button>
               </div>
               <input class="chat-group-search" id="group-search-inp" placeholder="Search groups…" oninput="filterGroupList()">
             </div>
@@ -1087,9 +1200,16 @@ textarea.inp{resize:vertical;min-height:72px}
 
       <!-- Tab: Discover -->
       <div id="comm-tab-discover" style="display:none;">
-        <div style="margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <input class="inp" id="discover-search" placeholder="Search public groups…" oninput="renderDiscoverGroups()" style="max-width:400px;flex:1;">
+        <div style="margin-bottom:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <div class="search-wrap" style="max-width:380px;margin-left:0;margin-right:0;flex:1;">
+            <i class="fas fa-search"></i>
+            <input id="discover-search" placeholder="Search public groups by name or description…" oninput="renderDiscoverGroups()" style="width:100%;padding:8px 12px 8px 34px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-mono);font-size:.76rem;outline:none;transition:all .2s;">
+          </div>
           <button class="btn btn-ghost btn-sm" onclick="loadAllPublicGroupsAndRender()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:.64rem;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+          <i class="fas fa-info-circle" style="font-size:.6rem;color:var(--a1);"></i>
+          Public groups are visible here. Private groups require an invite from the group leader.
         </div>
         <div id="discover-list"><div class="empty"><i class="fas fa-spinner spin"></i><p>Loading groups…</p></div></div>
       </div>
@@ -1104,6 +1224,10 @@ textarea.inp{resize:vertical;min-height:72px}
     <!-- ▸ LEADERBOARD -->
     <div id="view-leaderboard" class="view">
       <div class="lb-container">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div class="sec-title"><span class="accent-bar"></span>Global Leaderboard</div>
+          <div style="font-family:var(--font-mono);font-size:.64rem;color:var(--text-muted);" id="lb-player-count"></div>
+        </div>
         <div class="lb-head">
           <span>Rank</span><span>Player</span><span>Solves</span><span>Score</span><span>Level</span><span>Designation</span>
         </div>
@@ -1119,15 +1243,20 @@ textarea.inp{resize:vertical;min-height:72px}
           <div class="prof-cam" onclick="document.getElementById('photo-file-input').click()"><i class="fas fa-camera"></i></div>
           <input type="file" id="photo-file-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
         </div>
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="prof-name" id="prof-name">—</div>
           <div class="prof-email" id="prof-email">—</div>
-          <span class="sb-badge" id="prof-role">player</span>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap;">
+            <span class="sb-badge" id="prof-role">player</span>
+            <span id="prof-level-badge" style="font-family:var(--font-mono);font-size:.5rem;padding:2px 8px;border-radius:100px;background:rgba(0,212,170,.1);color:var(--a2);border:1px solid rgba(0,212,170,.2);">Rookie</span>
+          </div>
+          <div id="prof-bio-display" style="font-size:.8rem;color:var(--text-muted);margin-top:8px;font-style:italic;max-width:320px;"></div>
         </div>
         <div class="prof-stats">
           <div class="pstat"><div class="pstat-val" id="ps-pts" style="color:var(--a1);">0</div><div class="pstat-lbl">Points</div></div>
           <div class="pstat"><div class="pstat-val" id="ps-solves" style="color:var(--a2);">0</div><div class="pstat-lbl">Solves</div></div>
           <div class="pstat"><div class="pstat-val" id="ps-rank" style="color:var(--a4);">#—</div><div class="pstat-lbl">Rank</div></div>
+          <div class="pstat"><div class="pstat-val" id="ps-groups" style="color:var(--a5);">0</div><div class="pstat-lbl">Groups</div></div>
         </div>
       </div>
       <div class="prof-grid">
@@ -1135,16 +1264,33 @@ textarea.inp{resize:vertical;min-height:72px}
           <div class="prof-card" style="margin-bottom:12px;">
             <div class="card-title"><span class="dot-bar"></span>Edit Profile</div>
             <div class="field"><label>Display Name</label><input class="inp" id="pf-name" placeholder="h4cker_pro"></div>
-            <div class="field"><label>Bio</label><textarea class="inp" id="pf-bio" placeholder="Tell the community about yourself…"></textarea></div>
-            <div class="field"><label>GitHub</label><input class="inp" id="pf-github" placeholder="github_username"></div>
-            <div class="field"><label>Mobile</label><input class="inp" id="pf-mobile" placeholder="+91 9876543210"></div>
-            <button class="btn btn-primary btn-sm" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>
+            <div class="field"><label>Bio</label><textarea class="inp" id="pf-bio" placeholder="Tell the community about yourself…" rows="3"></textarea></div>
+            <div class="field"><label><i class="fab fa-github" style="margin-right:4px;"></i>GitHub Username</label><input class="inp" id="pf-github" placeholder="github_username"></div>
+            <div class="field"><label><i class="fas fa-linkedin" style="margin-right:4px;color:#0a66c2;"></i>LinkedIn (optional)</label><input class="inp" id="pf-linkedin" placeholder="linkedin.com/in/yourname"></div>
+            <div class="field"><label><i class="fas fa-phone" style="margin-right:4px;"></i>Mobile</label><input class="inp" id="pf-mobile" placeholder="+91 9876543210"></div>
+            <div class="field"><label><i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>Location (optional)</label><input class="inp" id="pf-location" placeholder="Chennai, India"></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+              <button class="btn btn-primary btn-sm" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>
+              <button class="btn btn-ghost btn-sm" onclick="copyProfileLink()"><i class="fas fa-link"></i> Copy Profile Link</button>
+            </div>
+          </div>
+          <div class="prof-card" style="margin-bottom:12px;">
+            <div class="card-title"><span class="dot-bar"></span>Social Links</div>
+            <div id="prof-social-links" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
+          </div>
+          <div class="prof-card">
+            <div class="card-title"><span class="dot-bar"></span>Category Mastery</div>
+            <div id="prof-cat-mastery" class="skill-list" style="padding:0;margin-top:10px;"></div>
           </div>
         </div>
         <div>
-          <div class="prof-card">
+          <div class="prof-card" style="margin-bottom:12px;">
             <div class="card-title"><span class="dot-bar"></span>Achievements</div>
             <div class="ach-grid" id="ach-list"></div>
+          </div>
+          <div class="prof-card">
+            <div class="card-title"><span class="dot-bar"></span>My Groups</div>
+            <div id="prof-groups-list" style="margin-top:8px;"></div>
           </div>
         </div>
       </div>
@@ -1152,27 +1298,54 @@ textarea.inp{resize:vertical;min-height:72px}
 
     <!-- ▸ SECURITY -->
     <div id="view-security" class="view">
-      <div class="security-card">
-        <div class="card-title"><span class="dot-bar"></span>Session Info</div>
-        <p style="font-family:var(--font-mono);font-size:.74rem;color:var(--text-muted);margin-bottom:14px;line-height:1.7;" id="sec-info">—</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-ghost btn-sm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteAcc()"><i class="fas fa-trash"></i> Delete Account</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="security-grid">
+        <div>
+          <div class="security-card" style="margin-bottom:14px;">
+            <div class="card-title"><span class="dot-bar"></span>Session Info</div>
+            <p style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);margin-bottom:14px;line-height:1.8;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;" id="sec-info">—</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-ghost btn-sm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteAcc()"><i class="fas fa-trash"></i> Delete Account</button>
+            </div>
+          </div>
+          <div class="security-card">
+            <div class="card-title"><span class="dot-bar"></span>Two-Factor Authentication</div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Email 2FA</div><div class="toggle-sub">Extra verification on login</div></div>
+              <label class="sw"><input type="checkbox" id="twofa-toggle" onchange="toggle2FA(this)"><div class="sw-track"></div><div class="sw-thumb"></div></label>
+            </div>
+            <p style="font-family:var(--font-mono);font-size:.7rem;margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--surface2);" id="twofa-status">2FA is currently disabled.</p>
+          </div>
         </div>
-      </div>
-      <div class="security-card">
-        <div class="card-title"><span class="dot-bar"></span>Two-Factor Authentication</div>
-        <div class="toggle-row">
-          <div><div class="toggle-label">Email 2FA</div><div class="toggle-sub">Send a code to your email on each login</div></div>
-          <label class="sw"><input type="checkbox" id="twofa-toggle" onchange="toggle2FA(this)"><div class="sw-track"></div><div class="sw-thumb"></div></label>
+        <div>
+          <div class="security-card" style="margin-bottom:14px;">
+            <div class="card-title"><span class="dot-bar"></span>Change Password</div>
+            <div class="field"><label>New Password</label>
+              <div style="position:relative;">
+                <input class="inp" type="password" id="new-pass" placeholder="Min 8 characters" style="padding-right:40px;">
+                <button onclick="togglePassVis('new-pass',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:.75rem;"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+            <div class="field"><label>Confirm Password</label>
+              <div style="position:relative;">
+                <input class="inp" type="password" id="new-pass2" placeholder="Repeat password" style="padding-right:40px;">
+                <button onclick="togglePassVis('new-pass2',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:.75rem;"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="doChangePass()"><i class="fas fa-lock"></i> Update Password</button>
+          </div>
+          <div class="security-card">
+            <div class="card-title"><span class="dot-bar"></span>Privacy Settings</div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Show email on leaderboard</div><div class="toggle-sub">Others can see your email</div></div>
+              <label class="sw"><input type="checkbox" id="show-email-toggle" onchange="toggleShowEmail(this)" checked><div class="sw-track"></div><div class="sw-thumb"></div></label>
+            </div>
+            <div class="toggle-row" style="margin-top:10px;">
+              <div><div class="toggle-label">Public Profile</div><div class="toggle-sub">Others can view your profile</div></div>
+              <label class="sw"><input type="checkbox" id="public-profile-toggle" onchange="togglePublicProfile(this)" checked><div class="sw-track"></div><div class="sw-thumb"></div></label>
+            </div>
+          </div>
         </div>
-        <p style="font-family:var(--font-mono);font-size:.7rem;margin-top:4px;" id="twofa-status">2FA is currently disabled.</p>
-      </div>
-      <div class="security-card">
-        <div class="card-title"><span class="dot-bar"></span>Change Password</div>
-        <div class="field"><label>New Password</label><input class="inp" type="password" id="new-pass" placeholder="Min 8 characters"></div>
-        <div class="field"><label>Confirm Password</label><input class="inp" type="password" id="new-pass2" placeholder="Repeat password"></div>
-        <button class="btn btn-primary btn-sm" onclick="doChangePass()"><i class="fas fa-lock"></i> Update Password</button>
       </div>
     </div>
 
@@ -1420,16 +1593,21 @@ window.openChal = function(id) {
   ab.style.display = activeModal.challengeUrl?"inline-flex":"none";
   const hints = [activeModal.hint1||activeModal.hint, activeModal.hint2, activeModal.hint3].filter(Boolean);
   if($("m-hints-count")) $("m-hints-count").textContent = hints.length+(hints.length===1?" hint":" hints");
-  $("m-hints").innerHTML = hints.length ? hints.map((h,i) => `
-    <div class="hint-item" id="hint-${i}">
-      <div class="hint-num">HINT ${i+1}</div>
-      <div class="hint-text">${h}</div>
-      <div class="hint-particle-area" id="hint-particles-${i}"></div>
-      <div class="hint-mist" id="hint-mist-${i}" onclick="revealHint(${i})">
-        <div class="hint-mist-inner"><span class="hint-mist-icon">🌫️</span><span>Touch to reveal hint ${i+1}</span></div>
-        <div class="hint-mist-hint">Hover to preview · Click to reveal</div>
+  if($("m-hints")) $("m-hints").innerHTML = hints.length ? hints.map((h,i) => {
+    const hintText=typeof h==="string"?h:(h.text||"");
+    const hintCost=typeof h==="object"&&h.cost?h.cost:0;
+    return `
+    <div class="hint-card" id="hint-card-${i}">
+      <div class="hint-top">
+        <span class="hint-icon">💡</span>
+        <div class="hint-label"><strong>Hint ${i+1}</strong>&nbsp;${hintCost?`<span class='hint-cost'><i class='fas fa-star' style='font-size:.52rem;'></i> ${hintCost} pts</span>`:`<span class='hint-cost free'><i class='fas fa-unlock' style='font-size:.52rem;'></i> Free</span>`}</div>
+        <button class="hint-reveal-btn" id="hint-btn-${i}" onclick="revealHint(${i},this)"><i class="fas fa-eye"></i> Reveal</button>
       </div>
-    </div>`).join("") : `<p style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);padding:10px 0;">No hints available.</p>`;
+      <div class="hint-body" id="hint-body-${i}"><div class="hint-body-inner"><span class="hint-typewriter" id="hint-tw-${i}"></span></div></div>
+    </div>`;
+  }).join("") : `<p style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);padding:10px 0;">No hints available.</p>`;
+  // Store hint texts for reveal
+  window._currentHints = hints;
   const alreadySolved = (myData?.solvedIds||[]).includes(activeModal.id);
   const flagBlock = $("m-flag-block"), flagRow = $("m-flag-row"), flagLabel = $("m-flag-label");
   const solvedBanner = $("m-solved-banner"), flagInp = $("m-flag"), submitBtn = $("m-submit-btn");
@@ -1576,6 +1754,7 @@ function getLevelBadge(score) {
 }
 function renderLb(rows) {
   const body = $("lb-body");
+  const cnt=$("lb-player-count"); if(cnt) cnt.textContent=rows.length+" player"+(rows.length!==1?"s":"")+" ranked";
   if(!rows.length) { body.innerHTML=`<div class="empty"><i class="fas fa-trophy"></i><p>No players yet.</p></div>`; return; }
   body.innerHTML = rows.map((r,i) => {
     const rank = i+1, isMe = r.id===me?.uid;
@@ -1606,10 +1785,22 @@ function renderLb(rows) {
 
 /* ─── DASHBOARD ─── */
 function refreshDashStats() {
-  $("d-pts").textContent = (myData?.score||0).toLocaleString();
-  $("d-solved").textContent = myData?.solves||0;
-  $("ps-pts").textContent = (myData?.score||0).toLocaleString();
-  $("ps-solves").textContent = myData?.solves||0;
+  if($("d-pts")) $("d-pts").textContent = (myData?.score||0).toLocaleString();
+  if($("d-solved")) $("d-solved").textContent = myData?.solves||0;
+  if($("ps-pts")) $("ps-pts").textContent = (myData?.score||0).toLocaleString();
+  if($("ps-solves")) $("ps-solves").textContent = myData?.solves||0;
+  // Welcome banner
+  const wb=$("dash-welcome");
+  if(wb&&wb.style.display==="none"&&myData){
+    const name=(myData.name||"Hacker").split(" ")[0];
+    const hr=new Date().getHours();
+    const greet=hr<12?"Good morning ☀️":hr<17?"Good afternoon ⚡":"Good evening 🌙";
+    const emojis=["👋","🔥","⚡","🎯","🚀"];
+    if($("dash-welcome-emoji")) $("dash-welcome-emoji").textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    if($("dash-welcome-msg")) $("dash-welcome-msg").textContent=`${greet}, ${name}!`;
+    if($("dash-welcome-sub")) $("dash-welcome-sub").textContent=`You have ${myData.solves||0} solve${(myData.solves||0)!==1?"s":""} · ${(myData.score||0).toLocaleString()} pts · Rank #${allLbUsers.findIndex(r=>r.id===me?.uid)+1||"—"}`;
+    wb.style.display="flex";
+  }
 }
 function renderDashSkillMap() {
   const solvedIds = myData?.solvedIds||[];
@@ -1738,6 +1929,13 @@ window.openNote = function(id) { const note=notes.find(n=>n.id===id); if(!note) 
 window.newNote = function() { const id="note_"+Date.now(); notes.unshift({id,title:"",body:"",cat:"",created:Date.now(),updated:Date.now()}); saveNoteStorage(); activeNoteId=id; $("note-title").value=""; $("note-body").value=""; $("note-cat-sel").value=""; $("note-title").focus(); renderNotesList(); updateNotesStats(); };
 window.saveNote = function() { if(!activeNoteId){window.newNote();return;} const note=notes.find(n=>n.id===activeNoteId); if(!note){window.newNote();return;} note.title=$("note-title").value||"Untitled"; note.body=$("note-body").value||""; note.cat=$("note-cat-sel").value||""; note.updated=Date.now(); saveNoteStorage(); renderNotesList(); updateNotesStats(); toast("Note saved","ok"); };
 window.deleteNote = function() { if(!activeNoteId) return; if(!confirm("Delete this note?")) return; notes=notes.filter(n=>n.id!==activeNoteId); activeNoteId=notes[0]?.id||null; if(activeNoteId){const n=notes[0];$("note-title").value=n.title||"";$("note-body").value=n.body||"";$("note-cat-sel").value=n.cat||"";}else{$("note-title").value="";$("note-body").value="";$("note-cat-sel").value="";} saveNoteStorage(); renderNotesList(); updateNotesStats(); toast("Deleted","info"); };
+window.duplicateNote = function() {
+  if(!activeNoteId) return;
+  const note=notes.find(n=>n.id===activeNoteId); if(!note) return;
+  const id="note_"+Date.now();
+  notes.unshift({...note,id,title:(note.title||"Untitled")+" (copy)",created:Date.now(),updated:Date.now()});
+  saveNoteStorage(); activeNoteId=id; renderNotesList(); updateNotesStats(); toast("Note duplicated","ok");
+};
 window.exportNotes = function() { const txt=notes.map(n=>`# ${n.title||"Untitled"}\nCategory: ${n.cat||"—"}\nDate: ${new Date(n.updated).toLocaleString()}\n\n${n.body||""}\n\n---\n`).join("\n"); const blob=new Blob([txt],{type:"text/markdown"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="ctf-notes.md"; a.click(); URL.revokeObjectURL(url); toast("Exported as .md","ok"); };
 
 /* ═══════════════════════════════════════════════════
@@ -1770,13 +1968,12 @@ window.switchCommTab = function(tab) {
 function startGroupsListener() {
   if(!me) return;
   if(groupsUnsub) groupsUnsub();
-  // Query: where user is a member — NO orderBy to avoid missing index errors
   groupsUnsub = onSnapshot(
     query(collection(db,"chatGroups"), where("members","array-contains",me.uid)),
     snap => {
+      const prevLen=groupsCache.length;
       groupsCache = [];
       snap.forEach(d => groupsCache.push({id:d.id,...d.data()}));
-      // Sort client-side by lastMessageAt descending
       groupsCache.sort((a,b) => {
         const ta = a.lastMessageAt?.toMillis ? a.lastMessageAt.toMillis() : (a.createdAt?.toMillis ? a.createdAt.toMillis() : 0);
         const tb = b.lastMessageAt?.toMillis ? b.lastMessageAt.toMillis() : (b.createdAt?.toMillis ? b.createdAt.toMillis() : 0);
@@ -1784,6 +1981,8 @@ function startGroupsListener() {
       });
       refreshGroupListUI();
       if($("chat-dot")) $("chat-dot").style.display = groupsCache.length?"flex":"none";
+      // Update profile groups count
+      if($("ps-groups")) $("ps-groups").textContent=groupsCache.length;
     },
     err => { console.error("groups listener error:", err); toast("Failed to load groups: "+err.message,"err"); }
   );
@@ -1834,13 +2033,10 @@ function refreshGroupListUI() {
     const isLeader = g.leaderId===me?.uid;
     return `
     <div class="group-item ${isActive?"active-group":""}" onclick="openGroup('${g.id}')">
-      <div class="group-av">${g.photo?`<img src="${g.photo}" alt="${escapeHtml(g.name)}" onerror="this.style.display='none'">`:"💬"}</div>
+      <div class="group-av">${g.photo?`<img src="${g.photo}" alt="${escapeHtml(g.name)}" onerror="this.style.display='none';this.parentElement.textContent='💬'">`:"💬"}</div>
       <div style="flex:1;min-width:0;">
-        <div class="group-name">${escapeHtml(g.name)} ${isLeader?`<i class="fas fa-crown" style="color:var(--a4);font-size:.6rem;" title="You are the leader"></i>`:""}</div>
-        <div class="group-meta-row">
-          <span class="group-member-count"><i class="fas fa-user" style="font-size:.5rem;"></i>${memberCount}</span>
-          <span class="${g.isPrivate!==false?"group-private-badge":"group-public-badge"}">${g.isPrivate!==false?"🔒":"🌐"}</span>
-        </div>
+        <div class="group-name">${escapeHtml(g.name)} ${isLeader?`<i class="fas fa-crown" style="color:var(--a4);font-size:.6rem;" title="Leader"></i>`:""} <span class="${g.isPrivate!==false?"group-private-badge":"group-public-badge"}" style="font-size:.48rem;">${g.isPrivate!==false?"🔒":"🌐"}</span></div>
+        <div class="group-last-msg">${g.lastMessage?escapeHtml(g.lastMessage.substring(0,40)+(g.lastMessage.length>40?"…":"")):`<span style="font-style:italic;opacity:.6;">${memberCount} member${memberCount!==1?"s":""}</span>`}</div>
       </div>
     </div>`;
   }).join("");
@@ -1853,6 +2049,17 @@ window.openGroup = function(groupId) {
   const group = groupsCache.find(g=>g.id===groupId);
   if(!group) { toast("Group not found","err"); return; }
   buildChatUI(groupId, group);
+  // On mobile: hide sidebar, show main area
+  if(window.innerWidth<=768){
+    const sidebar=document.querySelector(".chat-sidebar");
+    const mainArea=$("chat-main-area");
+    if(sidebar){sidebar.style.display="none";sidebar.classList.remove("mob-active");}
+    if(mainArea){mainArea.style.display="flex";}
+    // Show back button in chat header
+    setTimeout(()=>{
+      document.querySelectorAll(".mobile-back-btn").forEach(b=>b.style.display="flex");
+    },50);
+  }
 };
 
 function buildChatUI(groupId, group) {
@@ -1875,9 +2082,12 @@ function buildChatUI(groupId, group) {
         </div>
       </div>
       <div class="chat-actions">
-        ${isAdmin||isLeader?`<button class="tb-btn" onclick="showGroupMembers('${groupId}')" title="Members"><i class="fas fa-users"></i></button>`:""}
-        ${isLeader||isAdmin?`<button class="tb-btn" onclick="showGroupSettings('${groupId}')" title="Settings"><i class="fas fa-cog"></i></button>`:""}
-        <button class="tb-btn" onclick="leaveGroup('${groupId}')" title="Leave Group" style="color:var(--a3);"><i class="fas fa-door-open"></i></button>
+        <button class="tb-btn mobile-back-btn" onclick="closeMobileGroup()" title="Back to groups" style="display:none"><i class="fas fa-arrow-left"></i></button>
+        <button class="tb-btn" onclick="showGroupMembers('${groupId}')" title="View Members"><i class="fas fa-users"></i></button>
+        ${isLeader||isAdmin?`<button class="tb-btn" onclick="showInviteByEmail('${groupId}')" title="Invite Member" style="color:var(--a2);"><i class="fas fa-user-plus"></i></button>`:""}
+        ${isLeader||isAdmin?`<button class="tb-btn" onclick="postAnnouncement('${groupId}')" title="Post Announcement" style="color:var(--a4);"><i class="fas fa-bullhorn"></i></button>`:""}
+        ${isLeader||isAdmin?`<button class="tb-btn" onclick="showGroupSettings('${groupId}')" title="Group Settings"><i class="fas fa-cog"></i></button>`:""}
+        <button class="tb-btn" onclick="leaveGroup('${groupId}')" title="Leave Group" style="color:var(--a3);"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     </div>
     <div class="chat-messages" id="chat-msgs-${groupId}"><div class="empty" style="padding:30px;"><i class="fas fa-spinner spin"></i></div></div>
@@ -1903,6 +2113,7 @@ function renderChatMessages(groupId, msgs, group) {
   let lastDate = "";
   container.innerHTML = msgs.map(msg=>{
     if(msg.isSystem) { return `<div class="msg-system"><div class="msg-system-text"><i class="fas fa-info-circle" style="font-size:.6rem;"></i>${escapeHtml(msg.text||"")}</div></div>`; }
+    if(msg.isAnnouncement) { return `<div style="margin:10px 0;padding:12px 16px;background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(245,166,35,.04));border:1px solid rgba(245,166,35,.25);border-radius:12px;border-left:3px solid var(--a4);"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;"><i class='fas fa-bullhorn' style='color:var(--a4);font-size:.75rem;'></i><span style='font-family:var(--font-mono);font-size:.62rem;color:var(--a4);font-weight:700;text-transform:uppercase;letter-spacing:.5px;'>Announcement</span><span style='font-family:var(--font-mono);font-size:.56rem;color:var(--text-dim);margin-left:auto;'>${msg.ts?.toDate?msg.ts.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):""}</span></div><div style='font-size:.84rem;line-height:1.6;color:var(--text);'>${escapeHtml(msg.text||"")}</div><div style='font-family:var(--font-mono);font-size:.58rem;color:var(--text-dim);margin-top:4px;'>by ${escapeHtml(msg.senderName||"Admin")}</div></div>`; }
     const isMe = msg.uid===me?.uid;
     const color = AV_COLORS[Math.abs((msg.uid||"a").charCodeAt(0))%AV_COLORS.length];
     const isLeader = msg.uid===group.leaderId;
@@ -1948,20 +2159,73 @@ window.sendMsg = async function(groupId) {
   } catch(e) { toast("Failed to send: "+e.message,"err"); }
 };
 
-window.leaveGroup = async function(groupId) {
-  if(!me||!confirm("Leave this group?")) return;
-  const group = groupsCache.find(g=>g.id===groupId);
-  if(group?.leaderId===me.uid) {
-    toast("You are the leader. Transfer leadership or delete the group first.","err"); return;
-  }
+/* ─── ANNOUNCEMENT ─── */
+window.postAnnouncement = async function(groupId) {
+  if(!me) return;
+  const group=groupsCache.find(g=>g.id===groupId);
+  const isLeader=group?.leaderId===me.uid, isAdmin=myData?.role==="admin"||(group?.admins||[]).includes(me?.uid);
+  if(!isLeader&&!isAdmin){toast("Only admin/leader can post announcements","err");return;}
+  const text=prompt("📢 Post an announcement to the group:");
+  if(!text||!text.trim()) return;
   try {
-    await updateDoc(doc(db,"chatGroups",groupId), {members:arrayRemove(me.uid)});
-    if(activeGroupId===groupId) {
-      activeGroupId=null;
-      $("chat-main-area").innerHTML=`<div class="chat-empty"><i class="fas fa-comments"></i><p>Select a group to start chatting</p></div>`;
+    await addDoc(collection(db,"chatGroups",groupId,"messages"),{
+      uid:me.uid, senderName:myData?.name||"Admin",
+      senderRole:myData?.role||"player",
+      photo:myData?.photo||"",
+      text:text.trim(), ts:serverTimestamp(),
+      isAnnouncement:true,
+    });
+    await updateDoc(doc(db,"chatGroups",groupId),{
+      lastMessage:"📢 "+text.trim().substring(0,50),
+      lastMessageAt:serverTimestamp(),
+    });
+    toast("Announcement posted!","ok");
+  } catch(e){toast("Error: "+e.message,"err");}
+};
+
+window.leaveGroup = async function(groupId) {
+  if(!me) return;
+  const group = groupsCache.find(g=>g.id===groupId);
+  if(!group) return;
+  if(group.leaderId===me.uid) {
+    // Leader is leaving - must transfer leadership first
+    const otherMembers=(group.members||[]).filter(uid=>uid!==me.uid);
+    if(otherMembers.length===0) {
+      // No other members - confirm delete
+      if(!confirm("You are the only member. Leaving will delete this group. Continue?")) return;
+      return window.deleteGroup(groupId);
     }
+    // Transfer leadership to the next admin or first member
+    const nextAdmins=(group.admins||[]).filter(uid=>uid!==me.uid);
+    const newLeader=nextAdmins.length>0?nextAdmins[0]:otherMembers[0];
+    if(!confirm(`You are the group leader. Leaving will transfer leadership to another member. Continue?`)) return;
+    try {
+      await updateDoc(doc(db,"chatGroups",groupId),{
+        leaderId:newLeader,
+        admins:arrayUnion(newLeader),
+        members:arrayRemove(me.uid),
+      });
+      await addDoc(collection(db,"chatGroups",groupId,"messages"),{
+        uid:"system",senderName:"System",
+        text:`Leadership transferred. ${myData?.name||"Someone"} left the group.`,
+        ts:serverTimestamp(),isSystem:true,
+      });
+      if(activeGroupId===groupId){activeGroupId=null;$("chat-main-area").innerHTML=`<div class="chat-empty"><i class="fas fa-comments"></i><p>Select a group to start chatting</p></div>`;}
+      toast("Left group. Leadership transferred.","info");
+    } catch(e){toast("Error: "+e.message,"err");}
+    return;
+  }
+  if(!confirm("Leave this group?")) return;
+  try {
+    await updateDoc(doc(db,"chatGroups",groupId),{members:arrayRemove(me.uid)});
+    await addDoc(collection(db,"chatGroups",groupId,"messages"),{
+      uid:"system",senderName:"System",
+      text:`${myData?.name||"Someone"} left the group`,
+      ts:serverTimestamp(),isSystem:true,
+    });
+    if(activeGroupId===groupId){activeGroupId=null;$("chat-main-area").innerHTML=`<div class="chat-empty"><i class="fas fa-comments"></i><p>Select a group to start chatting</p></div>`;}
     toast("Left group","info");
-  } catch(e) { toast("Error: "+e.message,"err"); }
+  } catch(e){toast("Error: "+e.message,"err");}
 };
 
 /* ─── GROUP SETTINGS ─── */
@@ -1987,11 +2251,37 @@ window.showGroupSettings = async function(groupId) {
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
       <button class="btn btn-primary btn-sm" onclick="saveGroupSettings('${groupId}')"><i class="fas fa-save"></i> Save</button>
+      ${isLeader?`<button class="btn btn-ghost btn-sm" onclick="showTransferLeadership('${groupId}')"><i class="fas fa-exchange-alt"></i> Transfer Leadership</button>`:""}
       ${isLeader||isAdmin?`<button class="btn btn-danger btn-sm" onclick="deleteGroup('${groupId}')"><i class="fas fa-trash"></i> Delete Group</button>`:""}
     </div>`;
   msgs.style.position="relative";
   msgs.appendChild(overlay);
 };
+/* ─── TRANSFER LEADERSHIP ─── */
+window.showTransferLeadership = async function(groupId) {
+  const group=groupsCache.find(g=>g.id===groupId); if(!group) return;
+  if(group.leaderId!==me?.uid&&myData?.role!=="admin"){toast("Only the leader can transfer leadership","err");return;}
+  const otherMembers=(group.members||[]).filter(uid=>uid!==me.uid);
+  if(!otherMembers.length){toast("No other members to transfer to","err");return;}
+  // Fetch member names
+  try {
+    const memberDatas=await Promise.all(otherMembers.map(uid=>getDoc(doc(db,"users",uid)).then(s=>s.exists()?{uid,...s.data()}:{uid,name:"Unknown"}).catch(()=>({uid,name:"Unknown"}))));
+    const choices=memberDatas.map((m,i)=>`${i+1}. ${m.name||"Unknown"} (${m.email||""})`).join("
+");
+    const idx=parseInt(prompt(`Transfer leadership to:
+${choices}
+
+Enter number:`));
+    if(isNaN(idx)||idx<1||idx>memberDatas.length){toast("Invalid choice","err");return;}
+    const newLeader=memberDatas[idx-1];
+    if(!confirm(`Transfer leadership to "${newLeader.name}"? You will become a regular member.`)) return;
+    await updateDoc(doc(db,"chatGroups",groupId),{leaderId:newLeader.uid,admins:arrayUnion(newLeader.uid)});
+    await addDoc(collection(db,"chatGroups",groupId,"messages"),{uid:"system",senderName:"System",text:`Leadership transferred to ${newLeader.name}`,ts:serverTimestamp(),isSystem:true}).catch(()=>{});
+    toast(`Leadership transferred to ${newLeader.name}`,"ok");
+    document.querySelector(".settings-panel")?.remove();
+  } catch(e){toast("Error: "+e.message,"err");}
+};
+
 window.saveGroupSettings = async function(groupId) {
   const name=$("gs-name")?.value.trim(), desc=$("gs-desc")?.value.trim();
   const isPrivate=$("gs-private")?.checked!==false;
@@ -2093,25 +2383,25 @@ function renderCGMembersList() {
 }
 window.toggleCGMember = function(uid) { if(cgSelectedMembers.has(uid)) cgSelectedMembers.delete(uid); else cgSelectedMembers.add(uid); renderCGMembersList(); };
 
-/* ─── CREATE GROUP (FIXED) ─── */
-// KEY FIX: All invited members are added to the members array immediately (no pending).
-// If isPrivate, they receive an invite notification. If public, anyone can join directly.
+/* ─── CREATE GROUP ─── */
+// FIXED: Members are NOT added directly. Instead, join requests are sent.
+// Only the creator (leader) is added immediately. 
+// Invited members receive a request and must accept to join.
 window.createGroup = async function() {
   if(!me) return;
   const name=$("cg-name").value.trim();
   if(!name){toast("Enter a group name","err");return;}
   const isPrivate=$("cg-private-toggle")?.checked!==false;
   const desc=$("cg-desc")?.value.trim()||"";
-  const invitedMembers=Array.from(cgSelectedMembers);
-  // All invited members are confirmed immediately — they see the group right away
-  const confirmedMembers=[me.uid,...invitedMembers];
+  const invitedUids=Array.from(cgSelectedMembers);
   const btn=$("cg-create-btn");
   if(btn){btn.disabled=true;btn.innerHTML=`<i class="fas fa-spinner spin"></i> Creating…`;}
   try {
+    // Only creator is a confirmed member initially
     const groupRef=await addDoc(collection(db,"chatGroups"),{
       name, desc, photo:cgPhotoData||"",
       leaderId:me.uid,
-      members:confirmedMembers, // FIXED: all invited members added immediately
+      members:[me.uid], // ONLY creator is added
       admins:[me.uid],
       isPrivate,
       createdAt:serverTimestamp(),
@@ -2119,26 +2409,28 @@ window.createGroup = async function() {
       lastMessageAt:serverTimestamp(),
       messageCount:0,
     });
-    // Send notification to invited members so they know they were added
-    const invitePromises=invitedMembers.map(uid=>
-      setDoc(doc(db,"joinRequests",`${groupRef.id}_invite_${uid}`),{
-        groupId:groupRef.id, groupName:name, groupPhoto:cgPhotoData||"",
-        fromUid:me.uid, fromName:myData?.name||"Someone",
-        toUid:uid, status:"info", ts:serverTimestamp(), type:"invite_info",
-      })
-    );
-    await Promise.all(invitePromises);
     // Post welcome message
     await addDoc(collection(db,"chatGroups",groupRef.id,"messages"),{
       uid:"system",senderName:"System",
       text:`${myData?.name||"Someone"} created the group "${name}"`,
       ts:serverTimestamp(),isSystem:true,
     });
-    toast(`Group "${name}" created with ${confirmedMembers.length} member(s)!`,"ok");
+    // Send invite REQUESTS to invited members (they must accept)
+    if(invitedUids.length>0){
+      const invitePromises=invitedUids.map(uid=>
+        setDoc(doc(db,"joinRequests",`${groupRef.id}_invite_${uid}`),{
+          groupId:groupRef.id, groupName:name, groupPhoto:cgPhotoData||"",
+          fromUid:me.uid, fromName:myData?.name||"Someone",
+          toUid:uid, status:"pending", ts:serverTimestamp(), type:"group_invite",
+        })
+      );
+      await Promise.all(invitePromises);
+      toast(`Group "${name}" created! Invite requests sent to ${invitedUids.length} member(s).`,"ok");
+    } else {
+      toast(`Group "${name}" created!`,"ok");
+    }
     closeCGModal();
-    // Immediately open the new group
     activeGroupId=groupRef.id;
-    // Wait for snapshot to arrive and auto-open
     setTimeout(()=>{
       const newGroup=groupsCache.find(g=>g.id===groupRef.id);
       if(newGroup) openGroup(groupRef.id);
@@ -2148,6 +2440,72 @@ window.createGroup = async function() {
     toast("Failed: "+e.message,"err");
     if(btn){btn.disabled=false;btn.innerHTML=`<i class="fas fa-plus"></i> Create Group`;}
   }
+};
+
+/* ─── INVITE MEMBER BY EMAIL ─── */
+window.showInviteByEmail = function(groupId) {
+  const group = groupsCache.find(g=>g.id===groupId); if(!group) return;
+  const msgs = document.getElementById("chat-msgs-"+groupId); if(!msgs) return;
+  msgs.querySelectorAll(".invite-panel").forEach(p=>p.remove());
+  msgs.style.position="relative";
+  const overlay = document.createElement("div");
+  overlay.className = "invite-panel";
+  overlay.style.cssText="position:absolute;inset:0;background:var(--surface);z-index:20;padding:20px;overflow-y:auto;border-radius:0;";
+  overlay.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-family:var(--font-display);font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:8px;"><i class="fas fa-user-plus" style="color:var(--a2);"></i> Invite Member</div>
+      <button onclick="this.closest('.invite-panel').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button>
+    </div>
+    <p style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);margin-bottom:14px;line-height:1.7;">Search by email. The person will receive a request and must accept to join <strong style="color:var(--text);">${escapeHtml(group.name)}</strong>.</p>
+    <div class="field"><label>Search by Email</label>
+      <div style="display:flex;gap:8px;">
+        <input class="inp" id="invite-email-inp" placeholder="user@example.com" type="email" style="flex:1;">
+        <button class="btn btn-ghost btn-sm" onclick="searchUserByEmail('${groupId}')"><i class="fas fa-search"></i> Search</button>
+      </div>
+    </div>
+    <div id="invite-search-result" style="margin-top:12px;"></div>`;
+  msgs.appendChild(overlay);
+};
+
+window.searchUserByEmail = async function(groupId) {
+  const email = $("invite-email-inp")?.value.trim().toLowerCase(); if(!email){toast("Enter an email","err");return;}
+  const result = $("invite-search-result"); if(!result) return;
+  result.innerHTML=`<div class="empty" style="padding:16px;"><i class="fas fa-spinner spin"></i><p>Searching…</p></div>`;
+  try {
+    const snap = await getDocs(query(collection(db,"users"),where("email","==",email),limit(1)));
+    if(snap.empty){result.innerHTML=`<div class="empty" style="padding:16px;"><i class="fas fa-user-slash"></i><p>No user found with that email.</p></div>`;return;}
+    const userData={id:snap.docs[0].id,...snap.docs[0].data()};
+    const group=groupsCache.find(g=>g.id===groupId);
+    const alreadyMember=(group?.members||[]).includes(userData.id);
+    const col=AV_COLORS[Math.abs((userData.id||"a").charCodeAt(0))%AV_COLORS.length];
+    const photoHtml=userData.photo?`<img src="${userData.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:`<span style="font-family:var(--font-display);font-size:.9rem;font-weight:800;">${av(userData.name)}</span>`;
+    result.innerHTML=`
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rl);">
+        <div style="width:40px;height:40px;border-radius:50%;background:${userData.photo?"transparent":col};display:flex;align-items:center;justify-content:center;color:#000;overflow:hidden;flex-shrink:0;">${photoHtml}</div>
+        <div style="flex:1;min-width:0;"><div style="font-size:.88rem;font-weight:700;">${escapeHtml(userData.name||"User")}</div><div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-dim);">${escapeHtml(userData.email||email)}</div></div>
+        ${alreadyMember
+          ? `<span style="font-family:var(--font-mono);font-size:.66rem;color:var(--a2);"><i class="fas fa-check-circle"></i> Already a member</span>`
+          : `<button class="btn btn-primary btn-sm" onclick="sendGroupInvite('${groupId}','${userData.id}','${escapeHtml(group?.name||"")}')"><i class="fas fa-paper-plane"></i> Send Invite</button>`
+        }
+      </div>`;
+  } catch(e){result.innerHTML=`<div class="empty" style="padding:16px;"><i class="fas fa-exclamation-circle"></i><p>Error: ${e.message}</p></div>`;console.error(e);}
+};
+
+window.sendGroupInvite = async function(groupId, targetUid, groupName) {
+  if(!me) return;
+  const reqId=`${groupId}_invite_${targetUid}`;
+  try {
+    const existing=await getDoc(doc(db,"joinRequests",reqId)).catch(()=>null);
+    if(existing?.exists()&&existing.data().status==="pending"){toast("Invite already sent!","info");return;}
+    const group=groupsCache.find(g=>g.id===groupId);
+    await setDoc(doc(db,"joinRequests",reqId),{
+      groupId, groupName:groupName||group?.name||"", groupPhoto:group?.photo||"",
+      fromUid:me.uid, fromName:myData?.name||"Admin",
+      toUid:targetUid, status:"pending", ts:serverTimestamp(), type:"group_invite",
+    });
+    toast("Invite sent! Member must accept to join.","ok");
+    document.querySelector(".invite-panel")?.remove();
+  } catch(e){toast("Error: "+e.message,"err");}
 };
 
 /* ─── DISCOVER TAB (FIXED) ─── */
@@ -2195,8 +2553,8 @@ window.renderDiscoverGroups = function() {
     <div class="discover-card">
       <div class="discover-av">${g.photo?`<img src="${g.photo}" alt="${escapeHtml(g.name)}" onerror="this.style.display='none'">`:"💬"}</div>
       <div style="flex:1;min-width:0;">
-        <div class="discover-name">${escapeHtml(g.name)} ${g.isPrivate!==false?`<span class="group-private-badge">🔒 Private</span>`:`<span class="group-public-badge">🌐 Public</span>`}</div>
-        <div class="discover-meta">${memberCount} member${memberCount!==1?"s":""}${g.desc?` · ${escapeHtml(g.desc)}`:""}</div>
+        <div class="discover-name">${escapeHtml(g.name)} <span class="${g.isPrivate!==false?'group-private-badge':'group-public-badge'}">${g.isPrivate!==false?"🔒 Private":"🌐 Public"}</span></div>
+        <div class="discover-meta"><i class='fas fa-users' style='font-size:.55rem;margin-right:3px;'></i>${memberCount} member${memberCount!==1?"s":""}${g.desc?` &nbsp;·&nbsp; ${escapeHtml(g.desc.substring(0,60)+(g.desc.length>60?"…":""))}`:""}</div>
       </div>
       ${inGroup
         ? `<button class="request-join-btn" onclick="go('community');switchCommTab('groups');setTimeout(()=>openGroup('${g.id}'),400);" style="background:rgba(0,212,170,.1);border-color:rgba(0,212,170,.3);color:var(--a2);"><i class="fas fa-comments"></i> Open Chat</button>`
@@ -2273,11 +2631,10 @@ async function loadJoinRequests() {
   try {
     const allReqs=[];
     const seen=new Set();
-    // 1. Invites sent directly to this user (type=invite_info shows as info, not pending)
-    // We show pending join_request type
+    // 1. All pending requests/invites sent TO me (invites I need to accept/decline)
     const incomingSnap=await getDocs(query(collection(db,"joinRequests"),where("toUid","==",me.uid),where("status","==","pending")));
     incomingSnap.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);allReqs.push({id:d.id,...d.data()});}});
-    // 2. Join requests for groups where I am leader/admin
+    // 2. Join requests FOR groups where I am leader/admin (people want to join my groups)
     const myLeadGroups=groupsCache.filter(g=>g.leaderId===me?.uid||(g.admins||[]).includes(me?.uid));
     for(const g of myLeadGroups) {
       const reqSnap=await getDocs(query(collection(db,"joinRequests"),where("groupId","==",g.id),where("status","==","pending"),where("type","==","join_request")));
@@ -2285,62 +2642,63 @@ async function loadJoinRequests() {
     }
     if(!allReqs.length){container.innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><p>No pending requests.</p></div>`;return;}
     container.innerHTML=allReqs.map(req=>{
+      const isInviteToMe=req.toUid===me.uid && (req.type==="group_invite"||req.type==="invite_info");
       const isJoinReq=req.type==="join_request";
       const col=AV_COLORS[Math.abs((req.fromUid||"a").charCodeAt(0))%AV_COLORS.length];
       const photoHtml=req.fromPhoto?`<img src="${req.fromPhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:`<span style="font-family:var(--font-display);font-size:.9rem;font-weight:800;color:#fff;">${av(req.fromName)}</span>`;
+      const typeIcon=isInviteToMe?`<i class="fas fa-envelope" style="color:var(--a1);margin-right:4px;font-size:.65rem;"></i>`
+        :isJoinReq?`<i class="fas fa-user-plus" style="color:var(--a2);margin-right:4px;font-size:.65rem;"></i>`
+        :`<i class="fas fa-bell" style="color:var(--a4);margin-right:4px;font-size:.65rem;"></i>`;
       return `
       <div class="req-card" id="req-${req.id}">
-        <div style="width:38px;height:38px;border-radius:50%;background:${req.fromPhoto?"transparent":col};display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">${photoHtml}</div>
+        <div style="width:40px;height:40px;border-radius:50%;background:${req.fromPhoto?"transparent":col};display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border:2px solid ${isInviteToMe?"rgba(108,99,255,.3)":isJoinReq?"rgba(0,212,170,.3)":"rgba(245,166,35,.3)"};">${photoHtml}</div>
         <div class="req-card-info">
           <div class="req-card-title">
-            ${isJoinReq
-              ? `<strong>${escapeHtml(req.fromName)}</strong> wants to join <strong>${escapeHtml(req.groupName)}</strong>`
-              : `<strong>${escapeHtml(req.fromName)}</strong> invited you to <strong>${escapeHtml(req.groupName)}</strong>`}
+            ${isInviteToMe
+              ? `${typeIcon}<strong>${escapeHtml(req.fromName)}</strong> invited you to join <strong>${escapeHtml(req.groupName)}</strong>`
+              : isJoinReq
+                ? `${typeIcon}<strong>${escapeHtml(req.fromName)}</strong> wants to join <strong>${escapeHtml(req.groupName)}</strong>`
+                : `${typeIcon}<strong>${escapeHtml(req.fromName)}</strong> — <strong>${escapeHtml(req.groupName)}</strong>`
+            }
           </div>
-          <div class="req-card-sub">${req.ts?.toDate?req.ts.toDate().toLocaleDateString():""} · ${isJoinReq?"Join Request":"Invite"}</div>
+          <div class="req-card-sub">${req.ts?.toDate?req.ts.toDate().toLocaleDateString():""} · ${isInviteToMe?"Group Invite":isJoinReq?"Join Request":"Notification"}</div>
         </div>
         <div class="req-actions">
-          <button class="req-join-btn" onclick="respondToRequest('${req.id}','${req.groupId}','${req.fromUid}','accept','${isJoinReq}')"><i class="fas fa-check"></i> ${isJoinReq?"Approve":"Accept"}</button>
-          <button class="req-del-btn" onclick="respondToRequest('${req.id}','${req.groupId}','${req.fromUid}','decline','${isJoinReq}')"><i class="fas fa-times"></i> ${isJoinReq?"Reject":"Decline"}</button>
+          <button class="req-join-btn" onclick="respondToRequest('${req.id}','${req.groupId}','${req.fromUid}','accept','${req.type}')"><i class="fas fa-check"></i> ${isInviteToMe?"Accept":"Approve"}</button>
+          <button class="req-del-btn" onclick="respondToRequest('${req.id}','${req.groupId}','${req.fromUid}','decline','${req.type}')"><i class="fas fa-times"></i> ${isInviteToMe?"Decline":"Reject"}</button>
         </div>
       </div>`;
     }).join("");
   } catch(e){container.innerHTML=`<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Error loading: ${e.message}</p></div>`;console.error(e);}
 }
 
-/* FIXED: Respond to request — correctly adds member to group */
-window.respondToRequest = async function(reqId, groupId, fromUid, action, isJoinReq) {
+/* FIXED: Respond to request or invite */
+window.respondToRequest = async function(reqId, groupId, fromUid, action, reqType) {
   try {
     const reqRef=doc(db,"joinRequests",reqId);
+    const isInvite=(reqType==="group_invite")||(reqType==="true"&&fromUid===me?.uid)||false;
     if(action==="accept") {
-      // FIXED: Add the user to the group members array
-      await updateDoc(doc(db,"chatGroups",groupId),{members:arrayUnion(fromUid)});
+      // Add the member to the group
+      const targetUid=isInvite?me.uid:fromUid;
+      await updateDoc(doc(db,"chatGroups",groupId),{members:arrayUnion(targetUid)});
       await updateDoc(reqRef,{status:"accepted"});
-      // Notify in chat
-      const requesterSnap=await getDoc(doc(db,"users",fromUid)).catch(()=>null);
-      const requesterName=requesterSnap?.data()?.name||"Someone";
-      const group=groupsCache.find(g=>g.id===groupId);
+      // Post system message in chat
+      const memberSnap=await getDoc(doc(db,"users",targetUid)).catch(()=>null);
+      const memberName=memberSnap?.data()?.name||"Someone";
       await addDoc(collection(db,"chatGroups",groupId,"messages"),{
         uid:"system",senderName:"System",
-        text:`${requesterName} joined the group`,
+        text:`${memberName} joined the group`,
         ts:serverTimestamp(),isSystem:true,
-      });
-      // Also send an acceptance notification to the user (so their groups listener fires)
-      await setDoc(doc(db,"joinRequests",`${groupId}_accepted_${fromUid}`),{
-        groupId, groupName:group?.name||"",
-        fromUid:me.uid, fromName:myData?.name||"Admin",
-        toUid:fromUid, status:"accepted",
-        ts:serverTimestamp(), type:"join_accepted",
       }).catch(()=>{});
-      toast("Request approved! Member added to group.","ok");
+      const group=groupsCache.find(g=>g.id===groupId)||allGroupsCache.find(g=>g.id===groupId);
+      toast(isInvite?`Joined "${group?.name||"group"}"!`:"Request approved! Member added.","ok");
     } else {
       await updateDoc(reqRef,{status:"declined"});
-      toast("Request declined","info");
+      toast("Declined","info");
     }
     document.getElementById("req-"+reqId)?.remove();
-    // Refresh if no more items
     const remaining=document.querySelectorAll(".req-card");
-    if(!remaining.length) { const container=$("join-requests-list"); if(container) container.innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><p>No pending requests.</p></div>`; }
+    if(!remaining.length){ const container=$("join-requests-list"); if(container) container.innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><p>No pending requests.</p></div>`; }
   } catch(e){toast("Error: "+e.message,"err");console.error(e);}
 };
 
@@ -2376,20 +2734,49 @@ window.renderProfile = function() {
 };
 window.saveProfile = async function() {
   if(!me) return;
-  const name=$("pf-name").value.trim()||myData?.name||"Hacker";
-  const bio=$("pf-bio").value.trim(), github=$("pf-github").value.trim(), mobile=$("pf-mobile").value.trim();
-  try { await updateDoc(doc(db,"users",me.uid),{name,bio,github,mobile}); await updateDoc(doc(db,"leaderboard",me.uid),{name}).catch(()=>{}); toast("Profile saved","ok"); }
-  catch(e){toast("Error: "+e.message,"err");}
+  const name=($("pf-name")?.value||"").trim()||myData?.name||"Hacker";
+  const bio=($("pf-bio")?.value||"").trim();
+  const github=($("pf-github")?.value||"").trim();
+  const mobile=($("pf-mobile")?.value||"").trim();
+  const linkedin=($("pf-linkedin")?.value||"").trim();
+  const location=($("pf-location")?.value||"").trim();
+  try {
+    await updateDoc(doc(db,"users",me.uid),{name,bio,github,mobile,linkedin,location});
+    await updateDoc(doc(db,"leaderboard",me.uid),{name}).catch(()=>{});
+    myData={...myData,name,bio,github,mobile,linkedin,location};
+    renderProfile();
+    toast("Profile saved ✓","ok");
+  } catch(e){toast("Error: "+e.message,"err");}
 };
 
 /* ─── SECURITY ─── */
+window.togglePassVis = function(inputId, btn) {
+  const inp=$(inputId); if(!inp) return;
+  const isPass=inp.type==="password";
+  inp.type=isPass?"text":"password";
+  const icon=btn.querySelector("i");
+  if(icon){icon.className=isPass?"fas fa-eye-slash":"fas fa-eye";}
+};
+window.toggleShowEmail = async function(el) {
+  if(!me) return;
+  try{await updateDoc(doc(db,"users",me.uid),{showEmail:el.checked});toast(el.checked?"Email visible on leaderboard":"Email hidden","ok");}
+  catch(e){toast("Error: "+e.message,"err");el.checked=!el.checked;}
+};
+window.togglePublicProfile = async function(el) {
+  if(!me) return;
+  try{await updateDoc(doc(db,"users",me.uid),{publicProfile:el.checked});toast(el.checked?"Profile is public":"Profile is private","ok");}
+  catch(e){toast("Error: "+e.message,"err");el.checked=!el.checked;}
+};
 function renderSecurity() {
   if(!me) return;
-  $("sec-info").textContent=`Signed in as ${me.email} · UID: ${me.uid.substring(0,14)}…`;
+  if($("sec-info")) $("sec-info").textContent=`Signed in as ${me.email}
+UID: ${me.uid.substring(0,14)}…
+Last active: ${new Date().toLocaleString()}`;
   const tgl=$("twofa-toggle"), status=$("twofa-status");
-  tgl.checked=myData?.twoFA||false;
-  status.textContent=tgl.checked?"2FA is enabled.":"2FA is currently disabled.";
-  status.style.color=tgl.checked?"var(--a2)":"var(--text-muted)";
+  if(tgl){tgl.checked=myData?.twoFA||false;}
+  if(status){status.textContent=(myData?.twoFA)?"✓ 2FA is enabled.":"2FA is currently disabled.";status.style.color=(myData?.twoFA)?"var(--a2)":"var(--text-muted)";}
+  const showEmailTgl=$("show-email-toggle"); if(showEmailTgl) showEmailTgl.checked=myData?.showEmail!==false;
+  const pubProfTgl=$("public-profile-toggle"); if(pubProfTgl) pubProfTgl.checked=myData?.publicProfile!==false;
 }
 window.toggle2FA = async function(el) {
   if(!me) return; const on=el.checked;
@@ -2414,6 +2801,60 @@ window.deleteAcc = async function() {
 window.doLogout = async function() {
   if(chatUnsub) chatUnsub(); if(groupsUnsub) groupsUnsub(); if(lbUnsub) lbUnsub(); if(reqUnsub) reqUnsub();
   await signOut(auth); window.location.href="login.html";
+};
+
+/* ─── MOBILE GROUP NAVIGATION ─── */
+window.closeMobileGroup = function() {
+  // On mobile, go back to group list
+  if(window.innerWidth <= 768) {
+    const sidebar = document.querySelector(".chat-sidebar");
+    const mainArea = $("chat-main-area");
+    if(sidebar) { sidebar.classList.add("mob-active"); sidebar.style.cssText="display:flex!important;position:absolute;z-index:10;width:100%;top:0;left:0;bottom:0;"; }
+    if(mainArea) mainArea.style.display="none";
+  }
+};
+window.toggleMobileGroupList = function() {
+  const sidebar = document.querySelector(".chat-sidebar");
+  if(!sidebar) return;
+  const isOpen = sidebar.style.display==="flex"||sidebar.classList.contains("mob-active");
+  if(isOpen) {
+    sidebar.style.display="none"; sidebar.classList.remove("mob-active");
+    const mainArea=$("chat-main-area"); if(mainArea) mainArea.style.display="flex";
+  } else {
+    sidebar.style.cssText="display:flex!important;position:absolute;z-index:10;width:100%;top:0;left:0;bottom:0;flex-direction:column;background:var(--surface2);";
+    sidebar.classList.add("mob-active");
+  }
+};
+window.closeMobileGroupList = function() {
+  const sidebar=document.querySelector(".chat-sidebar");
+  if(sidebar){sidebar.style.display="";sidebar.classList.remove("mob-active");}
+  const mainArea=$("chat-main-area"); if(mainArea) mainArea.style.display="";
+};
+
+// Show mobile back btn and groups toggle on mobile
+function updateMobileCommUI() {
+  const isMobile=window.innerWidth<=768;
+  document.querySelectorAll(".mobile-back-btn").forEach(b=>b.style.display=isMobile?"flex":"none");
+  document.querySelectorAll(".mob-groups-toggle").forEach(b=>b.style.display=isMobile?"flex":"none");
+  document.querySelectorAll(".mob-close-groups").forEach(b=>b.style.display=isMobile?"flex":"none");
+}
+window.addEventListener("resize", updateMobileCommUI);
+// Call after a slight delay when community tab opens
+const _origSwitchCommTab = window.switchCommTab;
+window.switchCommTab = function(tab) {
+  _origSwitchCommTab(tab);
+  if(tab==="groups") {
+    setTimeout(()=>{
+      updateMobileCommUI();
+      // On mobile, if no group selected, show the sidebar
+      if(window.innerWidth<=768 && !activeGroupId){
+        const sidebar=document.querySelector(".chat-sidebar");
+        const mainArea=$("chat-main-area");
+        if(sidebar){sidebar.style.cssText="display:flex!important;flex-direction:column;position:static;width:100%;";}
+        if(mainArea){mainArea.style.display="none";}
+      }
+    }, 50);
+  }
 };
 
 /* ─── KEYBOARD ─── */

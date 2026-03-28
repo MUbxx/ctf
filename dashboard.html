@@ -761,6 +761,20 @@ textarea.inp{resize:vertical;min-height:72px}
 </style>
 </head>
 <body>
+<!-- LOADING OVERLAY - shown while Firebase initializes -->
+<div id="loading-screen" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s;">
+  <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(108,99,255,.4);animation:pulse 2s infinite;">
+    <i class="fas fa-shield-alt" style="color:#fff;font-size:1.4rem;"></i>
+  </div>
+  <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;letter-spacing:2px;color:var(--text);">CYBER BUDDY</div>
+  <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text-muted);letter-spacing:1px;" id="loading-msg">Initializing…</div>
+  <div style="width:200px;height:3px;background:var(--surface3);border-radius:4px;overflow:hidden;">
+    <div style="height:100%;background:linear-gradient(90deg,var(--a1),var(--a2));border-radius:4px;animation:loadBar 1.5s ease-in-out infinite;"></div>
+  </div>
+</div>
+<style>
+@keyframes loadBar{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+</style>
 <div class="bg-canvas">
   <div class="grid-lines"></div>
   <div class="bg-orb"></div>
@@ -1354,15 +1368,50 @@ textarea.inp{resize:vertical;min-height:72px}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script type="module">
-import { auth, db } from "./js/firebase.js";
-import {
-  onAuthStateChanged, signOut, deleteUser, updatePassword
+// ═══════════════════════════════════════════════════════════════
+// FIREBASE CONFIGURATION — Replace with your own Firebase config
+// Get it from: Firebase Console → Project Settings → Your apps
+// ═══════════════════════════════════════════════════════════════
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, deleteUser, updatePassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
+import { getFirestore,
   doc, collection, getDoc, getDocs, onSnapshot, setDoc,
   updateDoc, addDoc, deleteDoc, query, orderBy, where, limit,
   serverTimestamp, increment, writeBatch, arrayUnion, arrayRemove
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ──────────────────────────────────────────────
+// YOUR FIREBASE CONFIG — paste yours here
+// ──────────────────────────────────────────────
+let _app, auth, db;
+// Ensure auth and db are defined even if import fails
+window._firebaseReady = false;
+try {
+  // Try to load from the external firebase.js if it exists
+  const mod = await import("./js/firebase.js").catch(()=>null);
+  if(mod && mod.auth && mod.db) {
+    auth = mod.auth; db = mod.db;
+  } else {
+    throw new Error("No external firebase.js");
+  }
+} catch(_e) {
+  // Fallback: inline config — REPLACE THESE VALUES WITH YOUR OWN
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  _app = initializeApp(firebaseConfig);
+  auth = getAuth(_app);
+  db = getFirestore(_app);
+}
+
+// Mark Firebase as initialized
+if(auth && db) window._firebaseReady = true;
 
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);
@@ -1414,23 +1463,67 @@ window.toggleTheme = () => {
 try { const t = localStorage.getItem("ctf-theme"); if(t) applyTheme(t); } catch(e) {}
 
 /* ─── AUTH ─── */
+// Helper to hide loading screen
+function hideLoading() {
+  const ls = $("loading-screen"); 
+  if(ls) { ls.style.opacity="0"; setTimeout(()=>ls.style.display="none", 400); }
+}
+function setLoadingMsg(msg) {
+  const el = $("loading-msg"); if(el) el.textContent = msg;
+}
+
+// Check if Firebase is properly configured
+let isConfigured = false;
+try {
+  isConfigured = !!(auth && auth.app && auth.app.options && 
+    auth.app.options.apiKey && auth.app.options.apiKey !== "YOUR_API_KEY");
+} catch(_ce) { isConfigured = false; }
+
+if(!isConfigured) {
+  setLoadingMsg("Firebase not configured — check your firebase.js or update the config in this file.");
+  setTimeout(()=>{
+    const ls=$("loading-screen");
+    if(ls){
+      ls.innerHTML=`<div style="text-align:center;padding:30px;max-width:480px;">
+        <div style="font-size:2rem;margin-bottom:12px;">⚙️</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:10px;">Firebase Not Configured</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted);line-height:1.8;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:left;">
+          Either place your <code style="color:var(--a1);">firebase.js</code> at <code style="color:var(--a2);">./js/firebase.js</code><br>
+          — or —<br>
+          Edit this file and replace <code style="color:var(--a3);">YOUR_API_KEY</code>, <code style="color:var(--a3);">YOUR_PROJECT_ID</code>, etc. with your actual Firebase config.<br><br>
+          Get your config from:<br>
+          <strong>Firebase Console → Project Settings → Your apps</strong>
+        </div>
+      </div>`;
+    }
+  }, 1500);
+} else {
+  setLoadingMsg("Connecting to Firebase…");
+}
+
 onAuthStateChanged(auth, async user => {
-  if(!user) { window.location.href = "login.html"; return; }
+  if(!user) { 
+    setLoadingMsg("Redirecting to login…");
+    setTimeout(()=>{ window.location.href = "login.html"; }, 500);
+    return; 
+  }
   me = user;
+  setLoadingMsg("Loading your profile…");
   onSnapshot(doc(db,"users",user.uid), snap => {
     myData = snap.data() || {};
     if(myData.status==="pending"||myData.status==="rejected") { signOut(auth).then(()=>location.href="login.html"); return; }
     refreshSidebar();
     refreshDashStats();
-    if($("view-profile").classList.contains("active")) renderProfile();
-    if($("view-security").classList.contains("active")) renderSecurity();
+    hideLoading();
+    if($("view-profile")?.classList.contains("active")) renderProfile();
+    if($("view-security")?.classList.contains("active")) renderSecurity();
   });
   loadChallenges();
   startLeaderboard();
   loadSolveHistory();
   loadNotes();
   startGroupsListener();
-  startRequestsListener(); // NEW: always listen for requests
+  startRequestsListener();
 });
 
 /* ─── PHOTO UPLOAD ─── */
@@ -1471,7 +1564,7 @@ function refreshSidebar() {
 
 /* ─── NAVIGATION ─── */
 const VIEWS = ["dashboard","challenges","progress","notes","community","leaderboard","profile","security"];
-const TITLES = {dashboard:"DASHBOARD",challenges:"CHALLENGES",progress:"PROGRESS",notes:"CTF NOTES",community:"COMMUNITY",leaderboard:"LEADERBOARD",profile:"PROFILE",security:"SECURITY"};
+const TITLES = {dashboard:"DASHBOARD",challenges:"CHALLENGES",progress:"PROGRESS",notes:"HACKER NOTEBOOK",community:"COMMUNITY",leaderboard:"LEADERBOARD",profile:"PROFILE",security:"SECURITY"};
 window.go = function(v) {
   VIEWS.forEach(x => {
     $("view-"+x)?.classList.toggle("active", x===v);
@@ -1485,7 +1578,20 @@ window.go = function(v) {
   if(v==="profile") renderProfile();
   if(v==="security") renderSecurity();
   if(v==="notes") renderNotesList();
-  if(v==="community") { refreshGroupListUI(); switchCommTab(currentCommTab); }
+  if(v==="community") {
+    if(!groupsUnsub) startGroupsListener();
+    refreshGroupListUI();
+    switchCommTab(currentCommTab);
+    setTimeout(()=>{
+      if(window.innerWidth<=768&&!activeGroupId){
+        const sidebar=document.querySelector(".chat-sidebar");
+        const mainArea=$("chat-main-area");
+        if(sidebar){sidebar.style.cssText="display:flex!important;flex-direction:column;position:static;width:100%;";}
+        if(mainArea){mainArea.style.display="none";}
+        document.querySelectorAll(".mob-groups-toggle").forEach(b=>b.style.display="flex");
+      }
+    }, 100);
+  }
 };
 window.openSb  = () => { $("sidebar").classList.add("open"); $("mob-overlay").classList.add("show"); };
 window.closeSb = () => { $("sidebar").classList.remove("open"); $("mob-overlay").classList.remove("show"); };
@@ -1794,7 +1900,7 @@ function refreshDashStats() {
   if(wb&&wb.style.display==="none"&&myData){
     const name=(myData.name||"Hacker").split(" ")[0];
     const hr=new Date().getHours();
-    const greet=hr<12?"Good morning ☀️":hr<17?"Good afternoon ⚡":"Good evening 🌙";
+    const greet = hr<12 ? "Good morning ☀️" : hr<17 ? "Good afternoon ⚡" : "Good evening 🌙";
     const emojis=["👋","🔥","⚡","🎯","🚀"];
     if($("dash-welcome-emoji")) $("dash-welcome-emoji").textContent=emojis[Math.floor(Math.random()*emojis.length)];
     if($("dash-welcome-msg")) $("dash-welcome-msg").textContent=`${greet}, ${name}!`;

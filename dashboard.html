@@ -1295,15 +1295,31 @@ textarea.inp{resize:vertical;min-height:72px}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script type="module">
-import { auth, db } from "./js/firebase.js";
-import {
+// ══════════════════════════════════════════════════════════════
+//  PASTE YOUR FIREBASE CONFIG HERE (from Firebase Console)
+//  Firebase Console → Project Settings → Your apps → Config
+// ══════════════════════════════════════════════════════════════
+import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth,
   onAuthStateChanged, signOut, deleteUser, updatePassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
+import { getFirestore,
   doc, collection, getDoc, getDocs, onSnapshot, setDoc,
   updateDoc, addDoc, deleteDoc, query, orderBy, where, limit,
   serverTimestamp, increment, writeBatch, arrayUnion, arrayRemove
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "PASTE_YOUR_apiKey_HERE",
+  authDomain:        "PASTE_YOUR_authDomain_HERE",
+  projectId:         "PASTE_YOUR_projectId_HERE",
+  storageBucket:     "PASTE_YOUR_storageBucket_HERE",
+  messagingSenderId: "PASTE_YOUR_messagingSenderId_HERE",
+  appId:             "PASTE_YOUR_appId_HERE"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);

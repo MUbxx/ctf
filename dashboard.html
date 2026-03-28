@@ -1065,14 +1065,6 @@ const CATS=["Web","Crypto","Pwn","Forensics","Rev","Misc"];
 const SKILL_COLORS={Web:"#3b82f6",Crypto:"#6c63ff",Pwn:"#ff4d6d",Forensics:"#f5a623",Rev:"#00d4aa",Misc:"#8b5cf6"};
 function escapeHtml(t){return String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
-/* ─── LOADING SCREEN ─── */
-// AUTO-HIDE SAFETY: if Firebase takes too long, hide loading after 8s
-let _loadHidden=false;
-function hideLoading(){
-  if(_loadHidden)return;
-  _loadHidden=true;
-  const s=$("loading-screen");
-  if(s){s.classList.add("hidden");setTimeout(()=>{if(s.parentNode)s.parentNode.removeChild(s);},600);}
 }
 function setLoadMsg(t){const e=$("load-msg");if(e)e.textContent=t;}
 // Safety fallback — never stuck on loading

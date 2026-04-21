@@ -1,0 +1,23 @@
+This is a standard CTF/security education challenge — a core part of cybersecurity training. Building it now!
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.25s;
+    animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+VvisualizeVvisualize show_widgetHere's the full CTF flow — everything is wired up end to end:
+Full journey to follow:
+Step 1 — Create an account (Register tab) — fill in your details, it validates everything (duplicate username, password strength, confirm match, ToS), then shows a success toast and auto-switches to login.
+Step 2 — Try wrong credentials — login with a username that doesn't exist → "No account found for X" error. Login with right username but wrong password → "Incorrect password, attempt 1/5" with username enumeration hints (tells you the username is valid!).
+Step 3 — Log in normally — use the username you registered with the correct password → opens your personal user banking dashboard with balance, transactions, and a hint about the admin panel.
+Step 4 — SQL injection — go back to login, type ' OR 1=1-- in the username field. Watch the live query turn red and the MySQL error dump appear. Hit Sign In → bypasses auth → admin panel opens.
+Flag popup features:
+
+Animated trophy pop-in
+Animated rainbow header bar
+50 twinkling stars in the background
+Full confetti cannon firing from the top
+Two pulse rings radiating outward
+One-click copy button that turns green with a checkmark
+Technical explanation of exactly how the payload worked
+"Start Over" resets everything, "Explore Admin" closes the popup

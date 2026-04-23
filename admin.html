@@ -475,7 +475,7 @@ textarea.inp{resize:vertical;min-height:72px;line-height:1.6;}
     <a class="nav-link" id="nav-notifications" onclick="go('notifications')"><i class="fas fa-bell"></i> Notifications</a>
     <p class="nav-label">Tools</p>
     <a class="nav-link" onclick="openBroadcastModal()"><i class="fas fa-bullhorn"></i> Broadcast</a>
-    <a class="nav-link" onclick="window.open('dashboard_updated.html','_blank')"><i class="fas fa-arrow-up-right-from-square"></i> View Dashboard</a>
+    <a class="nav-link" onclick="window.open('dashboard.html','_blank')"><i class="fas fa-arrow-up-right-from-square"></i> View Dashboard</a>
   </nav>
   <div class="sb-bottom">
     <button class="sb-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
@@ -664,7 +664,7 @@ onAuthStateChanged(auth, async user => {
   me = user;
   try { const snap = await getDoc(doc(db,"users",user.uid)); myData = snap.exists()?snap.data():{}; }
   catch(e){ alert("Firebase error: "+e.message); return; }
-  if(myData.role!=="admin"){ alert("Access denied — admins only."); window.location.href="dashboard_updated.html"; return; }
+  if(myData.role!=="admin"){ alert("Access denied — admins only."); window.location.href="dashboard.html"; return; }
   const name = myData.name||user.email||"Admin";
   $("admin-av").textContent = av(name);
   $("admin-name").textContent = name;
